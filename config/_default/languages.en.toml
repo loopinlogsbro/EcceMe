@@ -2,25 +2,25 @@ disabled = false
 languageCode = "en"
 languageName = "English"
 weight = 1
-title = "Blowfish"
+title = "Logan K. Brown - Technical Explorations"
 
 [params]
   displayName = "EN"
   isoCode = "en"
   rtl = false
   dateFormat = "2 January 2006"
-  # logo = "img/logo.png"
-  # secondaryLogo = "img/secondary-logo.png"
-  # description = "My awesome website"
-  # copyright = "Copy, _right?_ :thinking_face:"
+  # logo = "img/EcceMeLogo.png"
+  # secondaryLogo = "img/DarkEcceMeLogo.png"
+  # description = "A labor of love and devotion"
+  # copyright = "lol no"
 
 # [params.author]
-#   name = "Your name here"
-#   email = "youremail@example.com"
-#   image = "img/blowfish_logo.png"
+#   name = "Logan K. Brown"
+#   email = "lkb@ecce.me"
+#   image = "img/EcceMeLogo"
 #   imageQuality = 96
-#   headline = "I'm only human"
-#   bio = "A little bit about you"
+#   headline = "Behold! Another hobbyist blog!... Errr... Hopefully this one is better?"
+#   bio = "Second most interesting man in the world"
 #   links = [
 #     { email = "mailto:hello@your_domain.com" },
 #     { link = "https://link-to-some-website.com/" },
