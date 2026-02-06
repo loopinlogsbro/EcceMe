@@ -9,20 +9,20 @@ title = "Logan K. Brown - Technical Explorations"
   isoCode = "en"
   rtl = false
   dateFormat = "2 January 2006"
-  # logo = "img/EcceMeLogo.png"
-  # secondaryLogo = "img/DarkEcceMeLogo.png"
-  # description = "A labor of love and devotion"
-  # copyright = "lol no"
+  logo = "img/EcceMeLogo.png"
+  secondaryLogo = "img/DarkEcceMeLogo.png"
+  description = "A labor of love and devotion"
+  copyright = "lol no"
 
-# [params.author]
-#   name = "Logan K. Brown"
-#   email = "lkb@ecce.me"
+ [params.author]
+   name = "Logan K. Brown"
+   email = "contact@ecce.me"
 #   image = "img/EcceMeLogo"
 #   imageQuality = 96
-#   headline = "Behold! Another hobbyist blog!... Errr... Hopefully this one is better?"
-#   bio = "Second most interesting man in the world"
+   headline = "Behold! Another hobbyist blog!... Errr... Hopefully this one is better?"
+   bio = "Second most interesting man in the world"
 #   links = [
-#     { email = "mailto:hello@your_domain.com" },
+#     { email = "mailto:contact@ecce.me" },
 #     { link = "https://link-to-some-website.com/" },
 #     { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
 #     { apple = "https://www.apple.com" },
