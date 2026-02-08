@@ -1,0 +1,25 @@
+baseURL = 'https://ecce.me/'
+languageCode = 'en-us'
+title = 'Ecce Me'
+theme = 'ecce'
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    style = "dracula"
+    noClasses = false
+
+[params]
+  [params.author]
+    headline = "Building digital experiences with purpose."
+    bio = "I'm a software engineer passionate about clean code and user-centric design."
+
+  [[params.social]]
+    name = "GitHub"
+    url = "https://github.com/loopinlogsbro"
+
+  [[params.social]]
+    name = "LinkedIn"
+    url = "https://linkedin.com/in/loopinlogsbro"

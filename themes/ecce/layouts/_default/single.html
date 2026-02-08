@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="container" style="max-width: 700px;">
+    <article class="post-single">
+        <header style="margin-bottom: 3rem; text-align: center;">
+            <span style="color: var(--accent); font-size: 0.9rem; display: block; margin-bottom: 1rem;">
+                {{ .Date.Format "January 2, 2006" }}
+                {{ if .Params.reading_time }} • {{ .Params.reading_time }} min read{{ end }}
+            </span>
+            <h1 style="font-size: 3rem; line-height: 1.1; margin-bottom: 1.5rem;">{{ .Title }}</h1>
+            {{ with .Params.subtitle }}
+            <p style="font-size: 1.25rem; color: var(--text-muted);">{{ . }}</p>
+            {{ end }}
+        </header>
+
+        <div class="post-content" style="font-size: 1.125rem; line-height: 1.8;">
+            {{ .Content }}
+        </div>
+    </article>
+</div>
+{{ end }}

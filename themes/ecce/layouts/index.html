@@ -1,0 +1,54 @@
+{{ define "main" }}
+<div class="container">
+    <section class="hero-section" style="margin-top: 4rem; margin-bottom: 6rem;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 2rem; letter-spacing: -0.03em;">
+            {{ .Site.Params.author.headline | default "Building digital experiences." }}
+        </h1>
+        <p style="font-size: 1.5rem; max-width: 600px; color: var(--text-muted);">
+            {{ .Site.Params.author.bio | default "Software engineer passionate about clean code." }}
+        </p>
+        <div style="margin-top: 2rem;">
+            {{ with .Site.Params.social }}
+            {{ range . }}
+            <a href="{{ .url }}"
+                style="margin-right: 1.5rem; font-weight: 500; border-bottom: 1px solid var(--accent);">{{ .name }}</a>
+            {{ end }}
+            {{ end }}
+        </div>
+    </section>
+
+    <section class="projects-section" style="margin-bottom: 6rem;">
+        <span class="section-title">Selected Projects</span>
+        <div class="grid">
+            {{ range first 4 (where .Site.RegularPages "Section" "projects") }}
+            <a href="{{ .RelPermalink }}" class="card">
+                <div class="card-meta">{{ .Params.tech_stack | default "Tech" }}</div>
+                <h3 class="card-title">{{ .Title }}</h3>
+                <p style="font-size: 0.95rem;">{{ .Summary | truncate 100 }}</p>
+            </a>
+            {{ end }}
+        </div>
+        <div style="margin-top: 2rem; text-align: right;">
+            <a href="/projects" style="font-size: 0.9rem; font-weight: 600;">View all projects &rarr;</a>
+        </div>
+    </section>
+
+    <section class="posts-section">
+        <span class="section-title">Latest Writing</span>
+        <div class="post-list">
+            {{ range first 3 (where .Site.RegularPages "Section" "posts") }}
+            <div class="post-item"
+                style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; border-bottom: 1px solid #222; padding-bottom: 1.5rem;">
+                <a href="{{ .RelPermalink }}"
+                    style="font-size: 1.25rem; font-weight: 600; font-family: var(--font-heading);">{{ .Title }}</a>
+                <time style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; margin-left: 2rem;">{{
+                    .Date.Format "Jan 02, 2006" }}</time>
+            </div>
+            {{ end }}
+        </div>
+        <div style="margin-top: 2rem; text-align: right;">
+            <a href="/posts" style="font-size: 0.9rem; font-weight: 600;">Read all posts &rarr;</a>
+        </div>
+    </section>
+</div>
+{{ end }}
