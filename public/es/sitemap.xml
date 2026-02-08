@@ -2,279 +2,279 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/</loc>
+    <loc>http://localhost:61338/es/blogs/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/"
+                href="http://localhost:61338/blogs/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/"
+                href="http://localhost:61338/fr/blogs/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/"
+                href="http://localhost:61338/es/blogs/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/ejemplo/</loc>
+    <loc>http://localhost:61338/es/tags/ejemplo/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/ejemplo/"
+                href="http://localhost:61338/tags/ejemplo/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/ejemplo/"
+                href="http://localhost:61338/es/tags/ejemplo/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/</loc>
+    <loc>http://localhost:61338/es/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/"
+                href="http://localhost:61338/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/"
+                href="http://localhost:61338/fr/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/"
+                href="http://localhost:61338/es/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/mathjax/</loc>
+    <loc>http://localhost:61338/es/tags/mathjax/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/mathjax/"
+                href="http://localhost:61338/tags/mathjax/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/tags/mathjax/"
+                href="http://localhost:61338/fr/tags/mathjax/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/mathjax/"
+                href="http://localhost:61338/es/tags/mathjax/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/math/</loc>
+    <loc>http://localhost:61338/es/blogs/math/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/math/"
+                href="http://localhost:61338/blogs/math/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/math/"
+                href="http://localhost:61338/fr/blogs/math/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/math/"
+                href="http://localhost:61338/es/blogs/math/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/sintaxis-de-markdown/</loc>
+    <loc>http://localhost:61338/es/tags/sintaxis-de-markdown/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/sintaxis-de-markdown/"
+                href="http://localhost:61338/tags/sintaxis-de-markdown/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/sintaxis-de-markdown/"
+                href="http://localhost:61338/es/tags/sintaxis-de-markdown/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/</loc>
+    <loc>http://localhost:61338/es/tags/</loc>
     <lastmod>2022-12-09T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/"
+                href="http://localhost:61338/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/tags/"
+                href="http://localhost:61338/fr/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/"
+                href="http://localhost:61338/es/tags/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/gallery/</loc>
+    <loc>http://localhost:61338/es/gallery/</loc>
     <lastmod>2022-06-25T18:35:46+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/gallery/"
+                href="http://localhost:61338/gallery/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/gallery/"
+                href="http://localhost:61338/fr/gallery/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/gallery/"
+                href="http://localhost:61338/es/gallery/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/muestra/</loc>
+    <loc>http://localhost:61338/es/tags/muestra/</loc>
     <lastmod>2021-04-03T23:29:21+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/muestra/"
+                href="http://localhost:61338/tags/muestra/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/muestra/"
+                href="http://localhost:61338/es/tags/muestra/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/markdown-syntax/</loc>
+    <loc>http://localhost:61338/es/blogs/markdown-syntax/</loc>
     <lastmod>2021-04-03T23:29:21+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/markdown-syntax/"
+                href="http://localhost:61338/blogs/markdown-syntax/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/markdown-syntax/"
+                href="http://localhost:61338/fr/blogs/markdown-syntax/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/markdown-syntax/"
+                href="http://localhost:61338/es/blogs/markdown-syntax/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/emoji-support/</loc>
+    <loc>http://localhost:61338/es/blogs/emoji-support/</loc>
     <lastmod>2021-04-03T22:53:58+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/emoji-support/"
+                href="http://localhost:61338/blogs/emoji-support/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/emoji-support/"
+                href="http://localhost:61338/fr/blogs/emoji-support/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/emoji-support/"
+                href="http://localhost:61338/es/blogs/emoji-support/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/soporte-de-emoji/</loc>
+    <loc>http://localhost:61338/es/tags/soporte-de-emoji/</loc>
     <lastmod>2021-04-03T22:53:58+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/soporte-de-emoji/"
+                href="http://localhost:61338/tags/soporte-de-emoji/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/soporte-de-emoji/"
+                href="http://localhost:61338/es/tags/soporte-de-emoji/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/placeholder-text/</loc>
+    <loc>http://localhost:61338/es/blogs/placeholder-text/</loc>
     <lastmod>2021-04-03T22:41:10+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/placeholder-text/"
+                href="http://localhost:61338/blogs/placeholder-text/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/placeholder-text/"
+                href="http://localhost:61338/fr/blogs/placeholder-text/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/placeholder-text/"
+                href="http://localhost:61338/es/blogs/placeholder-text/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/texto-de-relleno/</loc>
+    <loc>http://localhost:61338/es/tags/texto-de-relleno/</loc>
     <lastmod>2021-04-03T22:41:10+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/texto-de-relleno/"
+                href="http://localhost:61338/tags/texto-de-relleno/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/texto-de-relleno/"
+                href="http://localhost:61338/es/tags/texto-de-relleno/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/blogs/rich-content/</loc>
+    <loc>http://localhost:61338/es/blogs/rich-content/</loc>
     <lastmod>2021-04-03T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/blogs/rich-content/"
+                href="http://localhost:61338/blogs/rich-content/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/blogs/rich-content/"
+                href="http://localhost:61338/fr/blogs/rich-content/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/blogs/rich-content/"
+                href="http://localhost:61338/es/blogs/rich-content/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/tags/contenido-enriquecido/</loc>
+    <loc>http://localhost:61338/es/tags/contenido-enriquecido/</loc>
     <lastmod>2021-04-03T19:53:33+05:30</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/tags/contenido-enriquecido/"
+                href="http://localhost:61338/tags/contenido-enriquecido/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/tags/contenido-enriquecido/"
+                href="http://localhost:61338/es/tags/contenido-enriquecido/"
                 />
   </url><url>
-    <loc>https://hugo-profile.netlify.app/es/categories/</loc>
+    <loc>http://localhost:61338/es/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://hugo-profile.netlify.app/categories/"
+                href="http://localhost:61338/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
-                href="https://hugo-profile.netlify.app/fr/categories/"
+                href="http://localhost:61338/fr/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
-                href="https://hugo-profile.netlify.app/es/categories/"
+                href="http://localhost:61338/es/categories/"
                 />
   </url>
 </urlset>
