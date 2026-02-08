@@ -1,9 +1,10 @@
 # -- Site Configuration --
-# Refer to the theme docs for more details about each of these parameters.
-# https://blowfish.page/docs/getting-started/
 
-theme = "blowfish" # UNCOMMENT THIS LINE
+
 baseURL = "https://ecce.me/"
+languageCode = "en-us"
+title = "Ecce Me"
+
 defaultContentLanguage = "en"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
@@ -27,8 +28,6 @@ enableEmoji = true
 [taxonomies]
   tag = "tags"
   category = "categories"
-  author = "authors"
-  series = "series"
 
 [sitemap]
   changefreq = 'daily'
