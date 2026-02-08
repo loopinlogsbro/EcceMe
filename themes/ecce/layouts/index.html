@@ -1,12 +1,11 @@
 {{ define "main" }}
 <div class="container">
     <section class="hero-section" style="margin-top: 4rem; margin-bottom: 6rem;">
-        <h1 style="font-size: 3.5rem; margin-bottom: 1.5rem; letter-spacing: -0.03em;">
-            {{ .Site.Params.author.headline | default "Building digital experiences with purpose." }}
+        <h1 style="font-size: 3.5rem; margin-bottom: 2rem; letter-spacing: -0.03em;">
+            {{ .Site.Params.author.headline | default "Building digital experiences." }}
         </h1>
-        <p style="font-size: 1.25rem; max-width: 600px; color: var(--text-muted);">
-            {{ .Site.Params.author.bio | default "I'm a software engineer passionate about clean code and user-centric
-            design." }}
+        <p style="font-size: 1.5rem; max-width: 600px; color: var(--text-muted);">
+            {{ .Site.Params.author.bio | default "Software engineer passionate about clean code." }}
         </p>
         <div style="margin-top: 2rem;">
             {{ with .Site.Params.social }}
