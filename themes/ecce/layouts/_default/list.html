@@ -1,0 +1,26 @@
+{{ define "main" }}
+<div class="container">
+    <header style="margin-bottom: 4rem;">
+        <span class="section-title">{{ .Title }}</span>
+        <h1 style="font-size: 2.5rem;">{{ .Content }}</h1>
+    </header>
+
+    <div class="list-container">
+        {{ range .Paginator.Pages }}
+        <article style="margin-bottom: 3rem;">
+            <div style="margin-bottom: 0.5rem; color: var(--accent); font-size: 0.9rem;">
+                {{ .Date.Format "January 2, 2006" }} {{ if .Params.tech_stack }} • {{ .Params.tech_stack }} {{ end }}
+            </div>
+            <h2 style="margin-top: 0; font-size: 1.75rem;">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            </h2>
+            <p>{{ .Summary }}</p>
+            <a href="{{ .RelPermalink }}"
+                style="font-size: 0.9rem; text-decoration: underline; text-underline-offset: 4px;">Read more</a>
+        </article>
+        {{ end }}
+    </div>
+
+    {{ template "_internal/pagination.html" . }}
+</div>
+{{ end }}

@@ -4,6 +4,7 @@
 baseURL = "https://ecce.me/"
 languageCode = "en-us"
 title = "Ecce Me"
+theme = "ecce"
 
 defaultContentLanguage = "en"
 
