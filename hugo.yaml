@@ -1,6 +1,6 @@
 baseURL: "https://hugo-profile.netlify.app"
 languageCode: "en-us"
-title: "Hugo Profile"
+title: "Logan K. Brown | Dev & Tinkerer"
 theme: hugo-profile
 
 # Multilingual configuration
@@ -488,8 +488,8 @@ Menus:
     #   weight: 2
 
 params:
-  title: "Hugo Profile"
-  description: Text about my cool site
+  #title: "Ecce Me"
+  # description: Text about my cool site
   # staticPath: ""  # The path to serve the static files from
   favicon: "/fav.png"
 
@@ -510,8 +510,8 @@ params:
   animate: true
 
   theme:
-    # disableThemeToggle: true
-    # defaultTheme: "light" # dark
+    disableThemeToggle: true
+    defaultTheme: "dark" # dark
 
   font:
     fontSize: 1rem # default: 1rem
@@ -542,10 +542,10 @@ params:
   # If you want to customize the menu, you can change it here
   navbar:
     align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
-    # brandLogo: "/logo.png" # Logo for the brand | default is the favicon variable
+    # brandLogo: "images/fav.png" # Logo for the brand | default is the favicon variable
     # showBrandLogo: false # Show brand logo in nav bar | default is true
-    brandName: "Hugo Profile" # Brand name for the brand | default is the title variable
-    disableSearch: false
+    brandName: "" # Brand name for the brand | default is the title variable
+    disableSearch: true
     # searchPlaceholder: "Search"
     stickyNavBar:
       enable : true
@@ -563,10 +563,10 @@ params:
   hero:
     enable: true
     intro: "Hi, my name is"
-    title: "Isabella."
-    subtitle: "I build things for the web"
-    content: "A passionate web app developer. I tend to make use of modern web technologies to build websites that look great, feel fantastic, and function correctly."
-    image: /images/hero.svg
+    title: "Logan"
+    subtitle: "I build both digital and tangible things for the love of it"
+    content: "A passionate multidisciplinary tinkerer. I use technology to make things that improve the world around me."
+    image: images/Hero.svg
     bottomImage:
       enable: true
     # roundImage: true # Make hero image circular | default false
@@ -608,7 +608,7 @@ params:
 
   # Experience
   experience:
-    enable: true
+    enable: false
     # title: "Custom Name"
     items:
       - company: "Facebook"
@@ -688,7 +688,7 @@ params:
 
   # Education
   education:
-    enable: true
+    enable: false
     # title: "Custom Name"
     index: false
     items:
@@ -731,7 +731,7 @@ params:
 
   # Achievements
   achievements:
-    enable: true
+    enable: false
     # title: "Custom Name"
     items:
       - title: Google kickstart runner
@@ -803,7 +803,7 @@ params:
 
   #Contact
   contact:
-    enable: true
+    enable: false
     # title: "Custom Name"
     content: My inbox is always open. Whether you have a question or just want to say hi, I’ll try my best to get back to you!
     btnName: Mail me
@@ -821,7 +821,7 @@ params:
       count: 3
       title: Recent Posts
       enable: true
-      disableFeaturedImage: false
+      disableFeaturedImage: true
     socialNetworks:
       github: https://github.com
       linkedin: https://linkedin.com
@@ -831,7 +831,7 @@ params:
 
   # List pages like blogs and posts
   listPages:
-    disableFeaturedImage: false
+    disableFeaturedImage: true
 
   # Single pages like blog and post
   singlePages:

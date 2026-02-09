@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Hugo Profile</title>
-    <link>https://hugo-profile.netlify.app/es/tags/</link>
-    <description>Recent content in Tags on Hugo Profile</description>
+    <title>Tags on Logan K. Brown | Dev &amp; Tinkerer</title>
+    <link>http://localhost:1313/es/tags/</link>
+    <description>Recent content in Tags on Logan K. Brown | Dev &amp; Tinkerer</description>
     <generator>Hugo</generator>
     <language>es</language>
     <lastBuildDate>Fri, 09 Dec 2022 19:53:33 +0530</lastBuildDate>
-    <atom:link href="https://hugo-profile.netlify.app/es/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/es/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Ejemplo</title>
-      <link>https://hugo-profile.netlify.app/es/tags/ejemplo/</link>
+      <link>http://localhost:1313/es/tags/ejemplo/</link>
       <pubDate>Fri, 09 Dec 2022 19:53:33 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/ejemplo/</guid>
+      <guid>http://localhost:1313/es/tags/ejemplo/</guid>
       <description></description>
     </item>
     <item>
       <title>Mathjax</title>
-      <link>https://hugo-profile.netlify.app/es/tags/mathjax/</link>
+      <link>http://localhost:1313/es/tags/mathjax/</link>
       <pubDate>Fri, 09 Dec 2022 19:53:33 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/mathjax/</guid>
+      <guid>http://localhost:1313/es/tags/mathjax/</guid>
       <description></description>
     </item>
     <item>
       <title>Sintaxis De Markdown</title>
-      <link>https://hugo-profile.netlify.app/es/tags/sintaxis-de-markdown/</link>
+      <link>http://localhost:1313/es/tags/sintaxis-de-markdown/</link>
       <pubDate>Fri, 09 Dec 2022 19:53:33 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/sintaxis-de-markdown/</guid>
+      <guid>http://localhost:1313/es/tags/sintaxis-de-markdown/</guid>
       <description></description>
     </item>
     <item>
       <title>Muestra</title>
-      <link>https://hugo-profile.netlify.app/es/tags/muestra/</link>
+      <link>http://localhost:1313/es/tags/muestra/</link>
       <pubDate>Sat, 03 Apr 2021 23:29:21 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/muestra/</guid>
+      <guid>http://localhost:1313/es/tags/muestra/</guid>
       <description></description>
     </item>
     <item>
       <title>Soporte De Emoji</title>
-      <link>https://hugo-profile.netlify.app/es/tags/soporte-de-emoji/</link>
+      <link>http://localhost:1313/es/tags/soporte-de-emoji/</link>
       <pubDate>Sat, 03 Apr 2021 22:53:58 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/soporte-de-emoji/</guid>
+      <guid>http://localhost:1313/es/tags/soporte-de-emoji/</guid>
       <description></description>
     </item>
     <item>
       <title>Texto De Relleno</title>
-      <link>https://hugo-profile.netlify.app/es/tags/texto-de-relleno/</link>
+      <link>http://localhost:1313/es/tags/texto-de-relleno/</link>
       <pubDate>Sat, 03 Apr 2021 22:41:10 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/texto-de-relleno/</guid>
+      <guid>http://localhost:1313/es/tags/texto-de-relleno/</guid>
       <description></description>
     </item>
     <item>
       <title>Contenido Enriquecido</title>
-      <link>https://hugo-profile.netlify.app/es/tags/contenido-enriquecido/</link>
+      <link>http://localhost:1313/es/tags/contenido-enriquecido/</link>
       <pubDate>Sat, 03 Apr 2021 19:53:33 +0530</pubDate>
-      <guid>https://hugo-profile.netlify.app/es/tags/contenido-enriquecido/</guid>
+      <guid>http://localhost:1313/es/tags/contenido-enriquecido/</guid>
       <description></description>
     </item>
   </channel>
