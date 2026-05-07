@@ -1,0 +1,37 @@
+{{ $coursework := .Site.Params.coursework }}
+{{ $percent := $coursework.percent | default 0 }}
+<section id="coursework" class="ecce-section">
+    <div class="container">
+        <h3 class="text-center">WGU Computer Science Progress</h3>
+        <div class="row justify-content-center px-3 px-md-5">
+            <div class="col-lg-8 my-3">
+                <div class="ecce-card">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Completed</strong>
+                            <div class="ecce-meta">{{ $coursework.completed | default "To confirm" }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Current</strong>
+                            <div class="ecce-meta">{{ $coursework.current | default "To confirm" }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Remaining</strong>
+                            <div class="ecce-meta">{{ $coursework.remaining | default "To confirm" }}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Target finish</strong>
+                            <div class="ecce-meta">{{ $coursework.targetFinish | default "To confirm" }}</div>
+                        </div>
+                    </div>
+                    <div class="ecce-progress mt-4" aria-label="Course progress">
+                        <span class="ecce-progress-bar" style="--ecce-progress-value: {{ $percent }}%;"></span>
+                    </div>
+                    <p class="ecce-meta mt-3 mb-0">
+                        {{ $coursework.note | default "Update this from the official degree plan before treating the percentage as final." }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

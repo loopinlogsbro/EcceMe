@@ -1,0 +1,25 @@
+{{ $logs := first 3 (where .Site.RegularPages "Section" "logs") }}
+<section id="work-log" class="ecce-section">
+    <div class="container">
+        <h3 class="text-center">Recent Writing / Work Log</h3>
+        <div class="row justify-content-center px-3 px-md-5">
+            {{ if gt (len $logs) 0 }}
+                {{ range $logs }}
+                <div class="col-lg-4 col-md-6 my-3">
+                    <div class="ecce-card">
+                        <h5><a href="{{ .RelPermalink }}">{{ .Title }}</a></h5>
+                        <div class="ecce-meta">{{ .Date.Format "Jan 2, 2006" }}</div>
+                        <p>{{ .Summary | plainify | truncate 140 }}</p>
+                    </div>
+                </div>
+                {{ end }}
+            {{ else }}
+                <div class="col-lg-8 my-3">
+                    <div class="ecce-card">
+                        <p class="mb-0">Weekly logs will appear here once there is a real week of course or project notes to publish.</p>
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</section>

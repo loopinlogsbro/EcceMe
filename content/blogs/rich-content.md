@@ -1,7 +1,7 @@
 ---
 title: "Rich Content"
 date: 2021-04-03T19:53:33+05:30
-draft: false
+draft: true
 author: "Gurusabarish"
 tags:
   - Rich content
@@ -19,7 +19,7 @@ Hugo ships with several [Embedded Shortcodes](https://gohugo.io/content-manageme
 {{</* tweet user="GoHugoIO" id="1315233626070503424" */>}}
 ```
 <br>
-{{< tweet user="GoHugoIO" id="1315233626070503424" >}}
+{{< x user="GoHugoIO" id="1315233626070503424" >}}
 <br>
 
 

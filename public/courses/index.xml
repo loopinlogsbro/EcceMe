@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Courses on Logan K. Brown | Dev &amp; Tinkerer</title>
+    <link>https://ecce.me/courses/</link>
+    <description>Recent content in Courses on Logan K. Brown | Dev &amp; Tinkerer</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 07 May 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://ecce.me/courses/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C952 Computer Architecture - Working Notes</title>
+      <link>https://ecce.me/courses/c952-computer-architecture/</link>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://ecce.me/courses/c952-computer-architecture/</guid>
+      <description>&lt;p&gt;This is a working note for the current course. It should become a retrospective after the course is complete.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-this-course-covered&#34;&gt;What this course covered&lt;/h2&gt;&#xA;&lt;p&gt;Computer architecture, hardware/software boundaries, instruction execution, memory, and the lower-level machinery that software depends on.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-was-useful&#34;&gt;What was useful&lt;/h2&gt;&#xA;&lt;p&gt;TBD after finishing the course.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-was-not-useful&#34;&gt;What was not useful&lt;/h2&gt;&#xA;&lt;p&gt;TBD after finishing the course.&lt;/p&gt;&#xA;&lt;h2 id=&#34;how-i-studied-it&#34;&gt;How I studied it&lt;/h2&gt;&#xA;&lt;p&gt;TBD after finishing the course.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-i-would-do-differently&#34;&gt;What I would do differently&lt;/h2&gt;&#xA;&lt;p&gt;TBD after finishing the course.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

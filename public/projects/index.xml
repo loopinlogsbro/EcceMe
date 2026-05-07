@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Logan K. Brown | Dev &amp; Tinkerer</title>
+    <link>https://ecce.me/projects/</link>
+    <description>Recent content in Projects on Logan K. Brown | Dev &amp; Tinkerer</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 07 May 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://ecce.me/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Automation and Physical Systems</title>
+      <link>https://ecce.me/projects/automation-and-physical-systems/</link>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://ecce.me/projects/automation-and-physical-systems/</guid>
+      <description>Experiments around scripts, ESP32 devices, Home Assistant, and practical tools.</description>
+    </item>
+    <item>
+      <title>Coursework Tracker</title>
+      <link>https://ecce.me/projects/coursework-tracker/</link>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://ecce.me/projects/coursework-tracker/</guid>
+      <description>A visible tracker for WGU computer science progress.</description>
+    </item>
+    <item>
+      <title>Ecce.me</title>
+      <link>https://ecce.me/projects/ecce-me/</link>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://ecce.me/projects/ecce-me/</guid>
+      <description>A personal builder site for documenting coursework, project writeups, and weekly progress.</description>
+    </item>
+  </channel>
+</rss>
