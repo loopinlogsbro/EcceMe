@@ -269,7 +269,7 @@ params:
       path: "logs"
       count: 3
       title: Writing
-      enable: true
+      enable: false
       disableFeaturedImage: true
     socialNetworks:
       github: ""
@@ -305,5 +305,4 @@ params:
     articleList: "Jan 2, 2006"
     articleRecent: "Jan 2, 2006"
 
-  #customScripts: -| # You can add custom scripts which will be added before </body> tag
-  #  <script type="text/javascript"><!-- any script here --></script>
+  customScripts: '<script src="/js/scramble.js"></script><script src="/js/navbar-effects.js"></script>'

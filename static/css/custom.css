@@ -3,6 +3,17 @@
     font-family: 'Roboto Mono', monospace !important;
     font-weight: 700;
     letter-spacing: -0.05em;
+    font-size: 1.75rem !important;
+    border: 1.5px solid currentColor !important;
+    border-radius: 4px !important;
+    padding: 0.1em 0.45em !important;
+    line-height: 1;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.navbar-brand:hover {
+    background-color: var(--primary-color) !important;
+    color: var(--background-color) !important;
 }
 
 .navbar-brand img {
@@ -13,7 +24,8 @@
 
 /* Increase navbar menu font size */
 .navbar-nav .nav-link {
-    font-size: 1.15rem !important;
+    font-size: 1.2rem !important;
+    font-family: 'Roboto Mono', monospace !important;
 }
 
 /* Whitespace reduction */
@@ -27,7 +39,7 @@
 }
 
 #projects {
-    padding-top: 2rem !important;
+    padding-top: 0.75rem !important;
     padding-bottom: 1rem !important;
 }
 
@@ -37,7 +49,7 @@
 }
 
 .ecce-section {
-    padding: 2rem 0;
+    padding: 2rem 0 0.5rem;
 }
 
 /* Consistent section headings across all homepage sections */
@@ -116,7 +128,7 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     font-family: 'Roboto Mono', monospace;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
 }
 
 .terminal-header {
