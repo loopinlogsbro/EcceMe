@@ -27,22 +27,21 @@
     }, 38);
   }
 
-  function eraseRetype(el) {
+  function charWave(el) {
     const target = el.dataset.text;
-    let len = target.length;
-    const erase = setInterval(() => {
-      el.textContent = target.slice(0, --len);
-      if (len <= 0) {
-        clearInterval(erase);
-        const retype = setInterval(() => {
-          el.textContent = target.slice(0, ++len);
-          if (len >= target.length) clearInterval(retype);
-        }, 55);
-      }
-    }, 42);
+    const locked = new Array(target.length).fill(false);
+    let col = 0;
+    const id = setInterval(() => {
+      if (col >= target.length) { clearInterval(id); el.textContent = target; return; }
+      locked[col] = true;
+      col++;
+      el.textContent = Array.from(target, (c, i) =>
+        locked[i] ? c : CHARS[Math.floor(Math.random() * CHARS.length)]
+      ).join('');
+    }, 55);
   }
 
-  const EFFECTS = [glitch, cipherRoll, eraseRetype];
+  const EFFECTS = [glitch, cipherRoll, charWave];
 
   function init() {
     let idx = 0;
