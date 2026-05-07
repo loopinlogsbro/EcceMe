@@ -591,7 +591,7 @@ params:
     content: |-
       I am finishing a computer science degree through WGU and using this site to keep a visible trail of the work: course notes, project writeups, small tools, and systems that make everyday problems easier to handle.
 
-      I did not take college seriously the first time around. A few years of delivery work gave me enough time and perspective to come back with a clearer reason. Now I am moving quickly, building as I learn, and turning scattered curiosity into finished work.
+      I did not take college seriously the first time around. A few years of delivery work gave me enough time and perspective to come back with a clearer reason. Now I am moving quickly, building things that actually work, and keeping an honest record of the process.
     skills:
       enable: true
       title: "Tools and areas I am working with lately:"
@@ -754,8 +754,7 @@ params:
     title: "Featured Projects"
     items:
       - title: Ecce.me
-        content: "Status: In progress. A personal builder site for documenting coursework, projects, and weekly progress while finishing a CS degree."
-        image: /images/EcceIcon.png
+        content: "Personal site for documenting coursework, projects, and weekly progress while finishing a CS degree."
         featured:
           name: Writeup
           link: /projects/ecce-me/
@@ -766,8 +765,7 @@ params:
         links: []
 
       - title: Coursework Tracker
-        content: "Status: Planned. A simple tracker for completed, current, and remaining WGU computer science courses."
-        image: /images/EcceIcon.png
+        content: "A simple dashboard tracking completed, in-progress, and remaining WGU courses — kept honest and public."
         featured:
           name: View
           link: /courses/
@@ -778,8 +776,7 @@ params:
         links: []
 
       - title: Automation and Physical Systems
-        content: "Status: In progress. Notes and experiments around small scripts, ESP32 devices, Home Assistant, and practical tools."
-        image: /images/EcceIcon.png
+        content: "Notes and experiments around ESP32 devices, Home Assistant, and small automation scripts."
         featured:
           name: Writeup
           link: /projects/automation-and-physical-systems/
@@ -790,19 +787,19 @@ params:
         links: []
 
   coursework:
-    completed: "To confirm"
+    completed: "Fill in from degree plan"
     current: "C952 Computer Architecture"
-    remaining: "To confirm"
+    remaining: "Fill in from degree plan"
     percent: 0
-    targetFinish: "3-6 months"
-    note: "This tracker is wired into the homepage, but the official completed and remaining counts still need to be filled in from the WGU degree plan."
+    targetFinish: "3–6 months"
+    note: "Fill in completed and remaining counts from the official WGU degree plan."
 
   #Contact
   contact:
     enable: true
     title: "Contact"
     content: "The simplest way to follow the work right now is through the site itself. Public profile links will be added here once they are ready."
-    btnName: View Projects
+    btnName: Browse projects
     btnLink: /projects/
     # formspree:
     #   enable: true # `contact.email` value will be ignored

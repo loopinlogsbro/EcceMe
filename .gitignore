@@ -1,3 +1,7 @@
 AGENTS.md
 ecce-site-change-plan.md
 public/
+claude/worktrees/
+
+# Claude Code local files
+.claude/
