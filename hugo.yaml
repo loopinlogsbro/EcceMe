@@ -1,6 +1,6 @@
 baseURL: "https://ecce.me/"
 locale: "en-US"
-title: "ecce.me"
+title: "ecce"
 theme: hugo-profile
 
 # Multilingual configuration
