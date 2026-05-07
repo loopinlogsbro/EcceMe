@@ -1,6 +1,6 @@
 baseURL: "https://ecce.me/"
 locale: "en-US"
-title: "ecce.me"
+title: "ecce"
 theme: hugo-profile
 
 # Multilingual configuration
@@ -44,7 +44,7 @@ Menus:
   main:
     - identifier: about
       name: About
-      url: /#about
+      url: /about/
       weight: 1
     - identifier: projects
       name: Projects
@@ -167,7 +167,7 @@ params:
 
   # About
   about:
-    enable: true
+    enable: false
     title: "About"
     image: "/images/me.png"
     content: |-
