@@ -44,21 +44,34 @@
                                 {{ $repoParts := split .repo.name "/" }}
                                 {{ $repoName := index $repoParts (sub (len $repoParts) 1) }}
                                 
-                                {{ $commit := index .payload.commits 0 }}
-                                {{ if $commit }}
-                                    {{ $messageLines := split $commit.message "\n" }}
-                                    {{ $message := index $messageLines 0 }}
-                                    {{ $hash := substr $commit.sha 0 7 }}
-                                    {{ $date := time.Format "2006-01-02" .created_at }}
-                                    
-                                    <div class="terminal-line">
-                                        <span class="prompt">></span> 
-                                        <span class="term-date">[{{ $date }}]</span> 
-                                        <span class="term-repo">{{ $repoName }}</span> 
-                                        <span class="term-hash">({{ $hash }})</span>: 
-                                        <span class="term-msg">{{ htmlEscape $message }}</span>
-                                    </div>
+                                {{ $message := "" }}
+                                {{ $hash := "" }}
+                                
+                                {{ if .payload.commits }}
+                                    {{ $commit := index .payload.commits 0 }}
+                                    {{ if $commit }}
+                                        {{ $messageLines := split $commit.message "\n" }}
+                                        {{ $message = index $messageLines 0 }}
+                                        {{ $hash = substr $commit.sha 0 7 }}
+                                    {{ end }}
                                 {{ end }}
+
+                                {{ if eq $message "" }}
+                                    {{ $refParts := split .payload.ref "/" }}
+                                    {{ $branch := index $refParts (sub (len $refParts) 1) }}
+                                    {{ $message = printf "Pushed to %s" $branch }}
+                                    {{ $hash = substr .payload.head 0 7 }}
+                                {{ end }}
+                                
+                                {{ $date := time.Format "2006-01-02" .created_at }}
+                                
+                                <div class="terminal-line">
+                                    <span class="prompt">></span> 
+                                    <span class="term-date">[{{ $date }}]</span> 
+                                    <span class="term-repo">{{ $repoName }}</span> 
+                                    <span class="term-hash">({{ $hash }})</span>: 
+                                    <span class="term-msg">{{ htmlEscape $message }}</span>
+                                </div>
                             {{ end }}
                         {{ end }}
                     {{ end }}
