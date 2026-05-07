@@ -107,3 +107,76 @@
 #hero h1, #hero h2, #hero h3 {
     font-family: 'Roboto Mono', monospace !important;
 }
+
+/* GitHub Terminal Widget */
+.github-terminal {
+    background-color: #0d1117; /* GitHub dark bg */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    font-family: 'Roboto Mono', monospace;
+    margin-bottom: 2rem;
+}
+
+.terminal-header {
+    background-color: #161b22;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.terminal-button {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.terminal-button.close { background-color: #ff5f56; }
+.terminal-button.minimize { background-color: #ffbd2e; }
+.terminal-button.maximize { background-color: #27c93f; }
+
+.terminal-title {
+    color: #8b949e;
+    font-size: 0.85rem;
+    margin-left: 10px;
+}
+
+.terminal-body {
+    padding: 16px;
+    color: #c9d1d9;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.terminal-line {
+    margin-bottom: 4px;
+    word-break: break-all;
+}
+
+.terminal-line .prompt {
+    color: var(--primary-color-dark, #00FF41);
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.term-date { color: #8b949e; }
+.term-repo { color: #58a6ff; font-weight: bold; }
+.term-hash { color: #f0883e; }
+.term-msg { color: #c9d1d9; }
+
+.error-text { color: #ff5f56; }
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
