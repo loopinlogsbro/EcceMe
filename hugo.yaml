@@ -101,7 +101,7 @@ params:
 
   theme:
     disableThemeToggle: true
-    defaultTheme: "dark" # dark
+    defaultTheme: "auto"
 
   font:
     fontSize: 1rem # default: 1rem
@@ -112,13 +112,13 @@ params:
   # color preference
   # When using hex codes for colors, quotations must be used along with the # sign
   color:
-    textColor: "#343a40"
-    secondaryTextColor: "#6c757d"
-    textLinkColor: "#00FF41"
-    backgroundColor: "#eaedf0"
-    secondaryBackgroundColor: "#64ffda1a"
-    primaryColor: "#00FF41"
-    secondaryColor: "#f8f9fa"
+    textColor: "#1a1b1e"
+    secondaryTextColor: "#5a5f6b"
+    textLinkColor: "#007a1e"
+    backgroundColor: "#f2f4f2"
+    secondaryBackgroundColor: "#e6f0e8"
+    primaryColor: "#007a1e"
+    secondaryColor: "#edf3ee"
 
     darkmode:
       textColor: "#e4e6eb"

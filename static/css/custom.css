@@ -68,6 +68,11 @@
     padding: 1.25rem;
 }
 
+.light .ecce-card {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.02);
+}
+
 .ecce-card h4,
 .ecce-card h5 {
     margin-bottom: 0.75rem;
@@ -89,7 +94,7 @@
     display: block;
     height: 100%;
     width: var(--ecce-progress-value, 0%);
-    background: var(--primary-color-dark);
+    background: var(--primary-color);
 }
 
 .ecce-link-list {
@@ -179,7 +184,7 @@
 }
 
 .terminal-line .prompt {
-    color: var(--primary-color-dark, #00FF41);
+    color: var(--primary-color);
     margin-right: 8px;
     font-weight: bold;
 }
@@ -190,6 +195,23 @@
 .term-msg { color: #c9d1d9; }
 
 .error-text { color: #ff5f56; }
+
+/* GitHub terminal — light mode overrides */
+.light .github-terminal {
+    background-color: #f6f8fa;
+    border-color: rgba(0, 0, 0, 0.12);
+}
+.light .terminal-header {
+    background-color: #e8ecf0;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+.light .terminal-title { color: #57606a; }
+.light .terminal-body { color: #24292f; }
+.light .term-date  { color: #57606a; }
+.light .term-repo  { color: #0969da; }
+.light .term-hash  { color: #cf6a00; }
+.light .term-msg   { color: #24292f; }
+.light .error-text { color: #cf222e; }
 
 .cursor {
     display: inline-block;
@@ -218,7 +240,7 @@
     }
 
     .projects-carousel-indicators [data-bs-target] {
-        background-color: var(--primary-color-dark);
+        background-color: var(--primary-color);
         width: 8px;
         height: 8px;
         border-radius: 50%;
@@ -259,7 +281,7 @@
     font-family: 'Roboto Mono', monospace !important;
     font-weight: 700 !important;
     font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
-    color: var(--primary-color-dark, #00FF41) !important;
+    color: var(--primary-color) !important;
     letter-spacing: -0.02em;
 }
 
@@ -267,12 +289,12 @@
     font-size: 1.05rem;
     line-height: 1.7;
     opacity: 0.75;
-    border-left: 3px solid var(--primary-color-dark, #00FF41);
+    border-left: 3px solid var(--primary-color);
     padding-left: 1rem;
 }
 
 #about-page .about-content h3 {
-    color: var(--primary-color-dark, #00FF41) !important;
+    color: var(--primary-color) !important;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
     font-size: 1.1rem;

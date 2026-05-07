@@ -1,24 +1,15 @@
-{{- /* theme is auto */}}
+{{- /* theme: auto-follow OS preference, update live */}}
 <script>
-    let localStorageValue = localStorage.getItem("pref-theme");
-    let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    (function () {
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', prefersDark);
+        document.body.classList.toggle('dark', prefersDark);
 
-    switch (localStorageValue) {
-        case "dark":
-            document.documentElement.classList.add('dark');
-            document.body.classList.add('dark');
-            break;
-        case "light":
-            document.body.classList.remove('dark');
-            document.documentElement.classList.remove('dark');
-            break;
-        default:
-            if (mediaQuery) {
-                document.documentElement.classList.add('dark');
-                document.body.classList.add('dark');
-            }
-            break;
-    }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+            document.documentElement.classList.toggle('dark', e.matches);
+            document.body.classList.toggle('dark', e.matches);
+        });
+    })();
 </script>
 
 <!-- Show header on scroll up -->
