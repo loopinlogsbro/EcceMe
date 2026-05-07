@@ -1,6 +1,6 @@
 baseURL: "https://ecce.me/"
 locale: "en-US"
-title: "Behold The Overcomplicator"
+title: "ecce.me"
 theme: hugo-profile
 
 # Multilingual configuration
@@ -457,12 +457,16 @@ Menus:
   main:
     - identifier: about
       name: About
-      url: /#contact
+      url: /#about
       weight: 1
     - identifier: projects
       name: Projects
       url: /#projects
       weight: 2
+    - identifier: writing
+      name: Writing
+      url: /logs/
+      weight: 3
     #Dropdown menu
     # - identifier: dropdown
     #   title: Example dropdown menu
@@ -515,30 +519,30 @@ params:
 
   # color preference
   # When using hex codes for colors, quotations must be used along with the # sign
-  # color:
-  #   textColor: "#343a40"
-  #   secondaryTextColor: "#6c757d"
-  #   textLinkColor: "#007bff"
-  #   backgroundColor: "#eaedf0"
-  #   secondaryBackgroundColor: "#64ffda1a"
-  #   primaryColor: "#007bff"
-  #   secondaryColor: "#f8f9fa"
+  color:
+    textColor: "#343a40"
+    secondaryTextColor: "#6c757d"
+    textLinkColor: "#C9A135"
+    backgroundColor: "#eaedf0"
+    secondaryBackgroundColor: "#64ffda1a"
+    primaryColor: "#C9A135"
+    secondaryColor: "#f8f9fa"
 
-  #   darkmode:
-  #     textColor: "#e4e6eb"
-  #     secondaryTextColor: "#b0b3b8"
-  #     textLinkColor: "#ffffff"
-  #     backgroundColor: "#18191a"
-  #     secondaryBackgroundColor: "#212529"
-  #     primaryColor: "#ffffff"
-  #     secondaryColor: "#212529"
+    darkmode:
+      textColor: "#e4e6eb"
+      secondaryTextColor: "#b0b3b8"
+      textLinkColor: "#D4A843"
+      backgroundColor: "#18191a"
+      secondaryBackgroundColor: "#212529"
+      primaryColor: "#D4A843"
+      secondaryColor: "#212529"
 
   # If you want to customize the menu, you can change it here
   navbar:
     align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
     # brandLogo: "images/fav.png" # Logo for the brand | default is the favicon variable
     showBrandLogo: false # Show brand logo in nav bar | default is true
-    brandName: "" # Brand name for the brand | default is the title variable
+    brandName: "ecce.me" # Brand name for the brand | default is the title variable
     disableSearch: true
     # searchPlaceholder: "Search"
     stickyNavBar:
@@ -546,12 +550,12 @@ params:
       showOnScrollUp : true
     enableSeparator: false
     menus:
-      disableAbout: false
-      disableExperience: false
-      disableEducation: false
+      disableAbout: true
+      disableExperience: true
+      disableEducation: true
       disableProjects: true
-      disableAchievements: false
-      disableContact: false
+      disableAchievements: true
+      disableContact: true
 
   # Hero
   hero:
@@ -576,7 +580,7 @@ params:
 
   # About
   about:
-    enable: false
+    enable: true
     title: "About Me"
     image: "/images/me.png"
     content: |-

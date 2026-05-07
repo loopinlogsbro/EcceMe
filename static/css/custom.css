@@ -78,3 +78,13 @@
 .ecce-link-list li + li {
     margin-top: 0.75rem;
 }
+
+/* Hero sizing and readability */
+#hero h1 {
+    font-size: clamp(32px, 5vw, 56px) !important;
+}
+
+#hero h2 {
+    opacity: 0.7 !important;
+    line-height: 1.25 !important;
+}
