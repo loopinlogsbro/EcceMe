@@ -180,3 +180,61 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
+
+/* About page */
+#about-page {
+    min-height: 60vh;
+}
+
+.about-layout {
+    align-items: flex-start;
+    padding-top: 1rem;
+}
+
+.about-illustration {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: block;
+}
+
+#about-page .about-title {
+    font-family: 'Roboto Mono', monospace !important;
+    font-weight: 700 !important;
+    font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
+    color: var(--primary-color-dark, #00FF41) !important;
+    letter-spacing: -0.02em;
+}
+
+.about-intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    opacity: 0.75;
+    border-left: 3px solid var(--primary-color-dark, #00FF41);
+    padding-left: 1rem;
+}
+
+#about-page .about-content h3 {
+    color: var(--primary-color-dark, #00FF41) !important;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-family: 'Roboto Mono', monospace !important;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.about-content ol,
+.about-content ul {
+    padding-left: 1.5rem;
+    line-height: 1.8;
+}
+
+.about-content li + li {
+    margin-top: 0.5rem;
+}
+
+.about-content p {
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+}

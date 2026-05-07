@@ -1,0 +1,52 @@
+{{ define "head" }}
+<meta name="description" content="{{ .Params.description }}">
+<link rel="stylesheet" href="{{ (printf "%scss/single.css" (.Site.Params.staticPath | default "")) | relURL }}">
+<script defer src="{{ (printf "%sfontawesome-6/all-6.4.2.js" (.Site.Params.staticPath | default "")) | relURL }}"></script>
+{{ end }}
+
+{{ define "title" }}
+{{ .Title }} | {{ .Site.Title }}
+{{ end }}
+
+{{ define "main" }}
+<section id="about-page">
+  <div class="container py-5">
+    <div class="row about-layout">
+
+      {{ if .Params.image }}
+      <div class="col-md-4 mb-4 mb-md-0">
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" class="about-illustration">
+      </div>
+      {{ end }}
+
+      <div class="{{ if .Params.image }}col-md-8{{ else }}col-12{{ end }} about-body">
+        <h1 class="about-title mb-2">{{ .Title }}</h1>
+        {{ if .Params.description }}
+        <p class="about-intro mb-4">{{ .Params.description }}</p>
+        {{ end }}
+        <article class="about-content">{{ .Content | emojify }}</article>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<button class="p-2 px-3" onclick="topFunction()" id="topScroll">
+  <i class="fas fa-angle-up"></i>
+</button>
+
+<script>
+  var topScroll = document.getElementById("topScroll");
+  window.onscroll = function() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      topScroll.style.display = "block";
+    } else {
+      topScroll.style.display = "none";
+    }
+  };
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+</script>
+{{ end }}

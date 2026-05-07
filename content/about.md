@@ -3,11 +3,9 @@ title: "About the Lab"
 date: 2026-05-07T00:00:00Z
 draft: false
 tags: []
+image: /images/ecce_loogo.png
+description: "Ecce is a one-man systems, automation, and software engineering lab."
 ---
-
-![Ecce Logo](/images/ecce_loogo.png)
-
-**Ecce is a one-man systems, automation, and software engineering lab.**
 
 Rather than a standard portfolio, this site serves as a live, visible trail of work. It is an honest, ongoing record of project writeups, custom-built tools, and physical systems designed to solve practical, everyday problems.
 
