@@ -1,6 +1,6 @@
 baseURL: "https://ecce.me/"
 locale: "en-US"
-title: "Logan K. Brown | Dev & Tinkerer"
+title: "Behold The Overcomplicator"
 theme: hugo-profile
 
 # Multilingual configuration
@@ -15,18 +15,6 @@ languages:
     label: "English"
     weight: 1
     contentDir: "content"
-    menu:
-      main:
-        - identifier: courses
-          name: Courses
-          title: Coursework progress and retrospectives
-          url: /courses
-          weight: 1
-        - identifier: logs
-          name: Work Log
-          title: Weekly writing and work notes
-          url: /logs
-          weight: 2
   es:
     label: "Español"
     weight: 2
@@ -467,10 +455,13 @@ markup:
 
 Menus:
   main:
-    - identifier: gallery
-      name: Gallery
-      title: Gallery
-      url: /gallery
+    - identifier: about
+      name: About
+      url: /#contact
+      weight: 1
+    - identifier: projects
+      name: Projects
+      url: /#projects
       weight: 2
     #Dropdown menu
     # - identifier: dropdown
@@ -546,7 +537,7 @@ params:
   navbar:
     align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
     # brandLogo: "images/fav.png" # Logo for the brand | default is the favicon variable
-    # showBrandLogo: false # Show brand logo in nav bar | default is true
+    showBrandLogo: false # Show brand logo in nav bar | default is true
     brandName: "" # Brand name for the brand | default is the title variable
     disableSearch: true
     # searchPlaceholder: "Search"
@@ -558,7 +549,7 @@ params:
       disableAbout: false
       disableExperience: false
       disableEducation: false
-      disableProjects: false
+      disableProjects: true
       disableAchievements: false
       disableContact: false
 
@@ -568,8 +559,8 @@ params:
     intro: "Hi, I'm Logan."
     title: "CS student and practical builder."
     subtitle: "Software, automation, and physical systems."
-    content: "I'm a computer science student building practical software, automation tools, and physical systems. This site is where I document what I'm learning, what I'm building, and how I'm turning scattered curiosity into finished work."
-    image: images/hero.svg
+    content: "CS student finishing a WGU degree — building practical software, automation tools, and physical systems. Came back to school with a clearer reason. This site is the honest record."
+    image: images/ecce_loogo.png
     bottomImage:
       enable: true
     # roundImage: true # Make hero image circular | default false
@@ -585,7 +576,7 @@ params:
 
   # About
   about:
-    enable: true
+    enable: false
     title: "About Me"
     image: "/images/me.png"
     content: |-
@@ -751,7 +742,7 @@ params:
   # projects
   projects:
     enable: true
-    title: "Featured Projects"
+    title: "Projects"
     items:
       - title: Ecce.me
         content: "Personal site for documenting coursework, projects, and weekly progress while finishing a CS degree."
@@ -796,8 +787,8 @@ params:
 
   #Contact
   contact:
-    enable: true
-    title: "Contact"
+    enable: false
+    title: "About"
     content: "The simplest way to follow the work right now is through the site itself. Public profile links will be added here once they are ready."
     btnName: Browse projects
     btnLink: /projects/
