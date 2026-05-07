@@ -1,4 +1,9 @@
 baseURL: "https://ecce.me/"
+
+security:
+  funcs:
+    getenv:
+      - '^GITHUB_TOKEN$'
 locale: "en-US"
 title: "ecce"
 theme: hugo-profile

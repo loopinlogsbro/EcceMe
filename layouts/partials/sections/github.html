@@ -13,7 +13,9 @@
                     {{ $events := slice }}
                     {{ $fetchError := false }}
 
-                    {{ $req := try (resources.GetRemote $url) }}
+                    {{ $token := os.Getenv "GITHUB_TOKEN" }}
+                    {{ $opts := dict "headers" (dict "Authorization" (printf "Bearer %s" $token) "User-Agent" "EcceMe-build") }}
+                    {{ $req := try (resources.GetRemote $url $opts) }}
                     {{ if $req.Err }}
                         {{ $fetchError = true }}
                     {{ else if $req.Value }}
@@ -23,8 +25,16 @@
                     {{ end }}
 
                     {{ if $fetchError }}
+                        {{ $fallback := index site.Data "github-events" | default slice }}
+                        {{ if gt (len $fallback) 0 }}
+                            {{ $events = $fallback }}
+                            {{ $fetchError = false }}
+                        {{ end }}
+                    {{ end }}
+
+                    {{ if $fetchError }}
                         <div class="terminal-line error-text">
-                            <span class="prompt">></span> Terminal offline: GitHub API rate limit reached or unavailable during build.
+                            <span class="prompt">></span> Terminal offline: GitHub API unavailable during build.
                         </div>
                     {{ else }}
                         {{ $pushEvents := slice }}
