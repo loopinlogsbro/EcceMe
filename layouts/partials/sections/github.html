@@ -25,7 +25,7 @@
                     {{ end }}
 
                     {{ if $fetchError }}
-                        {{ $fallback := index site.Data "github-events" | default slice }}
+                        {{ $fallback := index hugo.Data "github-events" | default slice }}
                         {{ if gt (len $fallback) 0 }}
                             {{ $events = $fallback }}
                             {{ $fetchError = false }}
