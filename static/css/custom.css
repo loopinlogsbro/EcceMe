@@ -1,4 +1,47 @@
-/* Custom CSS override to resize the navbar logo and apply branding styles */
+/* ─── Design tokens ────────────────────────────────────────────────────────── */
+:root {
+  --terminal-bg:       #0d1117;
+  --terminal-header:   #161b22;
+  --terminal-text:     #c9d1d9;
+  --terminal-muted:    #8b949e;
+  --terminal-link:     #58a6ff;
+  --terminal-hash:     #f0883e;
+  --terminal-close:    #ff5f56;
+  --terminal-minimize: #ffbd2e;
+  --terminal-maximize: #27c93f;
+  --terminal-error:    #ff5f56;
+}
+
+/* ─── Theme toggle ─────────────────────────────────────────────────────────── */
+button#theme-toggle {
+    border: 1.5px solid currentColor !important;
+    border-radius: 4px !important;
+    padding: 0.1em 0.45em !important;
+    margin: auto 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    line-height: 1;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+button#theme-toggle:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+}
+
+button#theme-toggle:focus {
+    outline: none;
+}
+
+button#theme-toggle svg {
+    height: 18px;
+    width: 18px;
+    vertical-align: middle;
+    stroke: currentColor;
+}
+
+/* ─── Navbar ───────────────────────────────────────────────────────────────── */
 .navbar-brand {
     font-family: 'Roboto Mono', monospace !important;
     font-weight: 700;
@@ -17,18 +60,17 @@
 }
 
 .navbar-brand img {
-    width: auto !important;
-    height: 32px !important;
+    width: auto;
+    height: 32px;
     max-height: 32px;
 }
 
-/* Increase navbar menu font size */
 .navbar-nav .nav-link {
     font-size: 1.2rem !important;
     font-family: 'Roboto Mono', monospace !important;
 }
 
-/* Whitespace reduction */
+/* ─── Whitespace reduction ─────────────────────────────────────────────────── */
 #hero {
     min-height: auto !important;
     padding: 4rem 0 2rem !important;
@@ -48,11 +90,11 @@
     padding-bottom: 2rem !important;
 }
 
+/* ─── Custom sections ──────────────────────────────────────────────────────── */
 .ecce-section {
     padding: 2rem 0 0.5rem;
 }
 
-/* Consistent section headings across all homepage sections */
 .ecce-section h3,
 #projects h3 {
     font-size: 1.5rem;
@@ -107,7 +149,7 @@
     margin-top: 0.75rem;
 }
 
-/* Hero sizing and readability */
+/* ─── Hero ─────────────────────────────────────────────────────────────────── */
 .hero-intro {
     font-family: 'Roboto Mono', monospace;
     font-size: clamp(16px, 1.8vw, 22px);
@@ -129,14 +171,13 @@
     line-height: 1.3 !important;
 }
 
-/* Industrial typography for hero headers */
 #hero h1, #hero h2, #hero h3 {
     font-family: 'Roboto Mono', monospace !important;
 }
 
-/* GitHub Terminal Widget */
+/* ─── GitHub terminal widget ───────────────────────────────────────────────── */
 .github-terminal {
-    background-color: #0d1117; /* GitHub dark bg */
+    background-color: var(--terminal-bg);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -146,7 +187,7 @@
 }
 
 .terminal-header {
-    background-color: #161b22;
+    background-color: var(--terminal-header);
     padding: 8px 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
@@ -161,19 +202,19 @@
     margin-right: 8px;
 }
 
-.terminal-button.close { background-color: #ff5f56; }
-.terminal-button.minimize { background-color: #ffbd2e; }
-.terminal-button.maximize { background-color: #27c93f; }
+.terminal-button.close    { background-color: var(--terminal-close); }
+.terminal-button.minimize { background-color: var(--terminal-minimize); }
+.terminal-button.maximize { background-color: var(--terminal-maximize); }
 
 .terminal-title {
-    color: #8b949e;
+    color: var(--terminal-muted);
     font-size: 0.85rem;
     margin-left: 10px;
 }
 
 .terminal-body {
     padding: 16px;
-    color: #c9d1d9;
+    color: var(--terminal-text);
     font-size: 0.9rem;
     line-height: 1.5;
 }
@@ -189,30 +230,30 @@
     font-weight: bold;
 }
 
-.term-date { color: #8b949e; }
-.term-repo { color: #58a6ff; font-weight: bold; }
-.term-hash { color: #f0883e; }
-.term-msg { color: #c9d1d9; }
+.term-date { color: var(--terminal-muted); }
+.term-repo { color: var(--terminal-link); font-weight: bold; }
+.term-hash { color: var(--terminal-hash); }
+.term-msg  { color: var(--terminal-text); }
 
-.error-text { color: #ff5f56; }
+.error-text { color: var(--terminal-error); }
 
-/* GitHub terminal — light mode overrides */
+/* light mode overrides */
 .light .github-terminal {
-    background-color: #f6f8fa;
+    --terminal-bg:      #f6f8fa;
+    --terminal-header:  #e8ecf0;
+    --terminal-text:    #24292f;
+    --terminal-muted:   #57606a;
+    --terminal-link:    #0969da;
+    --terminal-hash:    #cf6a00;
+    --terminal-error:   #cf222e;
     border-color: rgba(0, 0, 0, 0.12);
 }
+
 .light .terminal-header {
-    background-color: #e8ecf0;
     border-bottom-color: rgba(0, 0, 0, 0.1);
 }
-.light .terminal-title { color: #57606a; }
-.light .terminal-body { color: #24292f; }
-.light .term-date  { color: #57606a; }
-.light .term-repo  { color: #0969da; }
-.light .term-hash  { color: #cf6a00; }
-.light .term-msg   { color: #24292f; }
-.light .error-text { color: #cf222e; }
 
+/* ─── Cursor ───────────────────────────────────────────────────────────────── */
 .cursor {
     display: inline-block;
     width: 8px;
@@ -224,10 +265,10 @@
     50% { opacity: 0; }
 }
 
-/* Mobile project carousel */
+/* ─── Mobile project carousel ──────────────────────────────────────────────── */
 @media (max-width: 767.98px) {
     #projects-carousel {
-        padding-bottom: 2.5rem; /* room for dot indicators */
+        padding-bottom: 2.5rem;
     }
 
     #projects-carousel .carousel-item .card {
@@ -256,11 +297,11 @@
     #projects-carousel .carousel-control-next {
         width: 2rem;
         top: 0;
-        bottom: 2.5rem; /* don't overlap dots */
+        bottom: 2.5rem;
     }
 }
 
-/* About page */
+/* ─── About page ───────────────────────────────────────────────────────────── */
 #about-page {
     min-height: 60vh;
 }
@@ -278,10 +319,10 @@
 }
 
 #about-page .about-title {
-    font-family: 'Roboto Mono', monospace !important;
-    font-weight: 700 !important;
-    font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
-    color: var(--primary-color) !important;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    color: var(--primary-color);
     letter-spacing: -0.02em;
 }
 
@@ -294,11 +335,11 @@
 }
 
 #about-page .about-content h3 {
-    color: var(--primary-color) !important;
+    color: var(--primary-color);
     margin-top: 2rem;
     margin-bottom: 0.75rem;
     font-size: 1.1rem;
-    font-family: 'Roboto Mono', monospace !important;
+    font-family: 'Roboto Mono', monospace;
     letter-spacing: 0.03em;
     text-transform: uppercase;
 }
