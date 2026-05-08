@@ -13,23 +13,6 @@
 }
 
 /* ─── Theme toggle ─────────────────────────────────────────────────────────── */
-button#theme-toggle {
-    border: 1.5px solid currentColor !important;
-    border-radius: 4px !important;
-    padding: 0.1em 0.45em !important;
-    margin: auto 4px;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    line-height: 1;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-button#theme-toggle:hover {
-    background-color: var(--primary-color);
-    color: var(--background-color);
-}
-
 button#theme-toggle:focus {
     outline: none;
 }
@@ -88,6 +71,16 @@ button#theme-toggle svg {
 #about {
     padding-top: 2rem !important;
     padding-bottom: 2rem !important;
+}
+
+/* ─── Project cards — natural height, footer pinned to bottom ─────────────── */
+#projects .card {
+    display: flex;
+    flex-direction: column;
+}
+
+#projects .card .card-body {
+    flex: 1 0 auto;
 }
 
 /* ─── Custom sections ──────────────────────────────────────────────────────── */

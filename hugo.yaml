@@ -55,10 +55,10 @@ Menus:
       name: Projects
       url: /#projects
       weight: 2
-    - identifier: writing
-      name: Writing
-      url: /logs/
-      weight: 3
+    #- identifier: writing
+    #  name: Writing
+    #  url: /logs/
+    #  weight: 3
     #Dropdown menu
     # - identifier: dropdown
     #   title: Example dropdown menu
