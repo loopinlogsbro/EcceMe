@@ -55,10 +55,10 @@ Menus:
       name: Projects
       url: /#projects
       weight: 2
-    - identifier: writing
-      name: Writing
-      url: /logs/
-      weight: 3
+    #- identifier: writing
+    #  name: Writing
+    #  url: /logs/
+    #  weight: 3
     #Dropdown menu
     # - identifier: dropdown
     #   title: Example dropdown menu
@@ -81,7 +81,7 @@ params:
   #title: "Ecce Me"
   description: "A personal builder site for coursework, projects, and practical systems."
   # staticPath: ""  # The path to serve the static files from
-  favicon: "/fav.png"
+  favicon: "/images/ecce-logo.png"
 
   # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
   # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
@@ -100,7 +100,7 @@ params:
   animate: true
 
   theme:
-    disableThemeToggle: true
+    disableThemeToggle: false
     defaultTheme: "auto"
 
   font:
@@ -132,7 +132,7 @@ params:
   # If you want to customize the menu, you can change it here
   navbar:
     align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
-    # brandLogo: "images/fav.png" # Logo for the brand | default is the favicon variable
+    # brandLogo: "images/ecce-logo.png" # Logo for the brand | default is the favicon variable
     showBrandLogo: false # Show brand logo in nav bar | default is true
     brandName: "ecce" # Brand name for the brand | default is the title variable
     disableSearch: true
@@ -310,4 +310,4 @@ params:
     articleList: "Jan 2, 2006"
     articleRecent: "Jan 2, 2006"
 
-  customScripts: '<script src="/js/scramble.js"></script><script src="/js/navbar-effects.js"></script><script src="/js/terminal-animate.js"></script>'
+  customScripts: '<script src="/js/navbar.js"></script><script src="/js/terminal-animate.js"></script>'

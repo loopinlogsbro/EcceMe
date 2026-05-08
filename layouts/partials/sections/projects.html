@@ -8,7 +8,7 @@
             <div class="carousel-inner">
                 {{ range $i, $p := $projects.items }}
                 <div class="carousel-item {{ if eq $i 0 }}active{{ end }} px-2">
-                    <div class="card h-100" title="{{ $p.title }}">
+                    <div class="card" title="{{ $p.title }}">
                         {{ if $p.image }}
                         <div class="card-head">
                             <img class="card-img-top" src="{{ $p.image }}" alt="{{ $p.title }}">
@@ -49,7 +49,7 @@
                 {{ range ( where .Site.RegularPages "Type" "projects" ) }}
                 {{ if .Params.showInHome | default true }}
                 <div class="carousel-item px-2">
-                    <div class="card h-100" title="{{ .Title }}">
+                    <div class="card" title="{{ .Title }}">
                         {{ if .Params.image }}
                         <div class="card-head">
                             <img class="card-img-top" src="{{ .Params.image }}" alt="{{ .Title }}">
@@ -106,7 +106,7 @@
         <div class="row justify-content-center px-3 px-md-5 d-none d-md-flex">
             {{ range $projects.items | default .Site.Params.projects.items }}
             <div class="col-lg-4 col-md-6 my-3">
-                <div class="card my-3 h-100" title="{{ .title }}">
+                <div class="card my-3" title="{{ .title }}">
                     {{ if .image }}
                     <div class="card-head">
                         <img class="card-img-top" src="{{ .image }}" alt="{{ .title }}">
@@ -147,7 +147,7 @@
             {{ range ( where .Site.RegularPages "Type" "projects" ) }}
             {{ if .Params.showInHome | default true }}
             <div class="col-lg-4 col-md-6 my-3">
-                <div class="card my-3 h-100" title="{{ .Title }}">
+                <div class="card my-3" title="{{ .Title }}">
                     {{ if .Params.image }}
                     <div class="card-head">
                         <img class="card-img-top" src="{{ .Params.image }}" alt="{{ .Title }}">
