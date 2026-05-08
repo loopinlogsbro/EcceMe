@@ -1,4 +1,9 @@
 baseURL: "https://ecce.me/"
+
+security:
+  funcs:
+    getenv:
+      - '^GITHUB_TOKEN$'
 locale: "en-US"
 title: "ecce"
 theme: hugo-profile
@@ -44,7 +49,7 @@ Menus:
   main:
     - identifier: about
       name: About
-      url: /#about
+      url: /about/
       weight: 1
     - identifier: projects
       name: Projects
@@ -96,7 +101,7 @@ params:
 
   theme:
     disableThemeToggle: true
-    defaultTheme: "dark" # dark
+    defaultTheme: "auto"
 
   font:
     fontSize: 1rem # default: 1rem
@@ -107,13 +112,13 @@ params:
   # color preference
   # When using hex codes for colors, quotations must be used along with the # sign
   color:
-    textColor: "#343a40"
-    secondaryTextColor: "#6c757d"
-    textLinkColor: "#00FF41"
-    backgroundColor: "#eaedf0"
-    secondaryBackgroundColor: "#64ffda1a"
-    primaryColor: "#00FF41"
-    secondaryColor: "#f8f9fa"
+    textColor: "#1a1b1e"
+    secondaryTextColor: "#5a5f6b"
+    textLinkColor: "#007a1e"
+    backgroundColor: "#f2f4f2"
+    secondaryBackgroundColor: "#e6f0e8"
+    primaryColor: "#007a1e"
+    secondaryColor: "#edf3ee"
 
     darkmode:
       textColor: "#e4e6eb"
@@ -147,11 +152,11 @@ params:
   # Hero
   hero:
     enable: true
-    intro: ""
-    title: "Systems & Automation."
-    subtitle: "Building practical software, automation tools, and physical systems."
-    content: "Developing complex, low-latency systems and practical software tools. This site is the honest record of the build process."
-    image: images/ecce_loogo.png
+    intro: "Hi, I'm"
+    title: "Logan"
+    subtitle: "This is where I put things I've actually built."
+    content: ""
+    image: ""
     bottomImage:
       enable: true
     # roundImage: true # Make hero image circular | default false
@@ -167,7 +172,7 @@ params:
 
   # About
   about:
-    enable: true
+    enable: false
     title: "About"
     image: "/images/me.png"
     content: |-
@@ -269,7 +274,7 @@ params:
       path: "logs"
       count: 3
       title: Writing
-      enable: true
+      enable: false
       disableFeaturedImage: true
     socialNetworks:
       github: ""
@@ -305,5 +310,4 @@ params:
     articleList: "Jan 2, 2006"
     articleRecent: "Jan 2, 2006"
 
-  #customScripts: -| # You can add custom scripts which will be added before </body> tag
-  #  <script type="text/javascript"><!-- any script here --></script>
+  customScripts: '<script src="/js/scramble.js"></script><script src="/js/navbar-effects.js"></script><script src="/js/terminal-animate.js"></script>'

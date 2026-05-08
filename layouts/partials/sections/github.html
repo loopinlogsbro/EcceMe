@@ -1,0 +1,94 @@
+<section id="github-stream" class="ecce-section container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="github-terminal">
+                <div class="terminal-header">
+                    <span class="terminal-button close"></span>
+                    <span class="terminal-button minimize"></span>
+                    <span class="terminal-button maximize"></span>
+                    <span class="terminal-title">activity-log — loopinlogsbro@ecce</span>
+                </div>
+                <div class="terminal-body" id="github-terminal-output">
+                    {{ $url := "https://api.github.com/users/loopinlogsbro/events/public" }}
+                    {{ $events := slice }}
+                    {{ $fetchError := false }}
+
+                    {{ $token := os.Getenv "GITHUB_TOKEN" }}
+                    {{ $opts := dict "headers" (dict "Authorization" (printf "Bearer %s" $token) "User-Agent" "EcceMe-build") }}
+                    {{ $req := try (resources.GetRemote $url $opts) }}
+                    {{ if $req.Err }}
+                        {{ $fetchError = true }}
+                    {{ else if $req.Value }}
+                        {{ $events = $req.Value.Content | transform.Unmarshal }}
+                    {{ else }}
+                        {{ $fetchError = true }}
+                    {{ end }}
+
+                    {{ if $fetchError }}
+                        {{ $fallback := index site.Data "github-events" | default slice }}
+                        {{ if gt (len $fallback) 0 }}
+                            {{ $events = $fallback }}
+                            {{ $fetchError = false }}
+                        {{ end }}
+                    {{ end }}
+
+                    {{ if $fetchError }}
+                        <div class="terminal-line error-text">
+                            <span class="prompt">></span> Terminal offline: GitHub API unavailable during build.
+                        </div>
+                    {{ else }}
+                        {{ $pushEvents := slice }}
+                        {{ range $events }}
+                            {{ if eq .type "PushEvent" }}
+                                {{ $pushEvents = $pushEvents | append . }}
+                            {{ end }}
+                        {{ end }}
+
+                        {{ if eq (len $pushEvents) 0 }}
+                            <div class="terminal-line">
+                                <span class="prompt">></span> No recent commits found for loopinlogsbro.
+                            </div>
+                        {{ else }}
+                            {{ range first 5 $pushEvents }}
+                                {{ $repoParts := split .repo.name "/" }}
+                                {{ $repoName := index $repoParts (sub (len $repoParts) 1) }}
+                                
+                                {{ $message := "" }}
+                                {{ $hash := "" }}
+                                
+                                {{ if .payload.commits }}
+                                    {{ $commit := index .payload.commits 0 }}
+                                    {{ if $commit }}
+                                        {{ $messageLines := split $commit.message "\n" }}
+                                        {{ $message = index $messageLines 0 }}
+                                        {{ $hash = substr $commit.sha 0 7 }}
+                                    {{ end }}
+                                {{ end }}
+
+                                {{ if eq $message "" }}
+                                    {{ $refParts := split .payload.ref "/" }}
+                                    {{ $branch := index $refParts (sub (len $refParts) 1) }}
+                                    {{ $message = printf "Pushed to %s" $branch }}
+                                    {{ $hash = substr .payload.head 0 7 }}
+                                {{ end }}
+                                
+                                {{ $date := time.Format "2006-01-02" .created_at }}
+                                
+                                <div class="terminal-line">
+                                    <span class="prompt">></span> 
+                                    <span class="term-date">[{{ $date }}]</span> 
+                                    <span class="term-repo">{{ $repoName }}</span> 
+                                    <span class="term-hash">({{ $hash }})</span>: 
+                                    <span class="term-msg">{{ htmlEscape $message }}</span>
+                                </div>
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                    <div class="terminal-line">
+                        <span class="prompt">></span> <span class="cursor">_</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
