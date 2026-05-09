@@ -154,8 +154,8 @@
   <a href="#s12">9.12 Field Programmable Devices</a>
   <a href="#s13">9.13 Concluding Remarks</a>
   <a href="#cheat">Cheat Sheet</a>
-  <a href="#quiz">Self-Test Q&amp;A</a>
   <a href="#trap">Common Exam Traps</a>
+  <a href="#mc">Multiple-Choice Quiz</a>
 </div>
 
 <p class="hint">zyBook flags this whole chapter as <i>Optional</i>. It is COD Appendix A, the prerequisite for the processor (Ch4/6), memory (Ch5/7), and control mapping (Ch11) chapters.</p>
@@ -639,139 +639,6 @@ FPGA    LUT cells + flip-flops + routing matrix
 </div>
 
 <!-- Self-test -->
-<h2 id="quiz">Self-Test Q&amp;A</h2>
-<div class="panel">
-
-  <details>
-    <summary>Combinational vs sequential, gates (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Define combinational logic.</div><div class="a">Logic with no memory — output depends only on current input. Same input → same output, every time.</div></div>
-      <div class="qa"><div class="q">Define sequential logic.</div><div class="a">Logic that contains state (memory). Output depends on current input AND stored state.</div></div>
-      <div class="qa"><div class="q">What does "asserted" mean?</div><div class="a">Logically true (1). "Deasserted" means logically false (0). The terms abstract away which voltage encodes which.</div></div>
-      <div class="qa"><div class="q">Why are NAND and NOR called universal?</div><div class="a">Any logic function can be built from a single inverting gate type. All other gates derive from these.</div></div>
-      <div class="qa"><div class="q">A 2-input mux is also universal — sketch how to build NOT.</div><div class="a">Wire S=A, input 0 = 1, input 1 = 0; output is ~A.</div></div>
-      <div class="qa"><div class="q">How many rows in a truth table for n inputs?</div><div class="a">2<sup>n</sup>.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Boolean algebra &amp; PLAs (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">State DeMorgan's two laws.</div><div class="a">~(A + B) = ~A · ~B and ~(A · B) = ~A + ~B.</div></div>
-      <div class="qa"><div class="q">What is sum-of-products form?</div><div class="a">A logical OR (sum) of product (AND) terms. The canonical 2-level form (after individual variable inversions) for any logic function.</div></div>
-      <div class="qa"><div class="q">What's a minterm?</div><div class="a">A product term in the AND plane of a PLA — a logical AND of inputs and/or their inverses corresponding to one truth-table row.</div></div>
-      <div class="qa"><div class="q">PLA vs ROM — which is more efficient for sparse logic and why?</div><div class="a">PLA. A ROM contains an entry for every possible input combination (2<sup>m</sup>), even if most go unused. A PLA encodes only the minterms that are actually needed.</div></div>
-      <div class="qa"><div class="q">What does ROM stand for, and what are PROM and EPROM?</div><div class="a">Read-Only Memory. PROM is a one-time-programmable ROM. EPROM is erasable (UV light).</div></div>
-      <div class="qa"><div class="q">What are output don't-cares useful for?</div><div class="a">They let logic minimization tools choose 0 or 1 for that input combination, which can collapse multiple truth-table rows together and shrink the gate network.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Decoders, multiplexors, buses (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">A 3-to-8 decoder — what's at its outputs?</div><div class="a">8 outputs; exactly one is asserted, corresponding to the binary value of the 3-bit input. All others are 0.</div></div>
-      <div class="qa"><div class="q">How is a multiplexor internally structured for n data inputs?</div><div class="a">Decoder generating n one-hot signals from log₂n select bits, AND each one-hot with the corresponding data input, OR the AND outputs.</div></div>
-      <div class="qa"><div class="q">A 64-bit-wide multiplexor selecting between two 64-bit buses — how many 1-bit muxes is that?</div><div class="a">64, all sharing the same select signal.</div></div>
-      <div class="qa"><div class="q">What is a "bus" in this context?</div><div class="a">A collection of data lines treated as a single logical signal, drawn as a thicker line in diagrams.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>1-bit ALU and full adder (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What does a (3,2) adder mean?</div><div class="a">A full adder — 3 inputs (a, b, CarryIn) and 2 outputs (Sum, CarryOut).</div></div>
-      <div class="qa"><div class="q">Write CarryOut as a Boolean equation.</div><div class="a">CarryOut = a·b + b·Cin + a·Cin.</div></div>
-      <div class="qa"><div class="q">Write Sum using XOR.</div><div class="a">Sum = a ⊕ b ⊕ CarryIn.</div></div>
-      <div class="qa"><div class="q">How does the ALU compute a − b?</div><div class="a">Asserts Binvert (so input 2 becomes ~b), sets the LSB CarryIn = 1; the adder computes a + ~b + 1 = a − b.</div></div>
-      <div class="qa"><div class="q">Why does this trick make two's complement universally cheap?</div><div class="a">Subtraction reuses the existing adder hardware — no separate subtractor needed.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Carry lookahead (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Define generate g_i and propagate p_i.</div><div class="a">g_i = a_i · b_i (carries out regardless of input). p_i = a_i + b_i (passes incoming carry through).</div></div>
-      <div class="qa"><div class="q">Write c_{i+1} in terms of g and p.</div><div class="a">c_{i+1} = g_i + p_i · c_i.</div></div>
-      <div class="qa"><div class="q">What's a "super propagate" P_i?</div><div class="a">AND of all the bit-level propagates in a group: P_i = p3·p2·p1·p0 — the group passes a carry only if every bit propagates.</div></div>
-      <div class="qa"><div class="q">Approximate gate-delay savings of a 16-bit two-level CLA vs ripple?</div><div class="a">~5 vs ~32 gate delays — about 6× faster.</div></div>
-      <div class="qa"><div class="q">Why doesn't software run the same speed-up?</div><div class="a">Hardware evaluates all gates in parallel. Software is sequential, so cleverness in algebra doesn't translate.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Verilog (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What's the difference between <code>wire</code> and <code>reg</code>?</div><div class="a">A <code>wire</code> is a combinational signal driven by continuous assignments. A <code>reg</code> holds a value across a simulation step and can be assigned only inside <code>always</code> or <code>initial</code> blocks.</div></div>
-      <div class="qa"><div class="q">Difference between blocking (=) and nonblocking (&lt;=) assignment?</div><div class="a">Blocking assigns immediately and blocks the next statement. Nonblocking evaluates all RHSs first, then assigns all LHSs simultaneously — needed for sequential logic so updates feel atomic on the clock edge.</div></div>
-      <div class="qa"><div class="q">How do you write a rising-edge D flip-flop in Verilog?</div><div class="a"><code>always @(posedge clock) Q &lt;= D;</code> with Q declared as a <code>reg</code>.</div></div>
-      <div class="qa"><div class="q">What three rules keep an <code>always</code> block from synthesizing into a latch?</div><div class="a">(1) Place all combinational logic in a continuous assign or always block. (2) Sensitivity list lists all inputs. (3) Every path through the always block assigns the same set of bits.</div></div>
-      <div class="qa"><div class="q">What does <code>{32{2'b01}}</code> evaluate to?</div><div class="a">A 64-bit value 0101...01 (the 2-bit pattern 01 repeated 32 times).</div></div>
-      <div class="qa"><div class="q">Behavioral vs structural Verilog?</div><div class="a">Behavioral describes what the logic does (synthesizes into something). Structural describes the circuit hierarchy explicitly (gates, modules, wires).</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Clocking, latches, flip-flops (7)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What does "edge-triggered" mean?</div><div class="a">All state changes occur on a clock edge (rising or falling), not while the clock is at a level.</div></div>
-      <div class="qa"><div class="q">Why is edge-triggered design preferred?</div><div class="a">Simpler to reason about. Allows reading and writing the same state element in one cycle without race because the write latches at the edge while the read sees the old value.</div></div>
-      <div class="qa"><div class="q">D latch vs D flip-flop?</div><div class="a">A D latch is transparent — Q tracks D while the clock is asserted. A D flip-flop changes only on a clock edge.</div></div>
-      <div class="qa"><div class="q">How is a falling-edge D-FF built from D latches?</div><div class="a">Master-slave: a D latch open while clock is high feeds a second D latch open while clock is low. The output changes only when the clock falls.</div></div>
-      <div class="qa"><div class="q">Define setup and hold time.</div><div class="a">Setup = minimum time the input must be valid before the clock edge. Hold = minimum time it must remain valid after the clock edge.</div></div>
-      <div class="qa"><div class="q">What is the formula for the minimum clock period?</div><div class="a">T ≥ t_prop(FF) + t_comb_max + t_setup(FF), plus skew margin if needed.</div></div>
-      <div class="qa"><div class="q">If the same register file slot is read and written in one cycle, what value do you read?</div><div class="a">The old value — the write doesn't take effect until the clock edge. To read the new value the same cycle, additional forwarding logic is needed.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>SRAM, DRAM, ECC (8)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Why does SRAM use 4–6 transistors per bit while DRAM uses 1?</div><div class="a">SRAM stores the bit on cross-coupled inverters (need both an inverter pair and access transistors). DRAM stores it as charge on a capacitor accessed by one pass transistor.</div></div>
-      <div class="qa"><div class="q">Why must DRAM be refreshed?</div><div class="a">Because the capacitor leaks charge over a few milliseconds. The cell value would be lost without periodic read-then-rewrite.</div></div>
-      <div class="qa"><div class="q">What's the role of RAS and CAS?</div><div class="a">Address pins are reused: RAS (Row Access Strobe) tells the DRAM the bits on the address pins are a row address; CAS does the same for column. Two-step decode lets one set of pins serve both axes.</div></div>
-      <div class="qa"><div class="q">Why does refresh consume so few cycles (1–2%)?</div><div class="a">Because the row decode latches an entire row at once, refresh of all bits in one row happens in a single read-write cycle — far fewer cycles than touching every individual cell.</div></div>
-      <div class="qa"><div class="q">Why are tri-state buffers used in SRAM cell arrays?</div><div class="a">Many cells share one bit line; only the selected cell drives it. Tri-state's high-impedance state lets all unselected cells "disconnect."</div></div>
-      <div class="qa"><div class="q">What does DDR mean?</div><div class="a">Double Data Rate — transfers data on both rising and falling clock edges, doubling effective bandwidth.</div></div>
-      <div class="qa"><div class="q">What can a 1-bit parity code do and not do?</div><div class="a">Detect any single-bit error (and any odd number). Cannot correct any error. Cannot reliably detect 2-bit errors (parity matches again).</div></div>
-      <div class="qa"><div class="q">Cost of SEC-DED for a 64-bit word?</div><div class="a">7 extra bits per 64 data bits.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>FSMs (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What functions describe an FSM?</div><div class="a">A next-state function (state, inputs → next state) and an output function (state for Moore, or state + inputs for Mealy).</div></div>
-      <div class="qa"><div class="q">Difference between a Moore and a Mealy machine?</div><div class="a">Moore outputs depend only on state. Mealy outputs depend on state and inputs. Mealy may need fewer states; Moore is simpler/faster.</div></div>
-      <div class="qa"><div class="q">What is "state assignment" and why does it matter?</div><div class="a">Choosing the binary encoding of states. Smart assignment makes logic equations contain redundancy and minimize.</div></div>
-      <div class="qa"><div class="q">For the 2-state traffic light, when does it switch?</div><div class="a">Only when a car is waiting in the opposite direction. Otherwise it stays in the current state.</div></div>
-      <div class="qa"><div class="q">What's the typical hardware structure for an FSM?</div><div class="a">A state register holding the current state plus combinational logic (often a PLA or ROM) implementing the next-state and output functions.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Timing, skew, metastability (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What is clock skew?</div><div class="a">The difference in absolute time at which two state elements see the same clock edge, caused by routing delay differences.</div></div>
-      <div class="qa"><div class="q">How does clock skew cause a race?</div><div class="a">If skew exceeds the propagation delay through a flip-flop, the data from FF1 can reach FF2's input before FF2's clock edge arrives — FF2 captures the new value instead of the intended old one.</div></div>
-      <div class="qa"><div class="q">What is metastability?</div><div class="a">A flip-flop's output settling in the indeterminate region between high and low for an unbounded time, after sampling an input that violated setup/hold.</div></div>
-      <div class="qa"><div class="q">What is synchronizer failure?</div><div class="a">Different downstream gates reading the metastable output and disagreeing — some see 1, some see 0 — diverging system state.</div></div>
-      <div class="qa"><div class="q">How does a 2-FF synchronizer mitigate metastability?</div><div class="a">FF1 may go metastable, but its output has one full clock period to resolve before FF2 samples it — making the probability of a metastable output reaching downstream logic vanishingly small (years/decades MTBF).</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>FPDs (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">SPLD vs FPGA?</div><div class="a">SPLD = single PLA or PAL (combinational only, simple). FPGA = array of LUT-based cells with flip-flops, configurable interconnect, supports complex sequential designs.</div></div>
-      <div class="qa"><div class="q">What's a LUT?</div><div class="a">Lookup Table — a small RAM whose contents are the truth table of the function the cell implements.</div></div>
-      <div class="qa"><div class="q">Difference between PLA and PAL?</div><div class="a">PLA has both AND and OR planes programmable. PAL has a programmable AND plane and a fixed OR plane.</div></div>
-      <div class="qa"><div class="q">What two configuration mechanisms are common in FPDs?</div><div class="a">Antifuse (one-time, permanent) and SRAM-based (volatile, reconfigurable on power-up).</div></div>
-    </div>
-  </details>
-
-</div>
-
-<!-- Common Traps -->
 <h2 id="trap">Common Exam Traps</h2>
 <div class="panel">
   <ul>
@@ -793,6 +660,133 @@ FPGA    LUT cells + flip-flops + routing matrix
   </ul>
 </div>
 
+
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">75 questions</span></h2>
+<div class="panel">
+  <div id="quiz9-shell">
+    <div id="quiz9-start">
+      <p>75 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA. Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quiz9Start()">Start Quiz</button>
+    </div>
+    <div id="quiz9-active" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q9-counter" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q9-score-disp" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q9-progress-wrap"><div id="q9-bar"></div></div>
+      <div id="q9-text" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q9-opts"></div>
+      <div id="q9-feedback" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn9-next" class="q-btn q-next" style="display:none" onclick="quiz9Next()">Next &rarr;</button>
+    </div>
+    <div id="quiz9-done" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done9-score" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done9-pct" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quiz9Restart()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>(function(){
+var Q=[
+// --- 9.2 Gates & Truth Tables (10) ---
+{q:"An AND gate outputs 1 only when:",opts:["Both inputs are 1","At least one input is 1","Exactly one input is 1","Neither input is 1"],ans:0},
+{q:"An OR gate outputs 0 only when:",opts:["Both inputs are 0","Both inputs are 1","Exactly one input is 0","One input is 0 and one is 1"],ans:0},
+{q:"A NAND gate is equivalent to:",opts:["An AND gate followed by an inverter","An OR gate followed by an inverter","An XOR gate followed by an inverter","A NOR gate followed by an inverter"],ans:0},
+{q:"De Morgan\'s theorem states that NOT(A AND B) equals:",opts:["NOT(A) OR NOT(B)","NOT(A) AND NOT(B)","NOT(A) XOR NOT(B)","A OR B"],ans:0},
+{q:"An XOR gate outputs 1 when:",opts:["Exactly one input is 1","Both inputs are 1","Both inputs are 0","Any input is 1"],ans:0},
+{q:"A truth table for a function with <b>3 inputs</b> has how many rows?",opts:["8","4","16","6"],ans:0},
+{q:"Which gate is described as <b>universal</b> because any Boolean function can be built from it alone?",opts:["NAND (or NOR)","AND","XOR","OR"],ans:0},
+{q:"The Boolean expression for a NOR gate with inputs A and B is:",opts:["NOT(A OR B)","NOT(A AND B)","A AND NOT(B)","NOT(A) OR NOT(B)"],ans:0},
+{q:"<b>Sum of Products (SOP)</b> form is obtained from a truth table by:",opts:["ORing together the AND terms for each row where the output is 1","ANDing together the OR terms for each row where the output is 0","XORing each pair of adjacent rows","Inverting each minterm and summing them"],ans:0},
+{q:"Which law correctly simplifies A + (A AND B)?",opts:["A (absorption law)","A AND B","A OR B","NOT(B)"],ans:0},
+// --- 9.3 Combinational Logic (12) ---
+{q:"A <b>decoder</b> with n inputs produces how many outputs, with exactly one output asserted at a time?",opts:["2^n","n","n^2","2n"],ans:0},
+{q:"A 3-to-8 decoder asserts output line <b>5</b> when the input is:",opts:["101 (binary)","011 (binary)","110 (binary)","100 (binary)"],ans:0},
+{q:"A <b>multiplexer (MUX)</b> with n select lines can choose among how many inputs?",opts:["2^n","n","n^2","2n"],ans:0},
+{q:"In a 4-to-1 MUX with select lines S1S0=10, which input is routed to the output?",opts:["Input 2","Input 0","Input 1","Input 3"],ans:0},
+{q:"A <b>Programmable Logic Array (PLA)</b> consists of:",opts:["An AND plane followed by an OR plane","An OR plane followed by an AND plane","A decoder followed by a multiplexer","A ROM followed by a latch"],ans:0},
+{q:"A <b>ROM (Read-Only Memory)</b> implements combinational logic by:",opts:["Fully decoding all input combinations and storing the output for each","Computing outputs using a fixed AND-OR array that cannot be reconfigured","Selecting one of N inputs based on select lines","Storing state in a feedback loop of NOR gates"],ans:0},
+{q:"<b>Don\'t-care conditions</b> (marked X) in a truth table allow designers to:",opts:["Minimize logic by treating them as either 0 or 1, whichever simplifies the circuit","Ignore those input combinations during simulation","Force the output to an intermediate voltage","Remove those rows from the truth table entirely"],ans:0},
+{q:"Which combinational circuit selects one of several data inputs and routes it to a single output?",opts:["Multiplexer","Decoder","Encoder","Full adder"],ans:0},
+{q:"A combinational circuit has <b>no feedback</b> paths and no memory elements. This means:",opts:["Output depends only on current inputs, not on any past state","Output can hold a value between clock edges","It requires a clock signal to operate correctly","It can implement any finite-state machine"],ans:0},
+
+{q:"Which device implements <b>any</b> truth table with n inputs by treating input values as an address into stored output values?",opts:["ROM","PLA","Multiplexer","Decoder"],ans:0},
+
+// --- 9.4 Verilog HDL (5) ---
+{q:"In Verilog, the keyword <code>assign</code> is used to describe:",opts:["Continuous (combinational) logic driven by wire connections","Sequential logic inside an always block","Clock-edge-triggered register updates","Module instantiation"],ans:0},
+{q:"In Verilog, <code>always @(*)</code> triggers when:",opts:["Any input signal in the sensitivity list changes","The clock rises","The clock falls","A reset signal is asserted"],ans:0},
+{q:"The Verilog data type <code>reg</code> is required for signals assigned inside:",opts:["An always block","An assign statement","A module port declaration","A wire declaration"],ans:0},
+{q:"Which Verilog construct describes a 2-to-1 MUX using behavioral style?",opts:["always @(*) begin if (sel) out=b; else out=a; end","assign out = sel & b | ~sel & a; (structural)","module mux(input sel,a,b,output out); (port only)","wire out = sel ? b : a; (this is also valid — ternary)"],ans:3},
+{q:"A Verilog <code>module</code> corresponds most closely to which hardware concept?",opts:["A self-contained logic block with defined inputs and outputs","A clock domain crossing circuit","A finite-state machine with one state","A memory-mapped I/O register"],ans:0},
+// --- 9.5 Building a Basic ALU (12) ---
+{q:"The Boolean expression for a <b>full adder\'s Sum</b> output is:",opts:["A XOR B XOR Cin","A AND B AND Cin","(A OR B) AND Cin","A XNOR B XNOR Cin"],ans:0},
+{q:"The Boolean expression for a <b>full adder\'s Carry-out</b> is:",opts:["(A AND B) OR (Cin AND (A XOR B))","A AND B AND Cin","A OR B OR Cin","(A XOR B) AND Cin"],ans:0},
+{q:"A 1-bit ALU that supports AND, OR, and Add requires which of these as its core components?",opts:["An AND gate, an OR gate, a full adder, and a MUX to select the operation","A decoder, a ROM, and a carry-lookahead adder","A D flip-flop and a carry-ripple chain","A PLA and a register file"],ans:0},
+{q:"In a 32-bit ripple-carry ALU, the carry-out of bit <i>i</i> becomes the carry-in of bit:",opts:["i+1","i-1","i","0"],ans:0},
+{q:"<b>Overflow</b> in a signed addition occurs when:",opts:["The carry into the sign bit differs from the carry out of the sign bit","The result is zero","The carry-out of the MSB is 1","Both operands have the same sign as the result"],ans:0},
+{q:"To implement subtraction A - B using an adder, the hardware computes:",opts:["A + NOT(B) + 1 (two\'s complement negation)","A + B with the carry-in forced to 0","NOT(A) + B + 1","A XOR B with carry-in 0"],ans:0},
+{q:"A <b>set-on-less-than (SLT)</b> operation sets the output to 1 if A &lt; B. This is detected from a full subtraction by:",opts:["Examining the sign bit of the result (and checking for overflow)","Checking whether the carry-out of the MSB is 1","ANDing all result bits together","Checking whether the zero flag is set"],ans:0},
+{q:"The <b>zero flag</b> in an ALU is asserted when:",opts:["All output bits of the result are 0","The carry-out of the MSB is 0","An overflow condition is detected","The two operands are equal in magnitude but opposite in sign"],ans:0},
+{q:"Which operation does a 1-bit ALU perform to implement NOR?",opts:["OR followed by inversion of the result","AND followed by inversion of the result","XOR followed by inversion","NOT of both inputs then AND"],ans:0},
+{q:"In MIPS, the ALU control for the <code>and</code> instruction is:",opts:["0000","0001","0010","0110"],ans:0},
+{q:"To build a 32-bit ALU from 1-bit ALUs, you connect them by:",opts:["Chaining carry-out of bit i to carry-in of bit i+1 (ripple carry)","Connecting all carry signals to a central carry generator","Routing all outputs through a single MUX","Using a separate decoder per bit position"],ans:0},
+{q:"Unsigned overflow in addition is detected by:",opts:["Carry-out of the most significant bit being 1","The result equaling zero","The sign bits of both operands being 1","The carry-in to the LSB being 1"],ans:0},
+// --- 9.6 Carry Lookahead (8) ---
+{q:"A ripple-carry adder with n bits has a worst-case delay proportional to:",opts:["O(n) — linear in the number of bits","O(log n) — logarithmic","O(1) — constant","O(n^2) — quadratic"],ans:0},
+{q:"In carry lookahead, the <b>Generate</b> signal G for a bit position is defined as:",opts:["G = A AND B (this bit always produces a carry regardless of carry-in)","G = A OR B","G = A XOR B","G = NOT(A AND B)"],ans:0},
+{q:"In carry lookahead, the <b>Propagate</b> signal P for a bit position is defined as:",opts:["P = A XOR B (carry-in is passed through if present)","P = A AND B","P = NOT(A OR B)","P = A XNOR B"],ans:0},
+{q:"A carry lookahead adder computes carries in parallel, giving a worst-case delay of:",opts:["O(log n)","O(n)","O(1)","O(n log n)"],ans:0},
+{q:"The carry into bit 2 (<code>C2</code>) in a CLA adder is expressed as:",opts:["G1 + P1·G0 + P1·P0·C0","G0 + P0·C0","G2 + P2·C1","G1 + G0 + P0·C0"],ans:0},
+{q:"A <b>4-bit CLA block</b> produces group Generate (GG) and group Propagate (GP) signals to:",opts:["Allow multi-level lookahead for wider adders without O(n) delay","Store intermediate carry values in flip-flops","Eliminate the need for propagate signals in the next stage","Replace the AND plane in a PLA"],ans:0},
+{q:"Which statement about carry lookahead is FALSE?",opts:["CLA requires fewer gates than ripple carry for any adder width","CLA is faster than ripple carry for wide adders","CLA computes carries using generate and propagate signals","Multi-level CLA can extend lookahead to 64-bit adders"],ans:0},
+{q:"In practice, a 64-bit adder often uses a <b>hierarchical (multi-level) CLA</b> because:",opts:["A single-level 64-bit CLA would require too many fan-in inputs per gate","Ripple carry is faster for more than 32 bits","Generate and propagate signals cannot be computed for wide operands","Carry lookahead only works for powers of 2 less than 16"],ans:0},
+// --- 9.7 Clocks (6) ---
+{q:"The <b>clock period</b> is related to the clock frequency by:",opts:["Period = 1 / Frequency","Period = Frequency / 2","Period = 2 × Frequency","Period = Frequency^2"],ans:0},
+{q:"A <b>rising-edge-triggered</b> flip-flop samples its D input:",opts:["At the moment the clock transitions from 0 to 1","While the clock signal is high (level 1)","At the moment the clock transitions from 1 to 0","Continuously as long as the clock is running"],ans:0},
+{q:"The difference between a <b>latch</b> and a <b>flip-flop</b> is:",opts:["A latch is level-sensitive (transparent when clock is high); a flip-flop is edge-triggered","A flip-flop is level-sensitive; a latch is edge-triggered","Both are edge-triggered but latches use fewer transistors","Latches can store multiple bits; flip-flops store only one bit"],ans:0},
+{q:"<b>Setup time</b> for a flip-flop is defined as:",opts:["The minimum time the D input must be stable BEFORE the active clock edge","The minimum time the D input must remain stable AFTER the active clock edge","The time from clock edge to stable Q output","The minimum clock period for correct operation"],ans:0},
+{q:"<b>Hold time</b> is the minimum time the input must remain stable:",opts:["After the active clock edge","Before the active clock edge","Before the clock period ends","Between two consecutive setup times"],ans:0},
+{q:"The maximum clock frequency of a synchronous circuit is determined by:",opts:["The critical path — the longest combinational delay between flip-flops plus setup time","The number of flip-flops in the design","The hold time of the slowest flip-flop","The propagation delay of the clock distribution network alone"],ans:0},
+// --- 9.8 Flip-Flops, Latches & Registers (10) ---
+{q:"In an SR latch, the condition S=1, R=0 produces:",opts:["Q=1 (set state)","Q=0 (reset state)","Q unchanged (hold)","Invalid / forbidden state"],ans:0},
+{q:"In an SR latch, the condition S=0, R=1 produces:",opts:["Q=0 (reset state)","Q=1 (set state)","Q unchanged (hold)","Invalid / forbidden state"],ans:0},
+{q:"In an SR latch, the condition S=1, R=1 is considered:",opts:["Invalid / forbidden — both outputs driven simultaneously","The hold state","A reset to Q=0","A set to Q=1"],ans:0},
+{q:"A <b>D latch</b> is transparent (output follows input) when:",opts:["The clock (enable) signal is high","The clock (enable) signal is low","The D input is 1","The D input is 0"],ans:0},
+{q:"A <b>D flip-flop</b> updates its output Q:",opts:["Only on the active clock edge (rising or falling)","Whenever the D input changes","While the clock is high","Asynchronously whenever Enable is asserted"],ans:0},
+{q:"A <b>register</b> storing n bits is built from:",opts:["n D flip-flops sharing a common clock","n SR latches connected in series","n full adders with carry chaining","n NAND gates in a feedback loop"],ans:0},
+{q:"The advantage of <b>edge-triggered</b> design over level-sensitive latches is:",opts:["State changes are strictly controlled to one clock edge, preventing races","Fewer transistors are needed per storage element","The circuit can operate without a clock signal","Hold time requirements are eliminated"],ans:0},
+{q:"Which statement about a D flip-flop is correct?",opts:["The output changes only at the clock edge and then holds until the next edge","The output is continuously equal to the D input","The output changes whenever D changes and the clock is high","The output is the complement of the D input"],ans:0},
+{q:"In a <b>positive-edge-triggered</b> D flip-flop timing diagram, Q updates:",opts:["At each rising edge of the clock, taking on the value of D just before the edge","At each falling edge","Continuously while CLK=1","Whenever D changes value"],ans:0},
+{q:"A <b>register file</b> in a processor is built using:",opts:["An array of D flip-flops with read/write address decoding","An array of SR latches without a clock","A ROM addressed by register number","A PLA that maps opcodes to register values"],ans:0},
+// --- 9.9 SRAMs & DRAMs (5) ---
+{q:"SRAM cells use how many transistors per bit and require refresh?",opts:["6 transistors, no refresh needed","1 transistor + 1 capacitor, refresh every ~8 ms","4 transistors, refresh every clock cycle","2 transistors, self-refreshing"],ans:0},
+{q:"DRAM stores each bit as:",opts:["A charge on a capacitor, requiring periodic refresh","The state of a cross-coupled inverter pair","The gate voltage of a floating-gate transistor","A magnetic domain in a thin-film material"],ans:0},
+{q:"Which memory technology is typically used for processor <b>caches</b>?",opts:["SRAM — fast (~0.5–5 ns) but large per bit","DRAM — dense but slow and requires refresh","Flash — non-volatile but has limited write endurance","ROM — immutable after fabrication"],ans:0},
+{q:"DRAM is organized as a <b>2D array</b> (rows and columns). A <b>sense amplifier</b> is used to:",opts:["Detect and amplify the small voltage difference on a bit line during a read","Store the row address for burst-mode access","Refresh all capacitors simultaneously","Drive the column address strobe (CAS) signal"],ans:0},
+{q:"<b>Burst mode</b> in DRAM improves performance for sequential accesses by:",opts:["Sending multiple consecutive column addresses after a single row activation","Activating multiple rows simultaneously","Disabling refresh during the burst","Pre-charging all bit lines before each access"],ans:0},
+// --- 9.10 Finite-State Machines (5) ---
+{q:"In a <b>Moore machine</b>, outputs depend on:",opts:["The current state only","The current state AND the current input","Only the current input","The next state"],ans:0},
+{q:"In a <b>Mealy machine</b>, outputs depend on:",opts:["Both the current state AND the current input","The current state only","Only the previous state","The clock edge only"],ans:0},
+{q:"In a state diagram, circles represent <b>states</b> and arcs represent:",opts:["Transitions, labeled with the input (and output for Mealy) that causes them","Clock periods","Register transfers","Memory read operations"],ans:0},
+{q:"<b>One-hot encoding</b> for a 5-state FSM uses how many flip-flops?",opts:["5","3","8","2"],ans:0},
+{q:"Compared to binary state encoding, one-hot encoding uses <b>more flip-flops</b> but typically:",opts:["Produces simpler next-state logic and is faster","Uses less silicon area","Requires fewer clock cycles per state transition","Eliminates the need for a state register"],ans:0},
+// --- 9.11-9.12 Timing & FPGAs (4) ---
+{q:"<b>Metastability</b> in a flip-flop occurs when:",opts:["An asynchronous input arrives too close to the clock edge, causing the output to oscillate before settling","The setup time is much larger than the clock period","Two flip-flops share the same clock but different power supplies","The hold time requirement is violated by a combinational path"],ans:0},
+{q:"The <b>critical path</b> in a synchronous design determines:",opts:["The minimum clock period — it is the longest combinational delay between any two registers","The maximum number of flip-flops in the design","The power consumption of the clock distribution network","The number of pipeline stages needed"],ans:0},
+{q:"An FPGA implements logic primarily using:",opts:["Look-Up Tables (LUTs) and programmable interconnect","Custom transistor-level circuits etched at fabrication","ROM arrays and fixed-function adders only","Discrete NAND gates wired on a printed circuit board"],ans:0},
+{q:"Approximately what fraction of FPGA die area is consumed by <b>interconnect</b>?",opts:["~90%","~10%","~50%","~75%"],ans:0},
+];
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quiz9Start=function(){order=shuffle(Array.from({length:Q.length},(_,i)=>i));idx=0;score=0;answered=false;document.getElementById('quiz9-start').style.display='none';document.getElementById('quiz9-done').style.display='none';document.getElementById('quiz9-active').style.display='block';render9();};
+window.quiz9Next=function(){idx++;if(idx>=order.length){showDone9();return;}render9();};
+window.quiz9Restart=function(){document.getElementById('quiz9-done').style.display='none';document.getElementById('quiz9-start').style.display='block';};
+function render9(){answered=false;var q=Q[order[idx]];document.getElementById('q9-counter').textContent='Question '+(idx+1)+' of '+Q.length;document.getElementById('q9-score-disp').textContent='Score: '+score+'/'+idx;document.getElementById('q9-bar').style.width=((idx/Q.length)*100)+'%';document.getElementById('q9-text').innerHTML=q.q;document.getElementById('q9-feedback').innerHTML='';document.getElementById('btn9-next').style.display='none';var opts=document.getElementById('q9-opts');opts.innerHTML='';q.opts.forEach(function(o,i){var b=document.createElement('button');b.className='q-opt';b.innerHTML=['A','B','C','D'][i]+'. '+o;b.dataset.i=i;b.onclick=function(){pick9(i,q.ans);};opts.appendChild(b);});}
+function pick9(chosen,correct){if(answered)return;answered=true;var allBtns=document.querySelectorAll('#q9-opts .q-opt');allBtns.forEach(function(b){b.disabled=true;});if(chosen===correct){score++;allBtns[chosen].classList.add('correct');document.getElementById('q9-feedback').innerHTML='<span class="ok">&#x2713; Correct!</span>';}else{allBtns[chosen].classList.add('wrong');allBtns[correct].classList.add('reveal');document.getElementById('q9-feedback').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';}document.getElementById('q9-score-disp').textContent='Score: '+score+'/'+(idx+1);document.getElementById('btn9-next').style.display='inline-block';}
+function showDone9(){document.getElementById('quiz9-active').style.display='none';document.getElementById('quiz9-done').style.display='block';var pct=Math.round(score/Q.length*100);document.getElementById('done9-score').textContent=score+' / '+Q.length;var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';document.getElementById('done9-pct').textContent=pct+'% — '+msg;}
+document.addEventListener('keydown',function(e){if(document.getElementById('quiz9-active').style.display==='none')return;if(!answered&&['1','2','3','4'].includes(e.key)){var i=parseInt(e.key)-1;var btns=document.querySelectorAll('#q9-opts .q-opt');if(btns[i])btns[i].click();}if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){e.preventDefault();var nb=document.getElementById('btn9-next');if(nb.style.display!=='none')nb.click();}});
+})();</script>
 <hr/>
 <p class="hint">Source: WGU C952 zyBook Chapter 9 — "Logic Design Basics" (COD Appendix A content). Chapter is marked <i>Optional</i> in zyBook.</p>
 
