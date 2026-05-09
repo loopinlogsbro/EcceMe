@@ -1,0 +1,1344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>C952 — LEGv8 Arcade</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--text); }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
+  header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  h2 { font-size: 18px; margin: 22px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 14px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  .b-good { background: rgba(106,210,154,0.14); color: var(--good); border: 1px solid rgba(106,210,154,0.4); }
+  .b-bad  { background: rgba(255,138,122,0.14); color: var(--bad); border: 1px solid rgba(255,138,122,0.4); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
+  .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .chnav a:hover { border-color: var(--accent); }
+  .chnav .spacer { visibility: hidden; }
+
+  /* ===== Game-specific ===== */
+  .btn {
+    display: inline-block; cursor: pointer; user-select: none;
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; font: inherit; font-size: 13px;
+    transition: background 0.12s, border-color 0.12s, transform 0.12s;
+  }
+  .btn:hover { background: var(--hl); border-color: var(--accent); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: rgba(124,196,255,0.12); border-color: rgba(124,196,255,0.45); color: var(--accent); }
+  .btn-primary:hover { background: rgba(124,196,255,0.22); }
+  .btn-ghost { background: transparent; }
+  .btn[aria-pressed="true"] { background: var(--hl); border-color: var(--accent); color: var(--accent); }
+
+  /* Scorebar */
+  #scorebar .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--panel-2);
+    color: var(--muted); font-size: 12px; font-weight: 700;
+  }
+  .dot.on { background: rgba(106,210,154,0.18); border-color: rgba(106,210,154,0.55); color: var(--good); }
+  #scorebar .scores { color: var(--muted); font-size: 13px; }
+  #scorebar .total { font-weight: 600; }
+  #scorebar .spacer { flex: 1; }
+
+  /* Station picker */
+  #stationPicker { display: flex; gap: 8px; flex-wrap: wrap; }
+  #stationPicker .btn { font-size: 13px; }
+
+  /* Station common */
+  .station h2 { margin-top: 0; }
+  .station .objective { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .station .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .feedback { margin-top: 10px; min-height: 1.4em; font-size: 13.5px; }
+  .feedback.ok { color: var(--good); }
+  .feedback.no { color: var(--bad); }
+
+  /* Station A — Instruction Decoder */
+  .bitrow { display: grid; grid-template-columns: repeat(32, 1fr); gap: 2px; margin: 6px 0 4px; }
+  .bitcell {
+    text-align: center; padding: 6px 0; font-family: ui-monospace, Consolas, monospace;
+    font-size: 13px; background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 3px; color: var(--text); position: relative;
+  }
+  .bitcell.f0 { background: rgba(124,196,255,0.18); border-color: rgba(124,196,255,0.55); }
+  .bitcell.f1 { background: rgba(243,185,95,0.18);  border-color: rgba(243,185,95,0.55); }
+  .bitcell.f2 { background: rgba(106,210,154,0.18); border-color: rgba(106,210,154,0.55); }
+  .bitcell.f3 { background: rgba(200,156,255,0.20); border-color: rgba(200,156,255,0.55); }
+  .bitcell.f4 { background: rgba(255,138,122,0.18); border-color: rgba(255,138,122,0.55); }
+  .bitruler { display: grid; grid-template-columns: repeat(32, 1fr); gap: 2px; color: var(--muted); font-size: 10px; }
+  .bitruler span { text-align: center; }
+  .fmtChips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .fmtChips .btn { min-width: 60px; text-align: center; font-family: ui-monospace, Consolas, monospace; }
+  .fieldLegend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--muted); margin: 6px 0 8px; }
+  .fieldLegend .lg { display: inline-flex; align-items: center; gap: 6px; }
+  .fieldLegend .sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--border); display: inline-block; }
+  .decodeTable { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  .decodeTable th, .decodeTable td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  .decodeTable th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  .decodeTable code { font-size: 12.5px; }
+  .mcOptions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px; margin-top: 8px; }
+  .mcOptions .btn { text-align: left; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+  .mcOptions .btn.correct { border-color: var(--good); background: rgba(106,210,154,0.18); color: var(--good); }
+  .mcOptions .btn.wrong   { border-color: var(--bad); background: rgba(255,138,122,0.18); color: var(--bad); }
+
+  /* Station B — Register Roundup */
+  .chipTray { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; padding: 8px; border: 1px dashed var(--border); border-radius: 6px; min-height: 46px; background: var(--panel-2); }
+  .regChip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 14px; font-family: ui-monospace, Consolas, monospace;
+    font-size: 13px; background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); cursor: pointer; user-select: none;
+    transition: transform 0.1s, border-color 0.1s, background 0.1s;
+  }
+  .regChip:hover { border-color: var(--accent); }
+  .regChip.selected { background: var(--hl); border-color: var(--accent); transform: translateY(-1px); }
+  .regChip.locked { cursor: default; opacity: 0.85; }
+  .zoneGrid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 8px; }
+  .zone {
+    background: var(--panel-2); border: 1px dashed var(--border);
+    border-radius: 6px; padding: 8px 10px; min-height: 80px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .zone .zone-title { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+  .zone .zone-title b { color: var(--text); }
+  .zone.target { border-color: var(--accent); background: rgba(124,196,255,0.06); }
+  .zone.flash-bad { animation: flashBad 0.45s ease; }
+  .zone.flash-good { animation: flashGood 0.45s ease; }
+  @keyframes flashBad  { 0%,100% { background: var(--panel-2); } 50% { background: rgba(255,138,122,0.20); } }
+  @keyframes flashGood { 0%,100% { background: var(--panel-2); } 50% { background: rgba(106,210,154,0.20); } }
+  @media (prefers-reduced-motion: reduce) {
+    .zone.flash-bad, .zone.flash-good { animation: none; }
+  }
+  .zone .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .regChip.g0 { box-shadow: inset 0 0 0 2px rgba(124,196,255,0.55); }
+  .regChip.g1 { box-shadow: inset 0 0 0 2px rgba(243,185,95,0.55); }
+  .regChip.g2 { box-shadow: inset 0 0 0 2px rgba(106,210,154,0.55); }
+  .regChip.g3 { box-shadow: inset 0 0 0 2px rgba(200,156,255,0.65); }
+
+  /* Station C — Flag Forensics */
+  .flagOp { font-family: ui-monospace, Consolas, monospace; font-size: 16px; padding: 8px 0; }
+  .flagOp .op { color: var(--accent); }
+  .flagBank { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .flagLamp {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 12px; min-width: 64px;
+    border: 1px solid var(--border); border-radius: 6px; background: var(--panel-2);
+    cursor: pointer; user-select: none;
+  }
+  .flagLamp .name { font-size: 12px; color: var(--muted); }
+  .flagLamp .val  { font-family: ui-monospace, Consolas, monospace; font-size: 18px; font-weight: 700; }
+  .flagLamp.on  { background: rgba(124,196,255,0.18); border-color: var(--accent); color: var(--accent); }
+  .flagLamp.on .name { color: var(--accent); }
+  .flagLamp.locked { cursor: default; opacity: 0.85; }
+  .branchOpts { display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 6px; }
+  .branchOpts .btn { font-family: ui-monospace, Consolas, monospace; }
+  .branchOpts .btn.fires { border-color: var(--good); background: rgba(106,210,154,0.16); color: var(--good); }
+  .branchOpts .btn.miss  { border-color: var(--bad); background: rgba(255,138,122,0.16); color: var(--bad); }
+  .branchOpts .btn[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); }
+
+  /* Station D — Addressing modes */
+  .modeRow {
+    display: grid; grid-template-columns: 1.3fr 2fr; gap: 10px; align-items: center;
+    padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--panel-2); margin: 6px 0;
+  }
+  .modeRow .snippet { font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; }
+  .modeRow.right { border-color: var(--good); background: rgba(106,210,154,0.10); }
+  .modeRow.wrong { border-color: var(--bad); background: rgba(255,138,122,0.10); }
+  .modeRow .reveal { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .modeRow .picks { display: flex; flex-wrap: wrap; gap: 4px; }
+  .modeRow .picks .btn { font-size: 12.5px; padding: 4px 8px; }
+  .modeRow .picks .btn[aria-pressed="true"] { background: var(--hl); border-color: var(--accent); color: var(--accent); }
+
+  /* Help dialog */
+  dialog#helpDialog {
+    background: var(--panel); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; max-width: 520px;
+    box-shadow: var(--shadow);
+  }
+  dialog#helpDialog::backdrop { background: rgba(0,0,0,0.4); }
+  dialog#helpDialog h3 { margin-top: 0; }
+
+  @media (max-width: 700px) {
+    .bitrow { gap: 1px; }
+    .bitcell { font-size: 10px; padding: 4px 0; }
+    .bitruler { font-size: 9px; gap: 1px; }
+  }
+</style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
+<div class="wrap">
+  <nav class="chnav">
+    <a class="spacer" href="#">prev</a>
+    <a href="index.html">All chapters</a>
+    <a class="spacer" href="#">next</a>
+  </nav>
+
+  <header>
+    <h1>C952 &mdash; LEGv8 Arcade <span class="badge b-key">ISA / ABI</span></h1>
+    <div class="sub">Four mini-stations: instruction formats, ABI register conventions, NZCV flags, addressing modes.</div>
+  </header>
+
+  <section class="panel" id="scorebar" aria-live="polite">
+    <div class="row">
+      <span class="dot" data-id="A" title="Decoder">A</span>
+      <span class="dot" data-id="B" title="Registers">B</span>
+      <span class="dot" data-id="C" title="Flags">C</span>
+      <span class="dot" data-id="D" title="Addressing">D</span>
+      <span class="scores" id="scoreText">A: 0 · B: 0 · C: 0 · D: 0</span>
+      <span class="spacer"></span>
+      <span class="total" id="totalText">Total: 0</span>
+      <button class="btn btn-ghost" id="resetBtn" type="button">Reset progress</button>
+      <button class="btn btn-ghost" id="helpBtn" type="button" aria-label="Help">?</button>
+    </div>
+  </section>
+
+  <nav class="panel" id="stationPicker" aria-label="Station picker">
+    <button class="btn" data-station="A" type="button" aria-pressed="true">1 &middot; A &middot; Decoder</button>
+    <button class="btn" data-station="B" type="button" aria-pressed="false">2 &middot; B &middot; Registers</button>
+    <button class="btn" data-station="C" type="button" aria-pressed="false">3 &middot; C &middot; Flags</button>
+    <button class="btn" data-station="D" type="button" aria-pressed="false">4 &middot; D &middot; Addressing</button>
+  </nav>
+
+  <main id="stationHost"></main>
+
+  <p class="hint" style="margin-top:14px;">
+    Keyboard: <code>1</code>&ndash;<code>4</code> pick station / option &middot;
+    <code>Enter</code> confirm &middot; <code>R</code> reroll &middot; <code>?</code> help
+  </p>
+</div>
+
+<dialog id="helpDialog">
+  <h3>How to play</h3>
+  <p>Each station drills one exam-relevant LEGv8 concept. Pick a station with the buttons above (or keys <code>1</code>&ndash;<code>4</code>). Hit <code>R</code> to reroll the current round, <code>Enter</code> to submit, and <code>1</code>&ndash;<code>4</code> to pick a multiple-choice option. Your station scores and completion badges persist in your browser.</p>
+  <ul>
+    <li><b>A &middot; Decoder.</b> Identify the LEGv8 instruction format (R / I / D / B / CB / IM) for a 32-bit encoding, then pick the disassembled instruction.</li>
+    <li><b>B &middot; Registers.</b> Click an X-register chip to select it, then click the ABI bucket it belongs to.</li>
+    <li><b>C &middot; Flags.</b> Toggle the NZCV bits the operation produces, then mark every <code>B.cond</code> branch that fires.</li>
+    <li><b>D &middot; Addressing.</b> Tag each LEGv8 snippet with its addressing mode, then submit.</li>
+  </ul>
+  <div class="actions" style="display:flex;justify-content:flex-end;margin-top:8px;">
+    <button class="btn btn-primary" id="helpClose" type="button">Close</button>
+  </div>
+</dialog>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // Shared infrastructure
+  // ============================================================
+  var STORAGE_KEY = 'c952-game-state';
+  var DEFAULT_STATE = {
+    active: 'A',
+    scores: { A: 0, B: 0, C: 0, D: 0 },
+    completed: { A: false, B: false, C: false, D: false }
+  };
+  var S = loadState();
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return clone(DEFAULT_STATE);
+      var parsed = JSON.parse(raw);
+      return {
+        active: typeof parsed.active === 'string' && /^[ABCD]$/.test(parsed.active) ? parsed.active : 'A',
+        scores: Object.assign({ A:0, B:0, C:0, D:0 }, parsed.scores || {}),
+        completed: Object.assign({ A:false, B:false, C:false, D:false }, parsed.completed || {})
+      };
+    } catch (e) { return clone(DEFAULT_STATE); }
+  }
+  function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); } catch (e) {} }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function addScore(id, n) {
+    S.scores[id] = (S.scores[id] || 0) + n;
+    saveState();
+    refreshScorebar();
+  }
+  function markCompleted(id) {
+    if (!S.completed[id]) { S.completed[id] = true; saveState(); refreshScorebar(); }
+  }
+  function refreshScorebar() {
+    var dots = document.querySelectorAll('#scorebar .dot');
+    dots.forEach(function(d) {
+      var id = d.getAttribute('data-id');
+      if (S.completed[id]) d.classList.add('on'); else d.classList.remove('on');
+    });
+    document.getElementById('scoreText').textContent =
+      'A: ' + S.scores.A + ' · B: ' + S.scores.B + ' · C: ' + S.scores.C + ' · D: ' + S.scores.D;
+    var total = S.scores.A + S.scores.B + S.scores.C + S.scores.D;
+    document.getElementById('totalText').textContent = 'Total: ' + total;
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    if (!confirm('Reset all scores and badges?')) return;
+    S = clone(DEFAULT_STATE);
+    saveState();
+    refreshScorebar();
+    mountStation(S.active);
+  });
+  var helpDlg = document.getElementById('helpDialog');
+  document.getElementById('helpBtn').addEventListener('click', function() { openHelp(); });
+  document.getElementById('helpClose').addEventListener('click', function() { helpDlg.close(); });
+  function openHelp() {
+    if (typeof helpDlg.showModal === 'function') helpDlg.showModal();
+    else helpDlg.setAttribute('open', '');
+  }
+
+  // ============================================================
+  // Station registry / picker / hash routing
+  // ============================================================
+  var Stations = {};
+  var currentController = null;
+
+  function mountStation(id) {
+    if (!Stations[id]) id = 'A';
+    S.active = id; saveState();
+    var pickerBtns = document.querySelectorAll('#stationPicker .btn');
+    pickerBtns.forEach(function(b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-station') === id ? 'true' : 'false');
+    });
+    var host = document.getElementById('stationHost');
+    if (currentController && typeof currentController.unmount === 'function') {
+      try { currentController.unmount(); } catch (e) {}
+    }
+    host.innerHTML = '';
+    currentController = Stations[id]();
+    currentController.mount(host);
+    if (location.hash !== '#' + id) {
+      try { history.replaceState(null, '', '#' + id); } catch (e) { location.hash = id; }
+    }
+  }
+
+  document.querySelectorAll('#stationPicker .btn').forEach(function(b) {
+    b.addEventListener('click', function() { mountStation(b.getAttribute('data-station')); });
+  });
+
+  window.addEventListener('hashchange', function() {
+    var h = (location.hash || '').replace('#', '').toUpperCase();
+    if (/^[ABCD]$/.test(h) && h !== S.active) mountStation(h);
+  });
+
+  // ============================================================
+  // Station A — Instruction Decoder
+  // ============================================================
+  // 32-bit canonical LEGv8 encodings (MSB first). Format widths verified.
+  // R:  opcode(11) | Rm(5) | shamt(6) | Rn(5) | Rd(5)
+  // I:  opcode(10) | imm(12)         | Rn(5) | Rd(5)
+  // D:  opcode(11) | addr(9)         | op2(2) | Rn(5) | Rt(5)
+  // B:  opcode(6)  | BR_address(26)
+  // CB: opcode(8)  | COND_BR_address(19)        | Rt(5)
+  // IM: opcode(9)  | MOV_quadrant(2) | MOV_immediate(16) | Rd(5)
+  var DECODER_EXAMPLES = [
+    {
+      asm: 'ADD X1, X2, X3', fmt: 'R',
+      bits: '10001011000' + '00011' + '000000' + '00010' + '00001',
+      fields: [
+        { name: 'opcode', span: 11, value: '10001011000', meaning: 'ADD (R-format)' },
+        { name: 'Rm',     span: 5,  value: '00011',       meaning: 'X3' },
+        { name: 'shamt',  span: 6,  value: '000000',      meaning: '0' },
+        { name: 'Rn',     span: 5,  value: '00010',       meaning: 'X2' },
+        { name: 'Rd',     span: 5,  value: '00001',       meaning: 'X1' }
+      ],
+      distractors: ['SUB X1, X2, X3', 'AND X1, X2, X3', 'ADDS X1, X2, X3']
+    },
+    {
+      asm: 'ADDI X1, X2, #10', fmt: 'I',
+      bits: '1001000100' + '000000001010' + '00010' + '00001',
+      fields: [
+        { name: 'opcode',    span: 10, value: '1001000100',   meaning: 'ADDI (I-format)' },
+        { name: 'immediate', span: 12, value: '000000001010', meaning: '10' },
+        { name: 'Rn',        span: 5,  value: '00010',         meaning: 'X2' },
+        { name: 'Rd',        span: 5,  value: '00001',         meaning: 'X1' }
+      ],
+      distractors: ['ADD X1, X2, X3', 'SUBI X1, X2, #10', 'ADDI X2, X1, #10']
+    },
+    {
+      asm: 'LDUR X1, [X2, #16]', fmt: 'D',
+      bits: '11111000010' + '000010000' + '00' + '00010' + '00001',
+      fields: [
+        { name: 'opcode',  span: 11, value: '11111000010', meaning: 'LDUR (D-format)' },
+        { name: 'address', span: 9,  value: '000010000',   meaning: '16' },
+        { name: 'op2',     span: 2,  value: '00',          meaning: '0' },
+        { name: 'Rn',      span: 5,  value: '00010',       meaning: 'X2 (base)' },
+        { name: 'Rt',      span: 5,  value: '00001',       meaning: 'X1 (target)' }
+      ],
+      distractors: ['STUR X1, [X2, #16]', 'LDUR X2, [X1, #16]', 'LDURB W1, [X2, #16]']
+    },
+    {
+      asm: 'B label', fmt: 'B',
+      // BR_address = +100 (decimal), 26-bit signed two's complement
+      bits: '000101' + '00000000000000000001100100',
+      fields: [
+        { name: 'opcode',     span: 6,  value: '000101',                     meaning: 'B (unconditional)' },
+        { name: 'BR_address', span: 26, value: '00000000000000000001100100', meaning: '+100 (PC-relative, words)' }
+      ],
+      distractors: ['BL label', 'B.EQ label', 'CBZ X0, label']
+    },
+    {
+      asm: 'CBZ X1, label', fmt: 'CB',
+      // COND_BR_address = +20, 19-bit signed two's complement; Rt = X1
+      bits: '10110100' + '0000000000000010100' + '00001',
+      fields: [
+        { name: 'opcode',          span: 8,  value: '10110100',            meaning: 'CBZ' },
+        { name: 'COND_BR_address', span: 19, value: '0000000000000010100', meaning: '+20 (PC-relative)' },
+        { name: 'Rt',              span: 5,  value: '00001',               meaning: 'X1 (test reg)' }
+      ],
+      distractors: ['CBNZ X1, label', 'B.EQ label', 'B.NE label']
+    },
+    {
+      asm: 'MOVZ X0, #0xABCD, LSL #16', fmt: 'IM',
+      // quadrant 01 (LSL #16); imm = 0xABCD; Rd = X0
+      bits: '110100101' + '01' + '1010101111001101' + '00000',
+      fields: [
+        { name: 'opcode',        span: 9,  value: '110100101',       meaning: 'MOVZ (IM-format)' },
+        { name: 'MOV_quadrant',  span: 2,  value: '01',              meaning: 'LSL #16 (bits 16-31)' },
+        { name: 'MOV_immediate', span: 16, value: '1010101111001101', meaning: '0xABCD' },
+        { name: 'Rd',            span: 5,  value: '00000',           meaning: 'X0' }
+      ],
+      distractors: ['MOVK X0, #0xABCD, LSL #16', 'MOVZ X0, #0xABCD, LSL #0', 'MOVZ X0, #0xABCD, LSL #32']
+    }
+  ];
+
+  var FORMATS = ['R', 'I', 'D', 'B', 'CB', 'IM'];
+
+  Stations.A = function() {
+    var host, ex, formatPicked, instrPicked, perfectFormat, perfectInstr;
+
+    function newRound() {
+      ex = pick(DECODER_EXAMPLES);
+      formatPicked = false; instrPicked = false;
+      perfectFormat = true; perfectInstr = true;
+      render();
+    }
+
+    function render() {
+      host.innerHTML = '';
+      var sec = el('section', 'station panel', { 'data-id': 'A' });
+      sec.appendChild(el('h2', null, null, 'A &middot; Instruction Decoder'));
+      sec.appendChild(el('div', 'objective', null,
+        'Identify the LEGv8 instruction format for a 32-bit encoding, then disassemble it. <span class="badge b-exam">core</span>'));
+
+      // Bit row + ruler
+      var brow = el('div', 'bitrow');
+      var ruler = el('div', 'bitruler');
+      for (var i = 0; i < 32; i++) {
+        var bit = el('div', 'bitcell', { 'data-bit': String(i) }, ex.bits.charAt(i));
+        brow.appendChild(bit);
+        var lbl = (31 - i);
+        ruler.appendChild(el('span', null, null, (lbl % 4 === 0 ? String(lbl) : '·')));
+      }
+      sec.appendChild(brow);
+      sec.appendChild(ruler);
+
+      // Format chips
+      sec.appendChild(el('h3', null, null, 'Step 1 &mdash; pick the format'));
+      var fmtRow = el('div', 'fmtChips');
+      FORMATS.forEach(function(f) {
+        var b = el('button', 'btn', { type: 'button', 'data-fmt': f }, f);
+        b.addEventListener('click', function() { onFormatPick(f, b); });
+        fmtRow.appendChild(b);
+      });
+      sec.appendChild(fmtRow);
+
+      // Decode panel placeholder
+      var decode = el('div', null, { id: 'decodePanel' });
+      sec.appendChild(decode);
+
+      // MC options placeholder
+      var mc = el('div', null, { id: 'mcPanel', style: 'display:none;' });
+      sec.appendChild(mc);
+
+      var fb = el('div', 'feedback', { id: 'fbA' });
+      sec.appendChild(fb);
+
+      var actions = el('div', 'actions');
+      var rerollBtn = el('button', 'btn btn-primary', { type: 'button' }, 'New round (R)');
+      rerollBtn.addEventListener('click', newRound);
+      actions.appendChild(rerollBtn);
+      sec.appendChild(actions);
+
+      host.appendChild(sec);
+    }
+
+    function onFormatPick(f, btn) {
+      if (formatPicked) return;
+      var fb = document.getElementById('fbA');
+      if (f !== ex.fmt) {
+        btn.classList.add('wrong'); btn.disabled = true;
+        perfectFormat = false;
+        fb.textContent = f + ' is not it. Try another format.';
+        fb.className = 'feedback no';
+        return;
+      }
+      formatPicked = true;
+      document.querySelectorAll('.fmtChips .btn').forEach(function(b) {
+        b.disabled = true;
+        if (b.getAttribute('data-fmt') !== ex.fmt) b.style.opacity = '0.5';
+      });
+      btn.classList.add('correct');
+      paintFields();
+      buildDecodeTable();
+      buildMCStep();
+      fb.textContent = 'Correct format. Now pick the assembly that matches.';
+      fb.className = 'feedback ok';
+    }
+
+    function paintFields() {
+      var cells = document.querySelectorAll('#stationHost .bitcell');
+      var idx = 0;
+      ex.fields.forEach(function(field, fi) {
+        var cls = 'f' + (fi % 5);
+        for (var k = 0; k < field.span; k++) {
+          cells[idx + k].classList.add(cls);
+        }
+        idx += field.span;
+      });
+    }
+
+    function buildDecodeTable() {
+      var d = document.getElementById('decodePanel');
+      d.innerHTML = '';
+      var legend = el('div', 'fieldLegend');
+      ex.fields.forEach(function(f, fi) {
+        var lg = el('span', 'lg');
+        var sw = el('span', 'sw');
+        sw.classList.add('bitcell', 'f' + (fi % 5));
+        sw.style.width = '12px'; sw.style.height = '12px'; sw.style.padding = '0';
+        lg.appendChild(sw);
+        lg.appendChild(document.createTextNode(' ' + f.name + ' (' + f.span + ')'));
+        legend.appendChild(lg);
+      });
+      d.appendChild(legend);
+
+      var tbl = el('table', 'decodeTable');
+      var thead = el('thead');
+      thead.innerHTML = '<tr><th>Field</th><th>Bits</th><th>Width</th><th>Decoded</th></tr>';
+      tbl.appendChild(thead);
+      var tbody = el('tbody');
+      ex.fields.forEach(function(f, fi) {
+        var tr = el('tr');
+        var td1 = el('td');
+        var sw = el('span', 'sw bitcell f' + (fi % 5));
+        sw.style.cssText = 'width:10px;height:10px;display:inline-block;margin-right:6px;padding:0;border-radius:2px;';
+        td1.appendChild(sw);
+        td1.appendChild(document.createTextNode(f.name));
+        tr.appendChild(td1);
+        tr.appendChild(el('td', null, null, '<code>' + f.value + '</code>'));
+        tr.appendChild(el('td', null, null, String(f.span)));
+        tr.appendChild(el('td', null, null, f.meaning));
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      d.appendChild(tbl);
+    }
+
+    function buildMCStep() {
+      var mc = document.getElementById('mcPanel');
+      mc.style.display = '';
+      mc.innerHTML = '';
+      mc.appendChild(el('h3', null, null, 'Step 2 &mdash; what is this instruction?'));
+      var pool = shuffle([ex.asm].concat(ex.distractors)).slice(0, 4);
+      if (pool.indexOf(ex.asm) === -1) pool[0] = ex.asm;
+      pool = shuffle(pool);
+      var grid = el('div', 'mcOptions', { id: 'mcOptsA' });
+      pool.forEach(function(opt, i) {
+        var b = el('button', 'btn', { type: 'button', 'data-asm': opt, 'data-i': String(i) },
+          (i + 1) + '. ' + escapeHtml(opt));
+        b.addEventListener('click', function() { onAsmPick(opt, b); });
+        grid.appendChild(b);
+      });
+      mc.appendChild(grid);
+    }
+
+    function onAsmPick(opt, btn) {
+      if (instrPicked) return;
+      var fb = document.getElementById('fbA');
+      if (opt !== ex.asm) {
+        btn.classList.add('wrong'); btn.disabled = true;
+        perfectInstr = false;
+        fb.textContent = 'Not quite. Look at the field decoder above.';
+        fb.className = 'feedback no';
+        return;
+      }
+      instrPicked = true;
+      btn.classList.add('correct');
+      document.querySelectorAll('#mcOptsA .btn').forEach(function(b) { b.disabled = true; });
+      var earned = 5 + 5 + (perfectFormat ? 0 : -2) + (perfectInstr ? 0 : -1);
+      if (earned < 1) earned = 1;
+      addScore('A', earned);
+      markCompleted('A');
+      fb.innerHTML = '<b>+' + earned + '</b> &mdash; ' + escapeHtml(ex.asm) + ' decoded.';
+      fb.className = 'feedback ok';
+    }
+
+    function pickOption(n) {
+      if (!formatPicked) {
+        var btns = document.querySelectorAll('.fmtChips .btn:not([disabled])');
+        if (btns[n - 1]) btns[n - 1].click();
+      } else if (!instrPicked) {
+        var opts = document.querySelectorAll('#mcOptsA .btn:not([disabled])');
+        if (opts[n - 1]) opts[n - 1].click();
+      }
+    }
+
+    return {
+      mount: function(h) { host = h; newRound(); },
+      unmount: function() {},
+      reroll: newRound,
+      confirm: function() {},
+      pickOption: pickOption
+    };
+  };
+
+  // ============================================================
+  // Station B — Register Roundup (ABI)
+  // ============================================================
+  // Group 0: X0–X7 args/return
+  // Group 1: X8 indirect-result, X9–X15 caller-saved temps, X16/X17 IP0/IP1, X18 PR
+  // Group 2: X19–X27 callee-saved
+  // Group 3: X28 SP, X29 FP, X30 LR, X31 XZR
+  var REG_INFO = (function() {
+    var arr = [];
+    function r(n, group, role) { arr.push({ id: 'X' + n, n: n, group: group, role: role }); }
+    for (var i = 0; i <= 7; i++) r(i, 0, 'argument / return value');
+    r(8, 1, 'indirect result location');
+    for (var j = 9; j <= 15; j++) r(j, 1, 'caller-saved temporary');
+    r(16, 1, 'IP0 (intra-procedure scratch 0)');
+    r(17, 1, 'IP1 (intra-procedure scratch 1)');
+    r(18, 1, 'platform register (PR)');
+    for (var k = 19; k <= 27; k++) r(k, 2, 'callee-saved');
+    r(28, 3, 'SP — stack pointer (16-byte aligned)');
+    r(29, 3, 'FP — frame pointer');
+    r(30, 3, 'LR — link register (return addr)');
+    r(31, 3, 'XZR — zero register (read-only)');
+    return arr;
+  })();
+  var ZONES = [
+    { id: 0, title: 'Args / Return',           sub: 'X0–X7' },
+    { id: 1, title: 'Temps & Scratch',         sub: 'X8 + X9–X15 + X16/X17 (IP0/IP1) + X18 (PR)' },
+    { id: 2, title: 'Callee-saved',            sub: 'X19–X27 — preserved across calls' },
+    { id: 3, title: 'Special',                 sub: 'X28 SP · X29 FP · X30 LR · X31 XZR' }
+  ];
+
+  Stations.B = function() {
+    var host, deck, selected, placed, perfect;
+
+    function newRound() {
+      selected = null;
+      placed = {};
+      perfect = true;
+      // Deal 8 chips: at least one from each zone, rest random.
+      var byZone = [[], [], [], []];
+      REG_INFO.forEach(function(r) { byZone[r.group].push(r); });
+      var chosen = [];
+      byZone.forEach(function(arr) { chosen.push(pick(arr)); });
+      var pool = REG_INFO.filter(function(r) { return chosen.indexOf(r) === -1; });
+      pool = shuffle(pool).slice(0, 4);
+      deck = shuffle(chosen.concat(pool));
+      render();
+    }
+
+    function render() {
+      host.innerHTML = '';
+      var sec = el('section', 'station panel', { 'data-id': 'B' });
+      sec.appendChild(el('h2', null, null, 'B &middot; Register Roundup <span class="badge b-exam">ABI</span>'));
+      sec.appendChild(el('div', 'objective', null,
+        'Tap a register chip to select it, then tap the ABI bucket where it belongs. Every chip in the right zone wins the round.'));
+
+      var tray = el('div', 'chipTray', { id: 'chipTrayB' });
+      deck.forEach(function(r) {
+        if (placed[r.id]) return;
+        var chip = el('button', 'regChip g' + r.group, { type: 'button', 'data-reg': r.id, title: r.id + ' — ' + r.role }, r.id);
+        chip.addEventListener('click', function() { onSelectChip(r, chip); });
+        tray.appendChild(chip);
+      });
+      sec.appendChild(tray);
+
+      var grid = el('div', 'zoneGrid');
+      ZONES.forEach(function(z) {
+        var zEl = el('div', 'zone', { 'data-zone': String(z.id), tabindex: '0' });
+        zEl.appendChild(el('div', 'zone-title', null, '<b>' + z.title + '</b><br><span style="font-size:11.5px;">' + z.sub + '</span>'));
+        var chipsBox = el('div', 'chips', { id: 'zoneChips-' + z.id });
+        // Render already-placed chips
+        Object.keys(placed).forEach(function(rid) {
+          if (placed[rid] === z.id) {
+            var info = REG_INFO.filter(function(r) { return r.id === rid; })[0];
+            var ch = el('span', 'regChip locked g' + info.group, { title: rid + ' — ' + info.role }, rid);
+            chipsBox.appendChild(ch);
+          }
+        });
+        zEl.appendChild(chipsBox);
+        zEl.addEventListener('click', function() { onZoneClick(z.id, zEl); });
+        zEl.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onZoneClick(z.id, zEl); }
+        });
+        grid.appendChild(zEl);
+      });
+      sec.appendChild(grid);
+
+      var fb = el('div', 'feedback', { id: 'fbB' });
+      sec.appendChild(fb);
+
+      var actions = el('div', 'actions');
+      var rerollBtn = el('button', 'btn btn-primary', { type: 'button' }, 'New round (R)');
+      rerollBtn.addEventListener('click', newRound);
+      actions.appendChild(rerollBtn);
+      sec.appendChild(actions);
+
+      host.appendChild(sec);
+    }
+
+    function onSelectChip(r, chip) {
+      if (selected && selected.chip !== chip) selected.chip.classList.remove('selected');
+      if (selected && selected.chip === chip) {
+        selected = null;
+        chip.classList.remove('selected');
+        return;
+      }
+      selected = { reg: r, chip: chip };
+      chip.classList.add('selected');
+      var fb = document.getElementById('fbB');
+      fb.textContent = 'Selected ' + r.id + ' — ' + r.role + '. Now tap a zone.';
+      fb.className = 'feedback';
+    }
+
+    function onZoneClick(zoneId, zEl) {
+      var fb = document.getElementById('fbB');
+      if (!selected) {
+        fb.textContent = 'Pick a register chip first.';
+        fb.className = 'feedback no';
+        return;
+      }
+      var r = selected.reg;
+      if (r.group !== zoneId) {
+        zEl.classList.remove('flash-bad'); void zEl.offsetWidth; zEl.classList.add('flash-bad');
+        fb.textContent = r.id + ' does not belong here. (' + r.role + ')';
+        fb.className = 'feedback no';
+        perfect = false;
+        return;
+      }
+      // Correct
+      zEl.classList.remove('flash-good'); void zEl.offsetWidth; zEl.classList.add('flash-good');
+      placed[r.id] = zoneId;
+      selected.chip.remove();
+      selected = null;
+      var box = document.getElementById('zoneChips-' + zoneId);
+      var ch = el('span', 'regChip locked g' + r.group, { title: r.id + ' — ' + r.role }, r.id);
+      box.appendChild(ch);
+      fb.textContent = r.id + ' ✓ ' + r.role;
+      fb.className = 'feedback ok';
+      // Done?
+      var remaining = document.querySelectorAll('#chipTrayB .regChip');
+      if (remaining.length === 0) {
+        var earned = perfect ? 12 : 6;
+        addScore('B', earned);
+        markCompleted('B');
+        fb.innerHTML = '<b>+' + earned + '</b> &mdash; round clear' + (perfect ? ' (no misses).' : '.');
+      }
+    }
+
+    function pickOption(n) {
+      // 1-4 picks the nth available chip in the tray (only if no chip selected),
+      // or the nth zone if a chip is selected.
+      if (!selected) {
+        var chips = document.querySelectorAll('#chipTrayB .regChip');
+        if (chips[n - 1]) chips[n - 1].click();
+      } else {
+        var zones = document.querySelectorAll('.zoneGrid .zone');
+        if (zones[n - 1]) zones[n - 1].click();
+      }
+    }
+
+    return {
+      mount: function(h) { host = h; newRound(); },
+      unmount: function() {},
+      reroll: newRound,
+      confirm: function() {},
+      pickOption: pickOption
+    };
+  };
+
+  // ============================================================
+  // Station C — Flag Forensics (NZCV → Branch)
+  // ============================================================
+  // Each scenario carries pre-computed flags so there is no ambiguity
+  // about ARMv8 SUBS C-flag semantics (C=1 means no borrow).
+  var FLAG_SCENARIOS = [
+    { op: 'SUBS', a: '0x5',  b: '0x5',  N:0, Z:1, C:1, V:0, note: '5 − 5: equal, no borrow' },
+    { op: 'SUBS', a: '0x1',  b: '0x2',  N:1, Z:0, C:0, V:0, note: '1 − 2: unsigned borrow' },
+    { op: 'SUBS', a: '0x8000000000000000', b: '0x1', N:0, Z:0, C:1, V:1, note: 'INT64_MIN − 1: signed overflow' },
+    { op: 'ADDS', a: '0xFFFFFFFFFFFFFFFF', b: '0x1', N:0, Z:1, C:1, V:0, note: 'unsigned wrap to 0' },
+    { op: 'ADDS', a: '0x7FFFFFFFFFFFFFFF', b: '0x1', N:1, Z:0, C:0, V:1, note: 'INT64_MAX + 1: signed overflow' },
+    { op: 'ANDS', a: '0xF0', b: '0x0F', N:0, Z:1, C:0, V:0, note: 'logical: result 0' },
+    { op: 'ANDS', a: '0xFF', b: '0x0F', N:0, Z:0, C:0, V:0, note: 'logical: result 0x0F' },
+    { op: 'SUBS', a: '0x7',  b: '0x3',  N:0, Z:0, C:1, V:0, note: '7 − 3: ordinary positive' },
+    { op: 'ADDS', a: '0x3',  b: '0x4',  N:0, Z:0, C:0, V:0, note: '3 + 4: nothing exciting' },
+    { op: 'CMP',  a: '0xA',  b: '0xA',  N:0, Z:1, C:1, V:0, note: 'CMP = SUBS XZR, …; equal' },
+    { op: 'CMP',  a: '0x3',  b: '0x9',  N:1, Z:0, C:0, V:0, note: 'CMP: borrow (3 < 9 unsigned)' },
+    { op: 'CMN',  a: '0xFFFFFFFFFFFFFFFE', b: '0x2', N:0, Z:1, C:1, V:0, note: 'CMN = ADDS XZR, …; sums to 0' }
+  ];
+
+  var BRANCH_LIST = [
+    'B.EQ','B.NE','B.MI','B.PL','B.VS','B.VC',
+    'B.HS','B.LO','B.HI','B.LS','B.GE','B.LT','B.GT','B.LE'
+  ];
+
+  function evaluateBranch(mn, f) {
+    switch (mn) {
+      case 'B.EQ': return f.Z === 1;
+      case 'B.NE': return f.Z === 0;
+      case 'B.MI': return f.N === 1;
+      case 'B.PL': return f.N === 0;
+      case 'B.VS': return f.V === 1;
+      case 'B.VC': return f.V === 0;
+      case 'B.HS': case 'B.CS': return f.C === 1;
+      case 'B.LO': case 'B.CC': return f.C === 0;
+      case 'B.HI': return f.C === 1 && f.Z === 0;
+      case 'B.LS': return f.C === 0 || f.Z === 1;
+      case 'B.GE': return f.N === f.V;
+      case 'B.LT': return f.N !== f.V;
+      case 'B.GT': return f.Z === 0 && f.N === f.V;
+      case 'B.LE': return f.Z === 1 || f.N !== f.V;
+    }
+    return false;
+  }
+
+  Stations.C = function() {
+    var host, scen, picked, branchOpts, branchPicks, step, flagsLocked;
+
+    function newRound() {
+      scen = pick(FLAG_SCENARIOS);
+      picked = { N: 0, Z: 0, C: 0, V: 0 };
+      flagsLocked = false;
+      branchPicks = {};
+      step = 1;
+      // Build a 4-option branch question: 1-2 fire, rest don't.
+      var fires = BRANCH_LIST.filter(function(b) { return evaluateBranch(b, scen); });
+      var dont  = BRANCH_LIST.filter(function(b) { return !evaluateBranch(b, scen); });
+      var firePool = shuffle(fires);
+      var dontPool = shuffle(dont);
+      var k = Math.min(2, firePool.length);
+      if (k === 0) k = 0; // edge case: nothing fires
+      var chosenFires = firePool.slice(0, Math.max(1, k));
+      if (firePool.length === 0) chosenFires = [];
+      var need = 4 - chosenFires.length;
+      branchOpts = shuffle(chosenFires.concat(dontPool.slice(0, need)));
+      render();
+    }
+
+    function render() {
+      host.innerHTML = '';
+      var sec = el('section', 'station panel', { 'data-id': 'C' });
+      sec.appendChild(el('h2', null, null, 'C &middot; Flag Forensics <span class="badge b-exam">NZCV</span>'));
+      sec.appendChild(el('div', 'objective', null,
+        'Step 1: toggle the NZCV bits the operation produces. Step 2: mark every <code>B.cond</code> that fires for those flags.'));
+
+      var op = el('div', 'flagOp');
+      op.innerHTML = '<span class="op">' + scen.op + '</span> X1, X2, X3   ' +
+        '<span class="hint" style="display:inline">with X2 = <code>' + scen.a + '</code>, X3 = <code>' + scen.b + '</code></span>';
+      sec.appendChild(op);
+      sec.appendChild(el('div', 'hint', null, scen.note));
+
+      sec.appendChild(el('h3', null, null, 'Step 1 &mdash; set the flags'));
+      var bank = el('div', 'flagBank');
+      ['N','Z','C','V'].forEach(function(name) {
+        var lamp = el('button', 'flagLamp', { type: 'button', 'data-flag': name });
+        lamp.appendChild(el('span', 'name', null, name));
+        lamp.appendChild(el('span', 'val', null, '0'));
+        lamp.addEventListener('click', function() { toggleFlag(name, lamp); });
+        bank.appendChild(lamp);
+      });
+      sec.appendChild(bank);
+
+      var fStep1 = el('div', 'actions');
+      var submitFlags = el('button', 'btn btn-primary', { type: 'button', id: 'submitFlagsBtn' }, 'Submit flags (Enter)');
+      submitFlags.addEventListener('click', onSubmitFlags);
+      fStep1.appendChild(submitFlags);
+      sec.appendChild(fStep1);
+
+      // Step 2 panel placeholder
+      var s2 = el('div', null, { id: 'step2C', style: 'display:none; margin-top:14px;' });
+      sec.appendChild(s2);
+
+      var fb = el('div', 'feedback', { id: 'fbC' });
+      sec.appendChild(fb);
+
+      var actions = el('div', 'actions');
+      var rerollBtn = el('button', 'btn', { type: 'button' }, 'New round (R)');
+      rerollBtn.addEventListener('click', newRound);
+      actions.appendChild(rerollBtn);
+      sec.appendChild(actions);
+
+      host.appendChild(sec);
+    }
+
+    function toggleFlag(name, lamp) {
+      if (flagsLocked) return;
+      picked[name] = picked[name] ? 0 : 1;
+      lamp.classList.toggle('on', !!picked[name]);
+      lamp.querySelector('.val').textContent = picked[name];
+    }
+
+    function onSubmitFlags() {
+      if (flagsLocked) return;
+      var fb = document.getElementById('fbC');
+      var ok = picked.N === scen.N && picked.Z === scen.Z && picked.C === scen.C && picked.V === scen.V;
+      var got = 'N=' + picked.N + ' Z=' + picked.Z + ' C=' + picked.C + ' V=' + picked.V;
+      var want = 'N=' + scen.N + ' Z=' + scen.Z + ' C=' + scen.C + ' V=' + scen.V;
+      if (!ok) {
+        // Reveal correct, deduct, lock so we can move on.
+        document.querySelectorAll('.flagLamp').forEach(function(l) {
+          var f = l.getAttribute('data-flag');
+          l.classList.toggle('on', !!scen[f]);
+          l.querySelector('.val').textContent = scen[f];
+          l.classList.add('locked');
+        });
+        fb.innerHTML = 'Got <code>' + got + '</code>; correct is <code>' + want + '</code>. <span class="badge b-bad">−2</span>';
+        fb.className = 'feedback no';
+        addScore('C', 1); // tiny consolation for engaging
+      } else {
+        document.querySelectorAll('.flagLamp').forEach(function(l) { l.classList.add('locked'); });
+        fb.innerHTML = 'Flags correct: <code>' + want + '</code>. Now pick the branches that fire.';
+        fb.className = 'feedback ok';
+        addScore('C', 5);
+      }
+      flagsLocked = true;
+      document.getElementById('submitFlagsBtn').disabled = true;
+      buildStep2(ok);
+    }
+
+    function buildStep2(perfectFlags) {
+      step = 2;
+      var s2 = document.getElementById('step2C');
+      s2.style.display = '';
+      s2.innerHTML = '';
+      s2.appendChild(el('h3', null, null, 'Step 2 &mdash; which <code>B.cond</code> fire?'));
+      var grid = el('div', 'branchOpts', { id: 'branchOptsC' });
+      branchOpts.forEach(function(mn, i) {
+        var b = el('button', 'btn', { type: 'button', 'data-mn': mn, 'data-i': String(i), 'aria-pressed': 'false' },
+          (i + 1) + '. ' + mn);
+        b.addEventListener('click', function() {
+          if (b.disabled) return;
+          var pressed = b.getAttribute('aria-pressed') === 'true';
+          b.setAttribute('aria-pressed', pressed ? 'false' : 'true');
+          branchPicks[mn] = !pressed;
+        });
+        grid.appendChild(b);
+      });
+      s2.appendChild(grid);
+      var actions = el('div', 'actions');
+      var submit = el('button', 'btn btn-primary', { type: 'button', id: 'submitBranchBtn' }, 'Submit branches (Enter)');
+      submit.addEventListener('click', function() { onSubmitBranches(perfectFlags); });
+      actions.appendChild(submit);
+      s2.appendChild(actions);
+      // Stash perfect-flags flag for confirm()
+      s2.dataset.perfectFlags = perfectFlags ? '1' : '0';
+    }
+
+    function onSubmitBranches(perfectFlags) {
+      var fb = document.getElementById('fbC');
+      var hits = 0, total = branchOpts.length, perfect = true, fired = [], wrong = [];
+      branchOpts.forEach(function(mn) {
+        var btn = document.querySelector('#branchOptsC .btn[data-mn="' + mn + '"]');
+        var should = evaluateBranch(mn, scen);
+        var picked = !!branchPicks[mn];
+        if (should) fired.push(mn);
+        btn.disabled = true;
+        if (should && picked) { btn.classList.add('fires'); hits++; }
+        else if (!should && !picked) { btn.classList.add('miss'); /* "miss" here = correctly not picked */ hits++; }
+        else { btn.classList.add('wrong'); perfect = false; wrong.push(mn); }
+      });
+      // Re-style: distinguish correctly-not-picked (subtle) vs correctly-picked (good).
+      // We'll repaint to simpler scheme:
+      branchOpts.forEach(function(mn) {
+        var btn = document.querySelector('#branchOptsC .btn[data-mn="' + mn + '"]');
+        var should = evaluateBranch(mn, scen);
+        var picked = !!branchPicks[mn];
+        btn.classList.remove('fires', 'miss', 'wrong');
+        if (should && picked)        btn.classList.add('fires');
+        else if (should && !picked)  btn.classList.add('wrong');
+        else if (!should && picked)  btn.classList.add('wrong');
+      });
+      var earned = perfect ? (perfectFlags ? 10 : 6) : 2;
+      addScore('C', earned);
+      if (perfect) markCompleted('C');
+      fb.innerHTML = '<b>+' + earned + '</b> &mdash; ' +
+        (fired.length ? 'fires: <code>' + fired.join(', ') + '</code>' : 'no branch fires for these flags') +
+        (perfect ? '.' : ' &middot; missed/extras revealed in red.');
+      fb.className = 'feedback ' + (perfect ? 'ok' : 'no');
+      document.getElementById('submitBranchBtn').disabled = true;
+    }
+
+    function pickOption(n) {
+      if (!flagsLocked) {
+        var lamps = document.querySelectorAll('.flagLamp');
+        if (lamps[n - 1]) lamps[n - 1].click();
+      } else {
+        var opts = document.querySelectorAll('#branchOptsC .btn:not([disabled])');
+        if (opts[n - 1]) opts[n - 1].click();
+      }
+    }
+
+    function confirmStep() {
+      if (!flagsLocked) {
+        var s = document.getElementById('submitFlagsBtn');
+        if (s && !s.disabled) s.click();
+      } else {
+        var b = document.getElementById('submitBranchBtn');
+        if (b && !b.disabled) b.click();
+      }
+    }
+
+    return {
+      mount: function(h) { host = h; newRound(); },
+      unmount: function() {},
+      reroll: newRound,
+      confirm: confirmStep,
+      pickOption: pickOption
+    };
+  };
+
+  // ============================================================
+  // Station D — Addressing Modes Match
+  // ============================================================
+  var MODES = ['Register', 'Immediate', 'Base+offset', 'PC-relative', 'Pseudo-direct'];
+  var SNIPPETS = [
+    { code: 'ADD X1, X2, X3',                        mode: 'Register',     why: 'Three register operands; no constant or memory.' },
+    { code: 'SUB X9, X10, X11',                      mode: 'Register',     why: 'All operands are registers.' },
+    { code: 'AND X1, X2, X3',                        mode: 'Register',     why: 'Pure register-to-register logical op.' },
+    { code: 'ADDI X1, X2, #10',                      mode: 'Immediate',    why: '12-bit immediate as second operand.' },
+    { code: 'SUBI X1, X1, #1',                       mode: 'Immediate',    why: 'I-format with constant subtrahend.' },
+    { code: 'ANDI X1, X2, #0xFF',                    mode: 'Immediate',    why: 'Logical with immediate mask.' },
+    { code: 'LDUR X1, [X2, #16]',                    mode: 'Base+offset',  why: 'D-format: address = X2 + signed 9-bit offset.' },
+    { code: 'STUR X3, [X29, #-8]',                   mode: 'Base+offset',  why: 'Store relative to FP; 9-bit signed offset.' },
+    { code: 'LDUR X4, [SP, #0]',                     mode: 'Base+offset',  why: 'Pop-style load using SP as base.' },
+    { code: 'B label',                               mode: 'PC-relative',  why: 'B uses 26-bit PC-relative offset (words).' },
+    { code: 'BL func',                               mode: 'PC-relative',  why: 'BL: PC-relative jump and link (saves PC+4 in LR).' },
+    { code: 'CBZ X1, label',                         mode: 'PC-relative',  why: 'CB-format: 19-bit PC-relative branch on Rt==0.' },
+    { code: 'B.EQ skip',                             mode: 'PC-relative',  why: 'Conditional branches use 19-bit PC-relative offset.' },
+    { code: 'MOVZ X0, #0xABCD, LSL #16',             mode: 'Pseudo-direct',why: 'IM-format builds wide constant in 16-bit chunks.' },
+    { code: 'MOVK X0, #0x1234, LSL #0',              mode: 'Pseudo-direct',why: 'MOVK keeps other quadrants; chained with MOVZ to form 64-bit.' }
+  ];
+
+  Stations.D = function() {
+    var host, rows, picks, submitted;
+
+    function newRound() {
+      // Pick 5 snippets, ensuring at least one of each mode where possible.
+      var byMode = {};
+      MODES.forEach(function(m) { byMode[m] = []; });
+      SNIPPETS.forEach(function(s) { byMode[s.mode].push(s); });
+      var chosen = MODES.map(function(m) { return pick(byMode[m]); });
+      // (5 modes → exactly 5 rows.)
+      rows = shuffle(chosen);
+      picks = {};
+      submitted = false;
+      render();
+    }
+
+    function render() {
+      host.innerHTML = '';
+      var sec = el('section', 'station panel', { 'data-id': 'D' });
+      sec.appendChild(el('h2', null, null, 'D &middot; Addressing Modes <span class="badge b-exam">core</span>'));
+      sec.appendChild(el('div', 'objective', null,
+        'For each LEGv8 snippet, pick the addressing mode it uses, then submit.'));
+
+      rows.forEach(function(s, i) {
+        var row = el('div', 'modeRow', { 'data-i': String(i) });
+        row.appendChild(el('div', 'snippet', null, escapeHtml(s.code)));
+        var picksWrap = el('div', 'picks');
+        MODES.forEach(function(m) {
+          var b = el('button', 'btn', { type: 'button', 'data-mode': m, 'aria-pressed': 'false' }, m);
+          b.addEventListener('click', function() {
+            if (submitted) return;
+            picks[i] = m;
+            row.querySelectorAll('.picks .btn').forEach(function(x) {
+              x.setAttribute('aria-pressed', x.getAttribute('data-mode') === m ? 'true' : 'false');
+            });
+          });
+          picksWrap.appendChild(b);
+        });
+        row.appendChild(picksWrap);
+        sec.appendChild(row);
+      });
+
+      var fb = el('div', 'feedback', { id: 'fbD' });
+      sec.appendChild(fb);
+
+      var actions = el('div', 'actions');
+      var submit = el('button', 'btn btn-primary', { type: 'button', id: 'submitDBtn' }, 'Submit (Enter)');
+      submit.addEventListener('click', onSubmit);
+      actions.appendChild(submit);
+      var rerollBtn = el('button', 'btn', { type: 'button' }, 'New round (R)');
+      rerollBtn.addEventListener('click', newRound);
+      actions.appendChild(rerollBtn);
+      sec.appendChild(actions);
+
+      host.appendChild(sec);
+    }
+
+    function onSubmit() {
+      if (submitted) return;
+      submitted = true;
+      var correct = 0;
+      rows.forEach(function(s, i) {
+        var row = document.querySelector('#stationHost .modeRow[data-i="' + i + '"]');
+        var chosen = picks[i];
+        if (chosen === s.mode) {
+          row.classList.add('right');
+          correct++;
+        } else {
+          row.classList.add('wrong');
+          var rev = el('div', 'reveal', null, 'Correct: <b>' + s.mode + '</b> &middot; ' + s.why);
+          row.appendChild(rev);
+        }
+      });
+      var earned = correct === rows.length ? 12 : (correct * 2);
+      addScore('D', earned);
+      if (correct === rows.length) markCompleted('D');
+      var fb = document.getElementById('fbD');
+      fb.innerHTML = '<b>+' + earned + '</b> &mdash; ' + correct + ' / ' + rows.length + ' correct.';
+      fb.className = 'feedback ' + (correct === rows.length ? 'ok' : 'no');
+      document.getElementById('submitDBtn').disabled = true;
+    }
+
+    function pickOption(n) {
+      // No clean 1-4 mapping (5 modes × 5 rows). Treat 1-4 as "select option n on first un-chosen row".
+      var row = null;
+      var rs = document.querySelectorAll('#stationHost .modeRow');
+      for (var i = 0; i < rs.length; i++) {
+        if (!picks[i]) { row = rs[i]; break; }
+      }
+      if (!row) return;
+      var btns = row.querySelectorAll('.picks .btn');
+      if (btns[n - 1]) btns[n - 1].click();
+    }
+
+    function confirmStep() {
+      var b = document.getElementById('submitDBtn');
+      if (b && !b.disabled) b.click();
+    }
+
+    return {
+      mount: function(h) { host = h; newRound(); },
+      unmount: function() {},
+      reroll: newRound,
+      confirm: confirmStep,
+      pickOption: pickOption
+    };
+  };
+
+  // ============================================================
+  // DOM helpers
+  // ============================================================
+  function el(tag, cls, attrs, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (attrs) {
+      for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
+    }
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  // ============================================================
+  // Keyboard shortcuts
+  // ============================================================
+  document.addEventListener('keydown', function(e) {
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (helpDlg.open && e.key !== '?') {
+      if (e.key === 'Escape') return; // dialog handles itself
+      return;
+    }
+    var key = e.key;
+    if (/^[1-9]$/.test(key)) {
+      var n = parseInt(key, 10);
+      // If user is on station picker (no station mounted yet) or top-level: 1-4 picks station.
+      // We always allow 1-4 to switch station via the picker if there is no active option to pick.
+      // To keep behavior predictable: if focus is on picker buttons OR no current controller, switch station;
+      // otherwise hand to controller's pickOption.
+      if (n >= 1 && n <= 4 && (e.target && e.target.closest && e.target.closest('#stationPicker'))) {
+        var b = document.querySelector('#stationPicker .btn[data-station="' + 'ABCD'.charAt(n - 1) + '"]');
+        if (b) { b.click(); e.preventDefault(); return; }
+      }
+      if (currentController && typeof currentController.pickOption === 'function') {
+        currentController.pickOption(n);
+        e.preventDefault();
+        return;
+      }
+    } else if (key === 'Enter') {
+      if (currentController && typeof currentController.confirm === 'function') {
+        currentController.confirm();
+      }
+    } else if (key === 'r' || key === 'R') {
+      if (currentController && typeof currentController.reroll === 'function') {
+        currentController.reroll();
+        e.preventDefault();
+      }
+    } else if (key === '?') {
+      openHelp();
+      e.preventDefault();
+    }
+  });
+
+  // ============================================================
+  // Theme toggle (mirrors chapter pages)
+  // ============================================================
+  (function() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    var mq = window.matchMedia('(prefers-color-scheme: light)');
+    function currentTheme() {
+      var t = root.getAttribute('data-theme');
+      if (t === 'light' || t === 'dark') return t;
+      return mq.matches ? 'light' : 'dark';
+    }
+    function updateLabel() {
+      var t = currentTheme();
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.setAttribute('title',      t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    btn.addEventListener('click', function() {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+      updateLabel();
+    });
+    if (mq.addEventListener) {
+      mq.addEventListener('change', function() {
+        var saved = null;
+        try { saved = localStorage.getItem('study-guide-theme'); } catch (e) {}
+        if (saved !== 'light' && saved !== 'dark') updateLabel();
+      });
+    }
+    updateLabel();
+  })();
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  refreshScorebar();
+  var initial = (location.hash || '').replace('#', '').toUpperCase();
+  if (!/^[ABCD]$/.test(initial)) initial = S.active;
+  mountStation(initial);
+})();
+</script>
+</body>
+</html>
