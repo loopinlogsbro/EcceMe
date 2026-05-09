@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>C952 — Chapter 3 Study Guide (LEGv8 / Instructions)</title>
+<style>
+  /* Default = dark. Overridden if user OS prefers light AND no manual choice yet,
+     or if [data-theme="light"] is set on <html>. */
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --panel-2: #f1f3f7;
+      --border: #d8dde5;
+      --text: #1a1d23;
+      --muted: #5a6473;
+      --accent: #1f6feb;
+      --warn: #b86a00;
+      --good: #1d8a5a;
+      --bad: #c0392b;
+      --code-bg: #f1f3f7;
+      --hl: #d6e4ff;
+      --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa;
+    --panel: #ffffff;
+    --panel-2: #f1f3f7;
+    --border: #d8dde5;
+    --text: #1a1d23;
+    --muted: #5a6473;
+    --accent: #1f6feb;
+    --warn: #b86a00;
+    --good: #1d8a5a;
+    --bad: #c0392b;
+    --code-bg: #f1f3f7;
+    --hl: #d6e4ff;
+    --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--text); }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
+  header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: #cdd5e2; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: #fff; }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: #cdd5e2; font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; color: #cdd5e2; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { color: #fff; font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+</style>
+<script>
+  // Apply saved theme before render to avoid flash
+  (function() {
+    try {
+      var saved = localStorage.getItem('c952-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
+<div class="wrap">
+
+<header>
+  <h1>C952 — Chapter 3 Study Guide <span class="badge b-key">LEGv8 / ARMv8</span></h1>
+  <div class="sub">Instructions: Language of the Computer. Source: zyBooks ch3.pdf. Built for fast last-pass review before the exam.</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">3.1 Introduction</a>
+  <a href="#s2">3.2 Operations</a>
+  <a href="#s3">3.3 Operands &amp; memory</a>
+  <a href="#s4">3.4 Signed/unsigned</a>
+  <a href="#s5">3.5 Instruction representation</a>
+  <a href="#s6">3.6 Logical operations</a>
+  <a href="#s7">3.7 Decisions &amp; branches</a>
+  <a href="#s8">3.8 Procedures</a>
+  <a href="#s9">3.9 ASCII / Unicode</a>
+  <a href="#s10">3.10 Addressing modes</a>
+  <a href="#s11">3.11 Synchronization</a>
+  <a href="#s12">3.12 Translate/start a program</a>
+  <a href="#cheat">Cheat sheet</a>
+  <a href="#quiz">Self-test (Q&amp;A)</a>
+  <a href="#trap">Common exam traps</a>
+</div>
+
+<!-- ===================== 3.1 ===================== -->
+<h2 id="s1">3.1 Introduction <span class="badge b-key">vocabulary</span></h2>
+<div class="panel">
+  <p>To control hardware you must speak its language. The "words" are <b>instructions</b>; the "vocabulary" is the <b>instruction set</b>. The textbook teaches a subset of <b>ARMv8</b> called <b>LEGv8</b>.</p>
+  <div class="grid grid-3">
+    <div class="term"><b>Instruction set</b><span class="d">Vocabulary of commands a given architecture understands.</span></div>
+    <div class="term"><b>Stored-program concept</b><span class="d">Instructions and data are both stored in memory as numbers, so programs can be loaded, copied, and changed like any other data.</span></div>
+    <div class="term"><b>ARMv8 vs LEGv8</b><span class="d">ARMv8 = full ARM 64-bit ISA. LEGv8 = teaching subset.</span></div>
+  </div>
+  <p class="hint">Likely exam phrasing: "Programs and data can be stored in memory as numbers" → <span class="ok">True</span>. "Instruction sets of different computers are quite similar" → <span class="ok">True</span>.</p>
+</div>
+
+<!-- ===================== 3.2 ===================== -->
+<h2 id="s2">3.2 Operations of the computer hardware</h2>
+<div class="panel">
+  <p>Every LEGv8 arithmetic instruction has <b>exactly three operands</b> (one destination, two sources). This is rigid by design: <em>simplicity favors regularity</em>.</p>
+<pre>ADD a, b, c    // a = b + c
+SUB a, b, c    // a = b - c</pre>
+  <p>To sum four variables you need <b>three</b> ADDs (each ADD adds only two values):</p>
+<pre>ADD a, b, c    // a = b + c
+ADD a, a, d    // a = b + c + d
+ADD a, a, e    // a = b + c + d + e</pre>
+  <p><b>Three design principles</b> introduced in this chapter:</p>
+  <ul>
+    <li><span class="hl">Simplicity favors regularity</span> — fixed instruction format, fixed 3-operand arithmetic.</li>
+    <li><span class="hl">Smaller is faster</span> — why LEGv8 has 32 registers (more registers ⇒ slower clock).</li>
+    <li><span class="hl">Good design demands good compromises</span> — different instruction formats coexist (R/I/D/B/CB/IM) so opcodes stay regular while leaving room for immediates.</li>
+  </ul>
+</div>
+
+<!-- ===================== 3.3 ===================== -->
+<h2 id="s3">3.3 Operands of the computer hardware <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <div class="grid grid-3">
+    <div class="term"><b>Word</b><span class="d">32 bits.</span></div>
+    <div class="term"><b>Doubleword</b><span class="d">64 bits — the size of a LEGv8 register.</span></div>
+    <div class="term"><b>Register</b><span class="d">Fast hardware storage. LEGv8 has <b>32</b> registers, each <b>64 bits</b> wide, named X0…X30 plus XZR.</span></div>
+    <div class="term"><b>Memory</b><span class="d">Large 1-D array of bytes. Byte-addressed: addresses of sequential doublewords differ by <b>8</b>.</span></div>
+    <div class="term"><b>Address</b><span class="d">Index into memory; selects a byte.</span></div>
+    <div class="term"><b>XZR</b><span class="d">Zero register (X31) — always reads as 0; cannot be changed.</span></div>
+  </div>
+
+  <h3>Load / Store (data transfer)</h3>
+<pre>LDUR  X9,  [X22, #8]     // X9 = Mem[X22 + 8]    (load doubleword)
+STUR  X9,  [X22, #8]     // Mem[X22 + 8] = X9    (store doubleword)
+LDURB X9,  [X0, #0]      // load 1 byte, zero-extend
+STURB X9,  [X1, #0]      // store low byte
+LDURH X9,  [X0, #0]      // load 16-bit halfword (sign-extends)
+STURH X9,  [X1, #0]      // store halfword</pre>
+  <p><b>Address = base register + immediate offset.</b> Offset in <code>[Xn, #imm]</code> is <b>9 bits</b> in D-format → ±256 byte range from base.</p>
+
+  <h3>Compiling <code>g = h + A[8];</code></h3>
+<pre>// X20=g, X21=h, X22=base of A
+LDUR X9,  [X22, #64]   // X9 = A[8]   (offset = 8 * 8 bytes = 64)
+ADD  X20, X21, X9      // g = h + A[8]</pre>
+  <p class="hint">Why <b>64</b>? Doublewords are 8 bytes, so element index <code>i</code> uses byte offset <code>i*8</code>.</p>
+</div>
+
+<!-- ===================== 3.4 ===================== -->
+<h2 id="s4">3.4 Signed and unsigned numbers <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <div class="grid grid-3">
+    <div class="term"><b>LSB</b><span class="d">Least-significant bit — rightmost (bit 0).</span></div>
+    <div class="term"><b>MSB</b><span class="d">Most-significant bit — leftmost (bit 63 in a doubleword).</span></div>
+    <div class="term"><b>Sign bit</b><span class="d">In two's complement, the MSB. 0 = positive, 1 = negative.</span></div>
+  </div>
+
+  <h3>Ranges</h3>
+  <table>
+    <tr><th>Width</th><th>Unsigned</th><th>Signed (two's complement)</th></tr>
+    <tr><td>4-bit</td><td>0 … 15</td><td>−8 … 7</td></tr>
+    <tr><td>8-bit</td><td>0 … 255</td><td>−128 … 127</td></tr>
+    <tr><td>32-bit</td><td>0 … 2³² − 1 ≈ 4.29 B</td><td>−2³¹ … 2³¹ − 1</td></tr>
+    <tr><td>64-bit</td><td>0 … 2⁶⁴ − 1</td><td>−2⁶³ … 2⁶³ − 1</td></tr>
+  </table>
+  <div class="formula">Unsigned N-bit max:   2^N − 1
+Signed N-bit range:   −2^(N−1)  to  2^(N−1) − 1</div>
+
+  <h3>Two's complement negation (memorize)</h3>
+  <ol>
+    <li>Flip every bit (0↔1).</li>
+    <li>Add 1.</li>
+  </ol>
+<pre>+5  in 8-bit   = 0000 0101
+flip           = 1111 1010
++1             = 1111 1011  =  -5</pre>
+
+  <h3>Sign extension</h3>
+  <p>To extend an N-bit two's-complement value to more bits, <b>copy the sign bit</b> into the new high bits.</p>
+<pre>-2 in 32-bit:   1111 1111 ... 1111 1110
+-2 in 64-bit:   1111 1111 ... 1111 1111 1111 ... 1111 1110</pre>
+
+  <h3>Overflow</h3>
+  <p>For two's complement: overflow occurs when the operands have the <b>same sign</b> but the result has the <b>opposite sign</b> (i.e. the carry into the MSB ≠ the carry out of the MSB).</p>
+  <ul>
+    <li>pos + pos = neg → overflow</li>
+    <li>neg + neg = pos → overflow</li>
+    <li>pos + neg → never overflows</li>
+  </ul>
+
+  <h3>Signed vs unsigned loads</h3>
+  <ul>
+    <li><b>LDURSB / LDURSW</b> — sign-extend (treat byte/word as signed).</li>
+    <li><b>LDURB / LDURH</b> — zero-extend (treat as unsigned).</li>
+    <li>Memory addresses are <b>unsigned</b> — there are no negative addresses.</li>
+  </ul>
+</div>
+
+<!-- ===================== 3.5 ===================== -->
+<h2 id="s5">3.5 Representing instructions in the computer <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>All LEGv8 instructions are exactly <b>32 bits</b> long. There are six formats; you mainly need <b>R, I, D</b> (and B, CB for branches).</p>
+
+  <h3>R-format (register arithmetic / logical / shift)</h3>
+<pre>| opcode | Rm  | shamt | Rn  | Rd  |
+|  11    |  5  |   6   |  5  |  5  |   = 32 bits</pre>
+  <p>Examples: <code>ADD, SUB, AND, ORR, EOR, LSL, LSR, BR</code>. <code>shamt</code> = shift amount (0 unless it's a shift).</p>
+
+  <h3>I-format (immediate)</h3>
+<pre>| opcode | immediate | Rn  | Rd  |
+|  10    |    12     |  5  |  5  |   = 32 bits</pre>
+  <p>Examples: <code>ADDI, SUBI, ANDI, ORRI, EORI</code>. Immediate is <b>12 bits</b> (zero-extended in LEGv8).</p>
+
+  <h3>D-format (data transfer / load &amp; store)</h3>
+<pre>| opcode | address | op2 | Rn  | Rt  |
+|  11    |    9    |  2  |  5  |  5  |   = 32 bits</pre>
+  <p>Examples: <code>LDUR, STUR, LDURB, STURB, LDURH, STURH</code>. Address = 9-bit signed byte offset. <code>Rt</code> is destination on load, source on store.</p>
+
+  <h3>Opcodes you should recognize</h3>
+  <table>
+    <tr><th>Mnemonic</th><th>Opcode (decimal)</th><th>Format</th></tr>
+    <tr><td>ADD</td><td>1112</td><td>R</td></tr>
+    <tr><td>SUB</td><td>1624</td><td>R</td></tr>
+    <tr><td>ADDI</td><td>580</td><td>I</td></tr>
+    <tr><td>SUBI</td><td>836</td><td>I</td></tr>
+    <tr><td>AND</td><td>1104</td><td>R</td></tr>
+    <tr><td>ORR</td><td>1360</td><td>R</td></tr>
+    <tr><td>EOR</td><td>1616</td><td>R</td></tr>
+    <tr><td>LSL</td><td>1691</td><td>R</td></tr>
+    <tr><td>LSR</td><td>1690</td><td>R</td></tr>
+    <tr><td>LDUR</td><td>1986</td><td>D</td></tr>
+    <tr><td>STUR</td><td>1984</td><td>D</td></tr>
+    <tr><td>CBZ</td><td>1440</td><td>CB</td></tr>
+    <tr><td>CBNZ</td><td>1448</td><td>CB</td></tr>
+    <tr><td>B</td><td>160 (6-bit op)</td><td>B</td></tr>
+    <tr><td>BL</td><td>1184 (6-bit op)</td><td>B</td></tr>
+    <tr><td>B.cond</td><td>672</td><td>CB</td></tr>
+  </table>
+
+  <h3>The "Big Picture"</h3>
+  <ol>
+    <li>Instructions are represented as numbers.</li>
+    <li>Programs are stored in memory and read/written like data.</li>
+  </ol>
+  <p>This is the <b>stored-program concept</b> — it's why one machine can run any program (compiler, editor, game) just by loading different memory.</p>
+
+  <h3>Hex shortcut</h3>
+  <p>4 binary bits = 1 hex digit. C/Java hex prefix is <code>0x</code>.</p>
+<pre>1010 1011 0000 0011  =  0xAB03</pre>
+</div>
+
+<!-- ===================== 3.6 ===================== -->
+<h2 id="s6">3.6 Logical operations</h2>
+<div class="panel">
+  <table>
+    <tr><th>Operation</th><th>C/Java</th><th>LEGv8</th><th>Use</th></tr>
+    <tr><td>Shift left</td><td><code>&lt;&lt;</code></td><td><code>LSL</code></td><td>Multiply by 2ⁿ; shamt in R-format. <code>LSL Xd, Xn, #n</code></td></tr>
+    <tr><td>Shift right</td><td><code>&gt;&gt;&gt;</code></td><td><code>LSR</code></td><td>Logical right shift (fills with 0). Divide unsigned by 2ⁿ.</td></tr>
+    <tr><td>Bitwise AND</td><td><code>&amp;</code></td><td><code>AND, ANDI</code></td><td>Mask — clear specific bits.</td></tr>
+    <tr><td>Bitwise OR</td><td><code>|</code></td><td><code>ORR, ORRI</code></td><td>Set specific bits to 1.</td></tr>
+    <tr><td>Bitwise XOR</td><td><code>^</code> (≈ <code>~</code> via EOR all-1s)</td><td><code>EOR, EORI</code></td><td>Toggle bits. NOT = <code>EOR Xd, Xn, ~0</code>.</td></tr>
+  </table>
+  <p class="hint">There is <b>no NOT instruction</b> in LEGv8. To invert: <code>EOR Xd, Xn, X-with-all-1s</code> (or use <code>EORI</code> with a constant of all-1s).</p>
+<pre>// Multiply X10 by 8
+LSL X10, X10, #3      // 2^3 = 8
+
+// Force the low bit of X10 to 1
+ORRI X10, X10, #1
+
+// Mask to keep only low byte
+ANDI X10, X10, #0xFF</pre>
+</div>
+
+<!-- ===================== 3.7 ===================== -->
+<h2 id="s7">3.7 Instructions for making decisions <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <div class="grid grid-2">
+    <div class="term"><b>CBZ Xn, label</b><span class="d">Compare-and-branch if zero. Branches if Xn == 0.</span></div>
+    <div class="term"><b>CBNZ Xn, label</b><span class="d">Compare-and-branch if not zero. Branches if Xn != 0.</span></div>
+    <div class="term"><b>B label</b><span class="d">Unconditional branch (uses B-format, ±128 MB range).</span></div>
+    <div class="term"><b>B.cond label</b><span class="d">Branch on flags after a "set flags" instruction (ADDS/SUBS/etc.).</span></div>
+    <div class="term"><b>BR Xn</b><span class="d">Unconditional branch to address held in register Xn.</span></div>
+  </div>
+
+  <h3>Condition codes (NZCV flags)</h3>
+  <ul>
+    <li><b>N</b> — result Negative (MSB = 1)</li>
+    <li><b>Z</b> — result Zero</li>
+    <li><b>V</b> — signed oVerflow</li>
+    <li><b>C</b> — Carry / borrow out of MSB</li>
+  </ul>
+  <p>Flags are <b>only</b> set by the "S" variants: <code>ADDS, ADDIS, ANDS, ANDIS, SUBS, SUBIS</code>. Add an <b>S</b> to set flags. Plain <code>ADD</code> does <em>not</em> change flags.</p>
+
+  <h3>B.cond suffixes after a SUBS A − B</h3>
+  <table>
+    <tr><th>Compare</th><th>Signed</th><th>Test</th><th>Unsigned</th><th>Test</th></tr>
+    <tr><td>=</td><td>B.EQ</td><td>Z=1</td><td>B.EQ</td><td>Z=1</td></tr>
+    <tr><td>≠</td><td>B.NE</td><td>Z=0</td><td>B.NE</td><td>Z=0</td></tr>
+    <tr><td>&lt;</td><td>B.LT</td><td>N≠V</td><td>B.LO</td><td>C=0</td></tr>
+    <tr><td>≤</td><td>B.LE</td><td>~(Z=0 &amp; N=V)</td><td>B.LS</td><td>~(Z=0 &amp; C=1)</td></tr>
+    <tr><td>&gt;</td><td>B.GT</td><td>Z=0 &amp; N=V</td><td>B.HI</td><td>Z=0 &amp; C=1</td></tr>
+    <tr><td>≥</td><td>B.GE</td><td>N=V</td><td>B.HS</td><td>C=1</td></tr>
+  </table>
+  <p>Plus four flag-bit branches: <code>B.MI</code> (N=1), <code>B.PL</code> (N=0), <code>B.VS</code> (V=1), <code>B.VC</code> (V=0).</p>
+
+  <h3>If/else pattern</h3>
+<pre>// if (i == j) f = g + h; else f = g - h;
+SUB  X9,  X22, X23     // X9 = i - j
+CBNZ X9,  Else         // if i != j (X9 != 0) jump to Else
+ADD  X19, X20, X21     // f = g + h
+B    Exit
+Else: SUB X19, X20, X21  // f = g - h
+Exit:</pre>
+
+  <h3>While loop pattern</h3>
+<pre>// while (save[i] == k) i++;
+Loop: LSL  X10, X22, #3       // i * 8
+      ADD  X10, X10, X25      // &amp;save[i]
+      LDUR X9,  [X10, #0]     // save[i]
+      SUB  X11, X9,  X24      // save[i] - k
+      CBNZ X11, Exit          // exit if not equal
+      ADDI X22, X22, #1       // i++
+      B    Loop
+Exit:</pre>
+
+  <h3>Bounds check shortcut</h3>
+  <p>Treating signed values as unsigned makes a single unsigned ≥ check verify both <code>x &lt; length</code> and <code>x ≥ 0</code> (because negatives become huge unsigned values).</p>
+<pre>// Check 0 ≤ X20 &lt; X11, branch to error if out of range
+SUBS XZR, X20, X11
+B.HS IndexOutOfBounds</pre>
+
+  <p class="hint"><b>Basic block</b> = straight-line code with no branches in the middle (label only at start, branch only at end). Compilers split programs into basic blocks early.</p>
+</div>
+
+<!-- ===================== 3.8 ===================== -->
+<h2 id="s8">3.8 Supporting procedures <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p><b>Six steps</b> of a procedure call:</p>
+  <ol>
+    <li>Caller puts parameters where the callee can find them.</li>
+    <li>Transfer control to the procedure (<code>BL</code>).</li>
+    <li>Acquire storage (push on stack if needed).</li>
+    <li>Perform the work.</li>
+    <li>Place return value where caller can read it.</li>
+    <li>Return control (<code>BR LR</code>).</li>
+  </ol>
+
+  <h3>Branch-and-link / Return</h3>
+<pre>BL   ProcedureAddress    // LR (X30) = PC + 4; PC = ProcedureAddress
+BR   LR                  // PC = LR  (return)</pre>
+
+  <h3>LEGv8 register conventions <span class="badge b-exam">memorize</span></h3>
+  <table>
+    <tr><th>Reg #</th><th>Name</th><th>Use</th><th>Preserved across call?</th></tr>
+    <tr><td>X0–X7</td><td>Args / Returns</td><td>Argument and return-value registers</td><td class="no">No</td></tr>
+    <tr><td>X8</td><td>Indirect result</td><td>Pointer to large return value</td><td class="no">No</td></tr>
+    <tr><td>X9–X15</td><td>Temporaries</td><td>Scratch for callee</td><td class="no">No</td></tr>
+    <tr><td>X16, X17 (IP0, IP1)</td><td>Linker scratch</td><td>Used by linker / temp</td><td class="no">No</td></tr>
+    <tr><td>X18</td><td>Platform reg</td><td>Platform-dependent / temp</td><td class="no">No</td></tr>
+    <tr><td>X19–X27</td><td>Saved</td><td>Caller relies on these surviving</td><td class="ok">Yes</td></tr>
+    <tr><td>X28 (SP)</td><td>Stack pointer</td><td>Top of stack</td><td class="ok">Yes</td></tr>
+    <tr><td>X29 (FP)</td><td>Frame pointer</td><td>Anchor for activation record</td><td class="ok">Yes</td></tr>
+    <tr><td>X30 (LR)</td><td>Link register</td><td>Return address (set by BL)</td><td class="ok">Yes</td></tr>
+    <tr><td>X31 (XZR)</td><td>Zero register</td><td>Always reads as 0</td><td>—</td></tr>
+  </table>
+
+  <h3>The stack</h3>
+  <ul>
+    <li>Stack <b>grows downward</b> (toward lower addresses).</li>
+    <li>Push: <code>SUBI SP, SP, #16; STUR Xn, [SP, #0]</code></li>
+    <li>Pop: <code>LDUR Xn, [SP, #0]; ADDI SP, SP, #16</code></li>
+    <li>An <b>activation record / procedure frame</b> contains saved regs + local variables for one call.</li>
+    <li><b>FP (X29)</b> points to the first doubleword of the frame; SP may move during the procedure, FP stays put.</li>
+    <li>ARMv8 wants the stack <b>16-byte (quadword) aligned</b>.</li>
+  </ul>
+
+  <h3>Memory layout (Linux on LEGv8)</h3>
+<pre>high addr  ┌──────────────┐
+           │   Stack      │  grows down  (SP starts ~0x0000_007F_FFFF_FFFC)
+           │      ↓       │
+           │              │
+           │      ↑       │
+           │   Heap       │  malloc/new, grows up
+           │              │
+           │ Static data  │  globals, constants (~0x0000_0000_1000_0000)
+           │ Text segment │  machine code   (starts at 0x0000_0000_0040_0000)
+low addr   │ Reserved     │
+           └──────────────┘</pre>
+
+  <h3>Leaf vs nested procedure</h3>
+  <ul>
+    <li><b>Leaf</b> — calls nothing. May not need to save LR.</li>
+    <li><b>Non-leaf</b> — must save LR (X30) on the stack before calling another procedure, then restore before returning.</li>
+    <li>Recursive procedures are non-leaf (they call themselves).</li>
+  </ul>
+
+  <h3>Static vs automatic vs heap</h3>
+  <ul>
+    <li><b>Static</b> — globals; lives in static data segment.</li>
+    <li><b>Automatic</b> — local variables; on the stack, freed when procedure returns.</li>
+    <li><b>Heap</b> — <code>malloc</code> in C / <code>new</code> in Java; explicit (or GC) free.</li>
+  </ul>
+</div>
+
+<!-- ===================== 3.9 ===================== -->
+<h2 id="s9">3.9 Communicating with people (ASCII / Unicode)</h2>
+<div class="panel">
+  <h3>ASCII</h3>
+  <ul>
+    <li>8 bits per character.</li>
+    <li>Upper- and lowercase letters differ by <b>32</b> (e.g. 'A'=65, 'a'=97).</li>
+    <li>'0' = 48, ' ' (space) = 32, null = 0, tab = 9, CR = 13.</li>
+    <li>C strings are <b>null-terminated</b> (last byte = 0). Java strings store an explicit length.</li>
+  </ul>
+  <table>
+    <tr><th>Char</th><th>ASCII</th></tr>
+    <tr><td>'0'</td><td>48</td></tr>
+    <tr><td>'A'</td><td>65</td></tr>
+    <tr><td>'a'</td><td>97</td></tr>
+    <tr><td>space</td><td>32</td></tr>
+    <tr><td>null '\0'</td><td>0</td></tr>
+  </table>
+  <p>Byte instructions: <code>LDURB</code> (zero-extends) / <code>STURB</code>. Halfword for Java's 16-bit Unicode chars: <code>LDURH</code> (sign-extends) / <code>STURH</code>.</p>
+</div>
+
+<!-- ===================== 3.10 ===================== -->
+<h2 id="s10">3.10 LEGv8 addressing — wide immediates &amp; addresses <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Wide constants: MOVZ / MOVK</h3>
+  <p>The 12-bit immediate in I-format isn't enough for big constants. LEGv8 has two move-wide instructions that load 16 bits at a time into one of four 16-bit "quadrants" (LSL 0/16/32/48):</p>
+<pre>MOVZ X9, 255, LSL 16     // X9 = 0x00000000_00FF0000  (zero rest)
+MOVK X9, 8,   LSL 0      // X9 = 0x00000000_00FF0008  (keep rest)</pre>
+  <p>To build a 64-bit constant: one MOVZ + up to three MOVKs.</p>
+
+  <h3>Branch addressing</h3>
+  <ul>
+    <li><b>B / BL (B-format)</b>: 26-bit field, treated as <b>word</b> offset → reaches <b>±128 MB</b> from PC.</li>
+    <li><b>CBZ / CBNZ / B.cond (CB-format)</b>: 19-bit field, word offset → <b>±1 MB</b> from PC.</li>
+    <li>All conditional branches use <b>PC-relative addressing</b>: <code>target = PC + (offset × 4)</code>.</li>
+    <li>For longer reach, the assembler rewrites a far conditional branch into <code>CBNZ Xn, skip; B faraway; skip:</code>.</li>
+  </ul>
+
+  <h3>The four LEGv8 addressing modes</h3>
+  <table>
+    <tr><th>Mode</th><th>Operand located by</th><th>Used in</th></tr>
+    <tr><td>1. Immediate</td><td>Constant in the instruction itself</td><td>ADDI, SUBI, ANDI…</td></tr>
+    <tr><td>2. Register</td><td>The register named by the instruction</td><td>ADD, SUB, AND…</td></tr>
+    <tr><td>3. Base / displacement</td><td>Memory at <code>Reg + constant</code></td><td>LDUR, STUR, LDURB…</td></tr>
+    <tr><td>4. PC-relative</td><td>Memory at <code>PC + (constant × 4)</code></td><td>B, BL, CBZ, CBNZ, B.cond</td></tr>
+  </table>
+
+  <h3>The six instruction formats</h3>
+  <table>
+    <tr><th>Format</th><th>Layout</th><th>Used by</th></tr>
+    <tr><td>R</td><td>opcode(11) | Rm(5) | shamt(6) | Rn(5) | Rd(5)</td><td>ADD, SUB, AND, ORR, EOR, LSL, LSR, BR</td></tr>
+    <tr><td>I</td><td>opcode(10) | imm(12) | Rn(5) | Rd(5)</td><td>ADDI, SUBI, ANDI, ORRI, EORI</td></tr>
+    <tr><td>D</td><td>opcode(11) | addr(9) | op2(2) | Rn(5) | Rt(5)</td><td>LDUR, STUR, LDURB, STURB, LDURH, STURH</td></tr>
+    <tr><td>B</td><td>opcode(6) | addr(26)</td><td>B, BL</td></tr>
+    <tr><td>CB</td><td>opcode(8) | addr(19) | Rt(5)</td><td>CBZ, CBNZ, B.cond</td></tr>
+    <tr><td>IM</td><td>opcode(9) | imm(16) | quadrant(2) | Rd(5)</td><td>MOVZ, MOVK</td></tr>
+  </table>
+</div>
+
+<!-- ===================== 3.11 ===================== -->
+<h2 id="s11">3.11 Parallelism &amp; instructions: synchronization</h2>
+<div class="panel">
+  <p>Threads cooperate by reading values others write. Without ordering, you get a <b>data race</b>: two accesses from different threads to the same location, at least one a write, occurring back-to-back with unpredictable result.</p>
+  <p>LEGv8 provides an <b>atomic load-store pair</b> for building locks/mutexes:</p>
+  <ul>
+    <li><b>LDXR Xt, [Xn]</b> — load exclusive register (mark address).</li>
+    <li><b>STXR Xs, Xt, [Xn]</b> — store exclusive: if no other write happened to that address since the LDXR, store succeeds and Xs = 0; else Xs = 1 and the store is discarded.</li>
+  </ul>
+  <p>Loop until STXR returns 0 to implement test-and-set / compare-and-swap on top.</p>
+</div>
+
+<!-- ===================== 3.12 ===================== -->
+<h2 id="s12">3.12 Translating &amp; starting a program <span class="badge b-exam">core</span></h2>
+<div class="panel">
+<pre>C source (.c)
+   │  Compiler
+   ▼
+Assembly (.s)
+   │  Assembler
+   ▼
+Object module (.o, machine language)  ◄── library .a / .so
+   │  Linker (resolves symbols, relocates)
+   ▼
+Executable (a.out)
+   │  Loader  (OS reads from disk into memory)
+   ▼
+Running process in memory</pre>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Compiler</b><span class="d">High-level language → assembly. Produces symbolic, human-readable form.</span></div>
+    <div class="term"><b>Assembler</b><span class="d">Assembly → machine-language object module. Builds a <em>symbol table</em> mapping labels → addresses, accepts <em>pseudoinstructions</em> (e.g. MOV, CMP), allows multiple bases (incl. hex).</span></div>
+    <div class="term"><b>Linker / link editor</b><span class="d">Combines independent .o files + libraries; resolves external references; relocates absolute addresses; outputs an <em>executable</em>.</span></div>
+    <div class="term"><b>Loader</b><span class="d">OS program that copies executable into memory, sets up stack/heap, initializes registers, branches to the start-up routine.</span></div>
+    <div class="term"><b>DLL — Dynamically Linked Library</b><span class="d">Library is linked at <em>run time</em> rather than build time. Smaller binaries, easy to update, <em>lazy linkage</em> defers each routine until first call.</span></div>
+    <div class="term"><b>Pseudoinstruction</b><span class="d">Assembler convenience: programmer writes one instruction, assembler emits a real one. Examples: <code>MOV X9, X10</code> → <code>ORR X9, XZR, X10</code>; <code>CMP X9, X10</code> → <code>SUBS XZR, X9, X10</code>.</span></div>
+    <div class="term"><b>Java path</b><span class="d">Java compiler → <em>bytecode</em> (binary). <em>JVM</em> interprets bytecode. <em>JIT</em> compiler then translates hot methods to native code at runtime — portability + speed.</span></div>
+  </div>
+
+  <h3>UNIX file suffixes</h3>
+  <p><code>.c</code> source • <code>.s</code> assembly • <code>.o</code> object • <code>.a</code> static library • <code>.so</code> shared (DLL) • <code>a.out</code> default executable.</p>
+  <p>MS-DOS/Windows: <code>.C, .ASM, .OBJ, .LIB, .DLL, .EXE</code>.</p>
+
+  <h3>Object file (UNIX) — six pieces</h3>
+  <ol>
+    <li>Object file header (sizes &amp; positions of pieces)</li>
+    <li>Text segment (machine code)</li>
+    <li>Static data segment</li>
+    <li>Relocation information (which addresses to patch)</li>
+    <li>Symbol table (unresolved labels)</li>
+    <li>Debugging information</li>
+  </ol>
+</div>
+
+<!-- ===================== Cheat sheet ===================== -->
+<h2 id="cheat">Quick-reference cheat sheet <span class="badge b-key">last 10 minutes</span></h2>
+<div class="panel">
+  <div class="grid grid-2">
+    <div>
+      <h3>Sizes</h3>
+      <ul>
+        <li>Byte = 8 bits • Halfword = 16 • Word = 32 • Doubleword = 64</li>
+        <li>LEGv8 register = 64 bits; instruction = 32 bits</li>
+        <li>32 registers; XZR (X31) = always 0</li>
+      </ul>
+      <h3>Three design principles</h3>
+      <ul>
+        <li>Simplicity favors regularity</li>
+        <li>Smaller is faster</li>
+        <li>Good design demands good compromises</li>
+      </ul>
+      <h3>Two big stored-program ideas</h3>
+      <ul>
+        <li>Instructions are numbers</li>
+        <li>Programs and data live together in memory</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Register quick map</h3>
+      <ul>
+        <li>X0–X7 args/returns (not preserved)</li>
+        <li>X9–X15 temporaries (not preserved)</li>
+        <li>X19–X27 saved (preserved)</li>
+        <li>X28 SP, X29 FP, X30 LR (preserved)</li>
+        <li>X31 XZR</li>
+      </ul>
+      <h3>Translation pipeline</h3>
+      <p>compiler → assembler → linker → loader.</p>
+      <h3>Branches</h3>
+      <ul>
+        <li>CBZ / CBNZ — compare-with-zero, ±1 MB</li>
+        <li>B / BL — unconditional, ±128 MB</li>
+        <li>B.cond — uses NZCV flags from "S" arithmetic</li>
+        <li>BR Xn — register-indirect (used for return: <code>BR LR</code>)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Quiz ===================== -->
+<h2 id="quiz">Self-test (likely exam-style Q&amp;A)</h2>
+
+<details open>
+<summary>Number representation</summary>
+<div class="body">
+  <div class="qa"><div class="q">What is the largest unsigned value representable in N bits?</div><div class="a">2^N − 1.</div></div>
+  <div class="qa"><div class="q">Two's complement range for 32 bits?</div><div class="a">−2,147,483,648 to 2,147,483,647 (i.e. −2³¹ to 2³¹ − 1).</div></div>
+  <div class="qa"><div class="q">How do you negate a value in two's complement?</div><div class="a">Flip every bit, then add 1.</div></div>
+  <div class="qa"><div class="q">How is sign extension done?</div><div class="a">Replicate the MSB (sign bit) into every new high-order bit.</div></div>
+  <div class="qa"><div class="q">A two's-complement add overflows when…?</div><div class="a">The two operands have the same sign but the result has the opposite sign (carry-in to MSB ≠ carry-out).</div></div>
+  <div class="qa"><div class="q">In two's complement, how is 0 represented?</div><div class="a">All zeros — there is only one zero.</div></div>
+  <div class="qa"><div class="q">Convert binary 1011 to decimal.</div><div class="a">1·8 + 0·4 + 1·2 + 1·1 = 11.</div></div>
+  <div class="qa"><div class="q">Hex 0xD6 to binary?</div><div class="a">1101 0110.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Instructions &amp; operands</summary>
+<div class="body">
+  <div class="qa"><div class="q">How many operands does every LEGv8 arithmetic instruction take?</div><div class="a">Exactly three (one destination, two sources).</div></div>
+  <div class="qa"><div class="q">How many registers does LEGv8 have, and how wide is each?</div><div class="a">32 registers, each 64 bits.</div></div>
+  <div class="qa"><div class="q">Why limit to 32 registers?</div><div class="a">"Smaller is faster" (signal travel time) plus more registers cost more bits in every instruction's register fields.</div></div>
+  <div class="qa"><div class="q">Difference between word and doubleword?</div><div class="a">Word = 32 bits; doubleword = 64 bits (size of a LEGv8 register).</div></div>
+  <div class="qa"><div class="q">What does LDUR X9, [X22, #8] do?</div><div class="a">Loads the doubleword at memory address (X22 + 8) into X9.</div></div>
+  <div class="qa"><div class="q">For element A[i] of a doubleword array, what byte offset goes in the LDUR?</div><div class="a">i × 8.</div></div>
+  <div class="qa"><div class="q">Which register always reads as zero?</div><div class="a">XZR (X31).</div></div>
+</div>
+</details>
+
+<details>
+<summary>Instruction formats</summary>
+<div class="body">
+  <div class="qa"><div class="q">Length of every LEGv8 instruction?</div><div class="a">32 bits.</div></div>
+  <div class="qa"><div class="q">Format of ADD?</div><div class="a">R-format. Fields: opcode | Rm | shamt | Rn | Rd.</div></div>
+  <div class="qa"><div class="q">Format of ADDI?</div><div class="a">I-format (immediate). 12-bit immediate field.</div></div>
+  <div class="qa"><div class="q">Format of LDUR / STUR?</div><div class="a">D-format (data transfer). 9-bit address field.</div></div>
+  <div class="qa"><div class="q">In LDUR, which field names the destination register?</div><div class="a">Rt (data transfers use Rt, not Rd, because in STUR the field is the source).</div></div>
+  <div class="qa"><div class="q">Why are there multiple instruction formats?</div><div class="a">Compromise: keep all instructions 32 bits, but make room for immediates/addresses by using different field layouts.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Branches &amp; decisions</summary>
+<div class="body">
+  <div class="qa"><div class="q">CBZ vs CBNZ?</div><div class="a">CBZ branches if the register == 0; CBNZ branches if != 0.</div></div>
+  <div class="qa"><div class="q">Which addressing mode do conditional branches use?</div><div class="a">PC-relative.</div></div>
+  <div class="qa"><div class="q">What sets the NZCV flags?</div><div class="a">Only the "S" variants of arithmetic/logical instructions: ADDS, ADDIS, ANDS, ANDIS, SUBS, SUBIS.</div></div>
+  <div class="qa"><div class="q">How do MIPS conditional branches differ from LEGv8?</div><div class="a">MIPS compares two registers directly in the branch instruction; LEGv8 uses condition-code flags set by a prior S instruction.</div></div>
+  <div class="qa"><div class="q">What's a basic block?</div><div class="a">A straight-line sequence with no branch in the middle (label only at start, branch only at end).</div></div>
+  <div class="qa"><div class="q">Branch range of B / BL? Of CBZ / CBNZ?</div><div class="a">B/BL: ±128 MB. CB-format: ±1 MB.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Procedures &amp; stack</summary>
+<div class="body">
+  <div class="qa"><div class="q">Which register holds the return address after BL?</div><div class="a">LR (X30) — BL stores PC + 4 there.</div></div>
+  <div class="qa"><div class="q">How do you return from a procedure?</div><div class="a"><code>BR LR</code>.</div></div>
+  <div class="qa"><div class="q">Which registers must a callee save if it modifies them?</div><div class="a">X19–X27 (saved), X28 SP, X29 FP, X30 LR.</div></div>
+  <div class="qa"><div class="q">Argument registers?</div><div class="a">X0–X7. Same regs return values.</div></div>
+  <div class="qa"><div class="q">Direction the stack grows?</div><div class="a">Downward (toward lower addresses).</div></div>
+  <div class="qa"><div class="q">What's an activation record?</div><div class="a">The frame on the stack for one call — saved regs + locals + params.</div></div>
+  <div class="qa"><div class="q">Leaf vs non-leaf procedure?</div><div class="a">Leaf calls no other procedure (often need not save LR). Non-leaf must save LR before its inner BL.</div></div>
+  <div class="qa"><div class="q">What lives on the heap vs stack?</div><div class="a">Heap = dynamic (malloc / new). Stack = automatic locals, frames, saved regs.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Logical / shifts / ASCII</summary>
+<div class="body">
+  <div class="qa"><div class="q">How do you implement NOT in LEGv8?</div><div class="a">EOR with a register of all 1s (no NOT instruction).</div></div>
+  <div class="qa"><div class="q">LSL by n is equivalent to multiplying by what?</div><div class="a">2^n.</div></div>
+  <div class="qa"><div class="q">Which logical op forces specific bits to 0?</div><div class="a">AND with a mask.</div></div>
+  <div class="qa"><div class="q">Which logical op forces specific bits to 1?</div><div class="a">OR with a mask.</div></div>
+  <div class="qa"><div class="q">ASCII codes for 'A', 'a', '0'?</div><div class="a">65, 97, 48 (uppercase &amp; lowercase differ by 32).</div></div>
+  <div class="qa"><div class="q">How does C terminate a string?</div><div class="a">A null byte (value 0). Java stores an explicit length instead.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Translation &amp; loading</summary>
+<div class="body">
+  <div class="qa"><div class="q">Order of the four translation tools?</div><div class="a">Compiler → Assembler → Linker → Loader.</div></div>
+  <div class="qa"><div class="q">What does the linker do?</div><div class="a">Combines object files + libraries, resolves all symbol references, relocates absolute addresses, produces the executable.</div></div>
+  <div class="qa"><div class="q">What is a pseudoinstruction?</div><div class="a">An assembler convenience that maps to one or more real machine instructions (e.g. MOV → ORR with XZR).</div></div>
+  <div class="qa"><div class="q">Why use DLLs?</div><div class="a">Smaller executables, library updates without relinking, on-demand loading. Cost: small first-call overhead via lazy linkage.</div></div>
+  <div class="qa"><div class="q">How is Java executed?</div><div class="a">Compiled to bytecode → run on the JVM (interpreter) → hot methods JIT-compiled to native at runtime.</div></div>
+  <div class="qa"><div class="q">Standard UNIX suffixes for source / asm / object / shared lib?</div><div class="a">.c / .s / .o / .so.</div></div>
+</div>
+</details>
+
+<!-- ===================== Traps ===================== -->
+<h2 id="trap">Common exam traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"ADD sets the flags."</b> <span class="no">False.</span> Only the S-suffix versions (ADDS, SUBS, ANDS, ADDIS, SUBIS, ANDIS) update NZCV.</li>
+    <li><b>"There's a NOT instruction."</b> <span class="no">No.</span> Use EOR with all-ones.</li>
+    <li><b>"Doubleword addresses go up by 1 each."</b> <span class="no">No.</span> Memory is byte-addressed; sequential doublewords differ by 8.</li>
+    <li><b>"Two's complement has +0 and −0."</b> <span class="no">No.</span> Only one zero; that's the whole reason it beats sign-and-magnitude.</li>
+    <li><b>"CBZ branches if the register is non-zero."</b> <span class="no">No</span> — CBZ branches if zero. CBNZ branches if non-zero.</li>
+    <li><b>"Conditional branches reach the entire program."</b> <span class="no">No.</span> ±1 MB only (CB-format). Far branches are split into a flipped condition + an unconditional B.</li>
+    <li><b>"Java compiles directly to native code."</b> <span class="no">Not initially.</span> Compiles to bytecode; JVM interprets; JIT compiles hot methods later.</li>
+    <li><b>"The linker is the same as the loader."</b> <span class="no">No.</span> Linker resolves symbols and produces the executable; loader (part of OS) puts the executable into memory and starts it.</li>
+    <li><b>"X0 is preserved across a call."</b> <span class="no">No.</span> X0–X7 are argument/return regs and not preserved. Saved set is X19–X27 (plus SP/FP/LR).</li>
+    <li><b>"Adding two negatives can overflow into a positive."</b> <span class="ok">Yes</span> — that's textbook signed overflow.</li>
+  </ul>
+</div>
+
+<hr/>
+<p style="color:var(--muted);font-size:12px;">Built from C952 zyBooks ch3.pdf. If anything here disagrees with the book, trust the book.</p>
+
+</div>
+<script>
+  (function() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    var mq = window.matchMedia('(prefers-color-scheme: light)');
+
+    function currentTheme() {
+      var t = root.getAttribute('data-theme');
+      if (t === 'light' || t === 'dark') return t;
+      return mq.matches ? 'light' : 'dark';
+    }
+    function updateLabel() {
+      var t = currentTheme();
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.setAttribute('title', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    btn.addEventListener('click', function() {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('c952-theme', next); } catch (e) {}
+      updateLabel();
+    });
+    // If user has not chosen manually, follow OS changes live
+    mq.addEventListener && mq.addEventListener('change', function() {
+      var saved = null;
+      try { saved = localStorage.getItem('c952-theme'); } catch (e) {}
+      if (saved !== 'light' && saved !== 'dark') updateLabel();
+    });
+    updateLabel();
+  })();
+</script>
+</body>
+</html>

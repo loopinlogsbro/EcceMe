@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C952 — Chapter 2 Study Guide: Computer Abstractions &amp; Technology</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--text); }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
+  header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+</style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
+<div class="wrap">
+
+<header>
+  <h1>C952 &mdash; Chapter 2 Study Guide <span class="badge b-key">Computer Abstractions &amp; Technology</span></h1>
+  <div class="sub">WGU C952 | zyBooks Chapter 2 (COD Ch. 1) &mdash; Intro, Eight Great Ideas, Hardware, Performance, Power Wall, Multicore, Benchmarking</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">2.1 Introduction &amp; Computing Classes</a>
+  <a href="#s2">2.2 Eight Great Ideas</a>
+  <a href="#s3">2.3 Below Your Program</a>
+  <a href="#s4">2.4 Under the Covers (Hardware)</a>
+  <a href="#s5">2.5 Technologies: Processors &amp; Memory</a>
+  <a href="#s6">2.6 Performance</a>
+  <a href="#s7">2.7 The Power Wall</a>
+  <a href="#s8">2.8 Uniprocessors to Multiprocessors</a>
+  <a href="#s9">2.9 Benchmarking the Intel Core i7</a>
+  <a href="#s10">2.10 Fallacies &amp; Pitfalls</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
+</div>
+
+<!-- ===================== 2.1 ===================== -->
+<h2 id="s1">2.1 Introduction &amp; Classes of Computing <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Establishes why computer architecture matters and defines the three main categories of computers. Performance depends on algorithm, language/compiler, hardware, and I/O together &mdash; no single factor is sufficient.</p>
+
+  <div class="grid grid-3">
+    <div class="term"><b>Personal Computer (PC)</b><span class="d">Designed for a single user; emphasizes good performance at low cost; runs third-party software. Drove evolution of computing for ~35 years.</span></div>
+    <div class="term"><b>Server</b><span class="d">Runs larger programs for multiple simultaneous users; accessed via network; emphasizes throughput and dependability. Ranges from low-end (&lt;$1K) to supercomputers.</span></div>
+    <div class="term"><b>Supercomputer</b><span class="d">Highest performance and cost. Tens of thousands of processors, many terabytes of memory, costs tens to hundreds of millions. Used for weather, oil, protein structure.</span></div>
+    <div class="term"><b>Embedded Computer</b><span class="d">Inside another device; runs one predetermined application. Largest class by unit count. Often no visible OS to end user. Low cost/power/failure tolerance.</span></div>
+    <div class="term"><b>PMD (Personal Mobile Device)</b><span class="d">Battery-operated, wirelessly connected, touch/speech input, downloads apps. Smartphones and tablets. Represents the "post-PC era." Passed PCs in units sold in 2011.</span></div>
+    <div class="term"><b>Cloud Computing / WSC</b><span class="d">Warehouse Scale Computers with 100,000+ servers. Companies rent capacity (Amazon, Google). SaaS delivered over the Internet without local install.</span></div>
+    <div class="term"><b>SaaS</b><span class="d">Software as a Service &mdash; delivered via browser over Internet. No binary installed locally. Examples: web search, social networking.</span></div>
+    <div class="term"><b>Multicore Microprocessor</b><span class="d">Single chip containing multiple processor cores. A "quadcore" chip = four processors on one chip.</span></div>
+    <div class="term"><b>Acronym</b><span class="d">Word from initial letters of a string of words. RAM = Random Access Memory. CPU = Central Processing Unit.</span></div>
+  </div>
+
+  <h3>What determines program performance?</h3>
+  <table>
+    <tr><th>Component</th><th>Affects</th><th>How</th></tr>
+    <tr><td>Algorithm</td><td>Instruction count, possibly CPI</td><td>Determines number of source instructions and I/O operations executed</td></tr>
+    <tr><td>Programming language / compiler</td><td>Instruction count, CPI</td><td>Translates source to machine instructions; language abstractions affect CPI</td></tr>
+    <tr><td>Processor &amp; memory system</td><td>Execution speed</td><td>Determines how fast instructions execute (covered in COD Ch. 4, 5, 6)</td></tr>
+    <tr><td>I/O system (HW + OS)</td><td>I/O speed</td><td>Determines how fast I/O operations execute</td></tr>
+  </table>
+
+  <h3>Size prefixes &mdash; decimal vs. binary</h3>
+  <table>
+    <tr><th>Decimal term</th><th>Value</th><th>Binary term</th><th>Value</th><th>Binary % larger</th></tr>
+    <tr><td>kilobyte (KB)</td><td>10&sup3;</td><td>kibibyte (KiB)</td><td>2&sup1;&sup0;</td><td>2%</td></tr>
+    <tr><td>megabyte (MB)</td><td>10&sup6;</td><td>mebibyte (MiB)</td><td>2&sup2;&sup0;</td><td>5%</td></tr>
+    <tr><td>gigabyte (GB)</td><td>10&sup9;</td><td>gibibyte (GiB)</td><td>2&sup3;&sup0;</td><td>7%</td></tr>
+    <tr><td>terabyte (TB)</td><td>10&sup1;&sup2;</td><td>tebibyte (TiB)</td><td>2&sup4;&sup0;</td><td>10%</td></tr>
+    <tr><td>petabyte (PB)</td><td>10&sup1;&sup5;</td><td>pebibyte (PiB)</td><td>2&sup5;&sup0;</td><td>13%</td></tr>
+  </table>
+  <p class="hint">Exam tip: TiB is ~10% larger than TB. The binary prefixes were introduced to resolve ambiguity ("terabyte" used to mean both 10&sup1;&sup2; and 2&sup4;&sup0; in different industries).</p>
+</div>
+
+<!-- ===================== 2.2 ===================== -->
+<h2 id="s2">2.2 Eight Great Ideas <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Eight foundational principles every computer architect reuses. Matching questions (idea &harr; analogy) appear on most exams. Know all eight names plus a one-line description each.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>1. Design for Moore's Law</b><span class="d">IC resources double every 18&ndash;24 months (Gordon Moore, 1965). Design for where technology will be when the project <em>finishes</em>, not when it starts. Analogy: soccer player running to where the ball will be.</span></div>
+    <div class="term"><b>2. Use Abstraction to Simplify Design</b><span class="d">Hide lower-level details behind simpler models at each layer. Fundamental to hardware and software productivity. Analogy: architect designing room layout before door/window details.</span></div>
+    <div class="term"><b>3. Make the Common Case Fast</b><span class="d">Optimizing the frequent case yields more gain than optimizing the rare case. Requires measurement to know what is common. Analogy: sports car optimized for 1&ndash;2 passengers (most trips).</span></div>
+    <div class="term"><b>4. Performance via Parallelism</b><span class="d">Compute multiple operations simultaneously. Analogy: sister and brother hanging clothes to dry simultaneously.</span></div>
+    <div class="term"><b>5. Performance via Pipelining</b><span class="d">Overlap stages of a task &mdash; like a bucket brigade or assembly line. One stage processes while next stage is already working on the previous item. Analogy: one washes dishes, one dries immediately after.</span></div>
+    <div class="term"><b>6. Performance via Prediction</b><span class="d">Guess and start work early; recover cheaply if wrong. Better on average if accuracy is high. Analogy: cooking dinner before confirming someone is hungry.</span></div>
+    <div class="term"><b>7. Hierarchy of Memories</b><span class="d">Fast/small/expensive at top, slow/large/cheap at bottom. Caches give illusion of speed + capacity. Analogy: student living close to campus (common destination) not the beach (rare).</span></div>
+    <div class="term"><b>8. Dependability via Redundancy</b><span class="d">Include redundant components so the system continues when one fails. Analogy: dual rear tires on a truck; drummer's backup stick.</span></div>
+  </div>
+</div>
+
+<!-- ===================== 2.3 ===================== -->
+<h2 id="s3">2.3 Below Your Program <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Traces how a high-level program becomes binary machine instructions through layers of abstraction. Each layer hides complexity from the layer above.</p>
+
+  <div class="grid grid-3">
+    <div class="term"><b>Systems Software</b><span class="d">Software providing common services: OS, compilers, loaders, assemblers. Sits between hardware and application software.</span></div>
+    <div class="term"><b>Operating System</b><span class="d">Manages hardware resources for programs. Handles I/O, memory allocation, protected sharing of the computer among multiple simultaneous applications.</span></div>
+    <div class="term"><b>Compiler</b><span class="d">Translates high-level language (C, Java) statements into assembly language statements.</span></div>
+    <div class="term"><b>Assembler</b><span class="d">Translates symbolic assembly instructions into binary machine language. Ex: ADD A,B &rarr; 1000110010100000.</span></div>
+    <div class="term"><b>Assembly Language</b><span class="d">Symbolic representation of machine instructions. One line per machine instruction. Human-readable.</span></div>
+    <div class="term"><b>Machine Language</b><span class="d">Binary representation of machine instructions &mdash; 0s and 1s that hardware actually executes.</span></div>
+    <div class="term"><b>Binary Digit (bit)</b><span class="d">One of two numbers in base 2 (0 or 1). The fundamental unit of computer information.</span></div>
+    <div class="term"><b>Instruction</b><span class="d">A command hardware understands and obeys; represented as a collection of bits.</span></div>
+    <div class="term"><b>High-Level Language</b><span class="d">Portable language (C, Java, Python) using words and algebra. Compiled to assembly, then assembled to machine code.</span></div>
+  </div>
+
+  <h3>Translation chain</h3>
+  <pre>High-level language (C, Java, Python)
+         |   Compiler
+         v
+Assembly language  (symbolic, e.g. LEGv8: ADD X9, X20, X21)
+         |   Assembler
+         v
+Binary machine language  (bits executed directly by CPU)</pre>
+
+  <p>Example from textbook &mdash; C swap function compiled to LEGv8 assembly then assembled to binary:</p>
+  <pre>// C source
+swap(int v[], int k) { int temp; temp=v[k]; v[k]=v[k+1]; v[k+1]=temp; }
+
+// LEGv8 assembly (compiler output)
+swap: LSL X10,X1,3   ADD X10,X0,X10
+      LDUR X9,[X10,0]  LDUR X11,[X10,8]
+      STUR X11,[X10,0] STUR X9,[X10,8]
+      BR LR
+
+// Binary (assembler output)
+00000000101000100000000100011000 ...</pre>
+
+  <p>Three advantages of high-level languages: (1) natural thinking; (2) higher programmer productivity; (3) machine-independence &mdash; recompile the same source for any CPU.</p>
+  <p class="hint">Some compilers skip assembly and produce binary directly. Both paths exist in practice.</p>
+</div>
+
+<!-- ===================== 2.4 ===================== -->
+<h2 id="s4">2.4 Under the Covers (Hardware) <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Five classic computer components, display technology, processor internals, memory hierarchy, ISA, and networking.</p>
+
+  <h3>Five classic components (Big Picture &mdash; every computer past and present)</h3>
+  <div class="grid grid-3">
+    <div class="term"><b>Input</b><span class="d">Writes data to memory. Ex: keyboard, microphone, camera, touchscreen.</span></div>
+    <div class="term"><b>Output</b><span class="d">Reads data from memory for the user. Ex: display, speakers, printer.</span></div>
+    <div class="term"><b>Memory</b><span class="d">Stores instructions and data for running programs.</span></div>
+    <div class="term"><b>Datapath</b><span class="d">Performs arithmetic operations &mdash; the "brawn" of the processor.</span></div>
+    <div class="term"><b>Control</b><span class="d">Commands the datapath, memory, and I/O according to instructions &mdash; the "brain."</span></div>
+    <div class="term"><b>Processor (CPU)</b><span class="d">Datapath + Control combined. Also called Central Processor Unit. The active part of the computer.</span></div>
+  </div>
+
+  <h3>Display technology</h3>
+  <div class="grid grid-3">
+    <div class="term"><b>LCD (Liquid Crystal Display)</b><span class="d">Does NOT generate light &mdash; controls transmission of light through liquid polymer layer between polarizers. Backlit.</span></div>
+    <div class="term"><b>Active Matrix Display</b><span class="d">LCD with a transistor switch at each individual pixel for precise current control and sharper images.</span></div>
+    <div class="term"><b>Pixel</b><span class="d">Smallest picture element. Color = 8 bits each for R, G, B = 24 bits/pixel = millions of distinct colors. Stored in a frame buffer.</span></div>
+  </div>
+  <p>Frame buffer: the bit map in memory that stores the image. Hardware reads it at the refresh rate to drive the display.</p>
+
+  <h3>Memory types</h3>
+  <div class="grid grid-3">
+    <div class="term"><b>Integrated Circuit (chip)</b><span class="d">Device combining dozens to millions of transistors. The building block of modern computers.</span></div>
+    <div class="term"><b>DRAM</b><span class="d">Dynamic RAM &mdash; main memory. ~50 ns access. Volatile. Cheaper, denser than SRAM. Dominated main memory since 1975.</span></div>
+    <div class="term"><b>SRAM</b><span class="d">Static RAM &mdash; used for cache. Faster, less dense, more expensive per bit than DRAM. Also volatile.</span></div>
+    <div class="term"><b>Cache Memory</b><span class="d">Small, fast SRAM buffer inside/near CPU. Acts as buffer for slower DRAM. Gives programmer illusion of fast, large memory.</span></div>
+    <div class="term"><b>Volatile Memory</b><span class="d">Loses data when power is removed. DRAM and SRAM are volatile. Also called "main memory" or "primary memory."</span></div>
+    <div class="term"><b>Nonvolatile Memory</b><span class="d">Retains data without power. Flash, magnetic disk, DVD. Also called "secondary memory."</span></div>
+    <div class="term"><b>Flash Memory</b><span class="d">Nonvolatile semiconductor. 5&ndash;50 &mu;s access. Cheaper than DRAM; more expensive than disk. Wears out after 100K&ndash;1M writes. Standard secondary storage for PMDs.</span></div>
+    <div class="term"><b>Magnetic Disk (HDD)</b><span class="d">Rotating platters. 5&ndash;20 ms access. Lowest $/GB. Nonvolatile. Dominated server secondary storage.</span></div>
+  </div>
+
+  <h3>Memory comparison</h3>
+  <table>
+    <tr><th>Type</th><th>Volatile?</th><th>Speed</th><th>Cost/GB</th><th>Use</th></tr>
+    <tr><td>SRAM</td><td>Yes</td><td>Fastest (sub-ns)</td><td>Highest</td><td>Cache</td></tr>
+    <tr><td>DRAM</td><td>Yes</td><td>~50 ns</td><td>Medium</td><td>Main memory</td></tr>
+    <tr><td>Flash</td><td>No</td><td>~5&ndash;50 &mu;s</td><td>Low</td><td>PMD secondary storage</td></tr>
+    <tr><td>Magnetic Disk</td><td>No</td><td>~5&ndash;20 ms</td><td>Lowest</td><td>Server secondary storage</td></tr>
+  </table>
+
+  <h3>ISA and ABI</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Instruction Set Architecture (ISA)</b><span class="d">Abstract interface between hardware and lowest-level software. Specifies all instructions, registers, memory access, I/O needed to write machine code. Enables many hardware implementations to run identical software.</span></div>
+    <div class="term"><b>Application Binary Interface (ABI)</b><span class="d">ISA + OS interfaces used by application programmers. Defines binary portability across computers.</span></div>
+    <div class="term"><b>Implementation</b><span class="d">Specific hardware that obeys an ISA abstraction. Many implementations can share one ISA at different cost/performance.</span></div>
+  </div>
+  <p class="hint">Big Picture: ISA = the interface (what programmers see). Implementation = the hardware realization. Separating them allows Moore's Law improvements without changing software.</p>
+
+  <h3>Networking</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>LAN (Local Area Network)</b><span class="d">Within a building. Ethernet: up to 1 km, up to 40 Gbps. Interconnected with switches.</span></div>
+    <div class="term"><b>WAN (Wide Area Network)</b><span class="d">Spans continents. Backbone of the Internet. Based on optical fibers leased from telecom companies.</span></div>
+  </div>
+</div>
+
+<!-- ===================== 2.5 ===================== -->
+<h2 id="s5">2.5 Technologies for Building Processors &amp; Memory <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Chip manufacturing from silicon ingot to packaged die. Understand yield and why bigger dies cost more per good unit.</p>
+
+  <div class="grid grid-3">
+    <div class="term"><b>Transistor</b><span class="d">On/off switch controlled by an electric signal. The fundamental building block of all ICs.</span></div>
+    <div class="term"><b>VLSI</b><span class="d">Very Large-Scale Integrated circuit &mdash; hundreds of thousands to millions of transistors on one chip.</span></div>
+    <div class="term"><b>Silicon</b><span class="d">Natural semiconductor (found in sand). Neither conductor nor insulator &mdash; can be made to behave as either with doping. Basis of modern chips.</span></div>
+    <div class="term"><b>Silicon Crystal Ingot</b><span class="d">Rod of pure silicon crystal, 8&ndash;12 inches diameter, 12&ndash;24 inches long. Starting material for wafer production.</span></div>
+    <div class="term"><b>Wafer</b><span class="d">Thin slice from the ingot (&le;0.1 inches). Undergoes 20&ndash;40 chemical processing steps to create patterned transistors, conductors, and insulators.</span></div>
+    <div class="term"><b>Die</b><span class="d">Individual rectangular section cut from a patterned wafer. Informally called a "chip." Defective dies are discarded.</span></div>
+    <div class="term"><b>Defect</b><span class="d">Microscopic flaw in wafer or in patterning steps. Can cause a die to fail. Virtually impossible to avoid entirely &mdash; hence the concept of yield.</span></div>
+    <div class="term"><b>Yield</b><span class="d">Percentage of good dies from total dies on the wafer. Larger die = lower yield + fewer per wafer = much higher cost per chip.</span></div>
+  </div>
+
+  <h3>Manufacturing process (in order)</h3>
+  <pre>Silicon ingot
+  &rarr; Slicer &rarr; Blank wafers
+  &rarr; 20&ndash;40 processing steps &rarr; Patterned wafers
+  &rarr; Wafer tester (map defects)
+  &rarr; Dicer &rarr; Tested dies (bad ones discarded)
+  &rarr; Bond die to package &rarr; Packaged dies
+  &rarr; Part tester (final QC) &rarr; Ship to customers</pre>
+
+  <h3>Technology evolution (relative performance per unit cost)</h3>
+  <table>
+    <tr><th>Year</th><th>Technology</th><th>Relative perf/cost</th></tr>
+    <tr><td>1951</td><td>Vacuum tube</td><td>1</td></tr>
+    <tr><td>1965</td><td>Transistor</td><td>35</td></tr>
+    <tr><td>1975</td><td>Integrated circuit</td><td>900</td></tr>
+    <tr><td>1995</td><td>VLSI</td><td>2,400,000</td></tr>
+    <tr><td>2013</td><td>Ultra VLSI</td><td>250,000,000,000</td></tr>
+  </table>
+
+  <p>DRAM capacity quadrupled every 3 years for ~35 years (~60% annual increase). Rate has slowed to roughly doubling every 2&ndash;3 years in recent history.</p>
+  <p class="hint">Higher volume &rarr; lower chip cost: expensive masks amortized over more units; engineering costs spread; process tuning raises yield.</p>
+</div>
+
+<!-- ===================== 2.6 ===================== -->
+<h2 id="s6">2.6 Performance <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>The CPU performance equation is the most tested content in this chapter. Know every term, every formula, and the worked example pattern.</p>
+
+  <div class="grid grid-3">
+    <div class="term"><b>Response Time (Execution Time)</b><span class="d">Total time to complete a task: disk, memory, I/O, OS overhead &mdash; everything. What the user experiences. Also called "wall-clock time" or "elapsed time."</span></div>
+    <div class="term"><b>Throughput (Bandwidth)</b><span class="d">Tasks completed per unit time. Datacenter metric. Adding more processors typically improves throughput without reducing individual response time.</span></div>
+    <div class="term"><b>CPU Execution Time</b><span class="d">Time the CPU actually spends computing for a task &mdash; excludes I/O wait and time running other programs. CPU time = user CPU time + system CPU time.</span></div>
+    <div class="term"><b>User CPU Time</b><span class="d">CPU time spent in the user's program itself.</span></div>
+    <div class="term"><b>System CPU Time</b><span class="d">CPU time the OS spends on behalf of the user's program.</span></div>
+    <div class="term"><b>Clock Cycle (tick)</b><span class="d">One discrete time interval in the CPU. Hardware events are synchronized to the clock. Rate measured in Hz (cycles/second).</span></div>
+    <div class="term"><b>Clock Period</b><span class="d">Length of one clock cycle = 1 / Clock_rate. Ex: 4 GHz clock &rarr; period = 0.25 ns.</span></div>
+    <div class="term"><b>CPI</b><span class="d">Clock Cycles Per Instruction &mdash; average number of cycles each instruction takes. Varies by program and by instruction mix. CPI is NOT a fixed property of a CPU.</span></div>
+    <div class="term"><b>Instruction Count (IC)</b><span class="d">Number of instructions executed for a program. Same across all implementations of the same ISA (for the same program/compiler).</span></div>
+    <div class="term"><b>IPC</b><span class="d">Instructions Per Clock Cycle = 1/CPI. Some modern processors fetch &amp; execute multiple instructions per cycle, so CPI &lt; 1 is possible.</span></div>
+    <div class="term"><b>Instruction Mix</b><span class="d">Dynamic frequency of each instruction type across a program. Affects CPI because different instructions have different cycle counts.</span></div>
+  </div>
+
+  <h3>Performance relationship</h3>
+  <div class="formula">Performance = 1 / Execution_time
+
+"X is n times as fast as Y"  means:
+  Performance_X / Performance_Y = n
+  Execution_time_Y / Execution_time_X = n</div>
+
+  <h3>CPU Performance Equation</h3>
+  <div class="formula">CPU_time = Instruction_Count &times; CPI &times; Clock_Period
+CPU_time = (Instruction_Count &times; CPI) / Clock_Rate
+
+Clock_Cycles = Instruction_Count &times; CPI
+CPU_time = Clock_Cycles / Clock_Rate</div>
+
+  <h3>Example 1: Relative speed</h3>
+  <pre>A runs in 10 s. B runs the same program in 15 s.
+Ratio = Time_B / Time_A = 15/10 = 1.5
+A is 1.5x as fast as B.</pre>
+
+  <h3>Example 2: Comparing implementations of same ISA</h3>
+  <pre>A: clock period = 250 ps, CPI = 2.0
+B: clock period = 500 ps, CPI = 1.2
+Both execute I instructions.
+
+CPU_time_A = I &times; 2.0 &times; 250 ps = 500I ps
+CPU_time_B = I &times; 1.2 &times; 500 ps = 600I ps
+A is faster. Ratio = 600/500 = 1.2x faster.</pre>
+
+  <h3>Example 3: Finding required clock rate for target time</h3>
+  <pre>Program: 10 s on A (2 GHz clock). Target: 6 s on B.
+B requires 1.2x cycles of A.
+
+Cycles_A = 10 s &times; 2&times;10&sup9; = 20&times;10&sup9; cycles
+Cycles_B = 1.2 &times; 20&times;10&sup9; = 24&times;10&sup9; cycles
+
+CPU_time_B = Cycles_B / Rate_B
+6 = 24&times;10&sup9; / Rate_B
+Rate_B = 4 GHz</pre>
+
+  <h3>Example 4: Comparing code sequences (different instruction mix)</h3>
+  <pre>CPI by class: A=1, B=2, C=3
+
+Code 1: 2A + 1B + 2C  &rarr;  cycles = 2&times;1 + 1&times;2 + 2&times;3 = 10
+Code 2: 4A + 1B + 1C  &rarr;  cycles = 4&times;1 + 1&times;2 + 1&times;3 = 9
+
+Code 2 is faster (9 vs 10 cycles) despite having more instructions (6 vs 5).
+Code 2 CPI = 9/6 = 1.5. Code 1 CPI = 10/5 = 2.0.</pre>
+
+  <h3>What each factor affects</h3>
+  <table>
+    <tr><th>Factor</th><th>Set by</th><th>Changes IC?</th><th>Changes CPI?</th><th>Changes Rate?</th></tr>
+    <tr><td>Algorithm</td><td>Programmer</td><td>Yes</td><td>Possibly</td><td>No</td></tr>
+    <tr><td>Language / compiler</td><td>Programmer / compiler</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+    <tr><td>ISA</td><td>Designer</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Implementation (microarch)</td><td>Designer</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+  </table>
+  <p class="hint">Only the product IC &times; CPI &times; Clock_Period = CPU Time is a reliable measure of performance. Any one or two of the three factors alone can be misleading.</p>
+</div>
+
+<!-- ===================== 2.7 ===================== -->
+<h2 id="s7">2.7 The Power Wall <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Why clock rates stopped rising around 2004 and why energy efficiency is now the critical design constraint.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Dynamic Energy (CMOS)</b><span class="d">Energy consumed when transistors switch states (0&harr;1). Primary energy source in CMOS chips. Depends on capacitive load &times; V&sup2;.</span></div>
+    <div class="term"><b>Leakage (Static) Energy</b><span class="d">Current that flows even when transistors are "off." Responsible for ~40% of server chip power today. Cannot be eliminated by turning transistors off.</span></div>
+  </div>
+
+  <h3>Power formulas</h3>
+  <div class="formula">Energy_per_transition = Capacitive_load &times; Voltage&sup2;
+Power = Capacitive_load &times; Voltage&sup2; &times; Frequency_switched
+
+Power &prop; V&sup2; &mdash; reducing voltage 15% cuts power ~28%.
+Over 20 years: voltage went from 5 V &rarr; 1 V &rarr; power increase only ~30x
+despite clock rate increasing ~1000x.</div>
+
+  <h3>Why clock rates plateaued ~2004</h3>
+  <ul>
+    <li>Cooling commodity chips hits a practical limit (~100 W for desktop, ~300 W for high-end servers)</li>
+    <li>Further voltage reduction causes transistors to leak current even when "off"</li>
+    <li>Pentium 4 Prescott (2004): 3.6 GHz, 103 W &mdash; abandoned due to thermal problems</li>
+    <li>Post-Prescott: Core 2 reverted to lower clock rates + multiple cores</li>
+  </ul>
+
+  <h3>Power calculation example</h3>
+  <pre>New processor vs. old:
+  Capacitive load: 85% of old
+  Voltage: 85% of old (also reduces frequency by 15%)
+
+Power_ratio = (0.85) &times; (0.85)&sup2; &times; (0.85)
+           = 0.85 &times; 0.7225 &times; 0.85 &approx; 0.52
+
+New processor uses about half the power.</pre>
+
+  <p class="hint">Energy (joules) is a better metric than power (watts) for efficiency comparisons. A fast program can finish sooner and reduce total energy even if its instantaneous power is higher.</p>
+</div>
+
+<!-- ===================== 2.8 ===================== -->
+<h2 id="s8">2.8 Uniprocessors to Multiprocessors <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>The shift to multicore was forced by the power wall. Since 2002 performance growth slowed from ~52%/year to ~22%/year for single-core processors.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Multicore Microprocessor</b><span class="d">Single chip with multiple processor cores. "Cores" avoids confusion with "processor" = chip. A quadcore chip = 4 cores.</span></div>
+    <div class="term"><b>Instruction-Level Parallelism (ILP)</b><span class="d">Parallelism hidden from the programmer (pipelining, out-of-order execution). Hardware/compiler finds it automatically. Does NOT require code changes.</span></div>
+  </div>
+
+  <h3>Parallel programming challenges</h3>
+  <ul>
+    <li><b>Scheduling:</b> dividing the application into roughly equal sub-tasks</li>
+    <li><b>Load balancing:</b> ensuring each core has approximately equal work at the same time</li>
+    <li><b>Synchronization overhead:</b> time spent coordinating between processors</li>
+    <li><b>Communication overhead:</b> time spent transferring data between processors</li>
+  </ul>
+  <p>Unlike pipelining (transparent to programmer), multicore requires <span class="hl">programmers to explicitly rewrite code</span> to be parallel. This was historically the "third rail" of computer architecture &mdash; companies that depended on such behavioral shifts from programmers previously failed.</p>
+
+  <h3>Performance improvement history</h3>
+  <table>
+    <tr><th>Period</th><th>Annual perf growth</th><th>Reason</th></tr>
+    <tr><td>Pre-mid-1980s</td><td>~25%/year</td><td>Technology-driven (transistor scaling)</td></tr>
+    <tr><td>Mid-1980s to 2002</td><td>~52%/year</td><td>Advanced architecture (pipelining, caches, ILP)</td></tr>
+    <tr><td>2002 to present</td><td>~22%/year</td><td>Power wall, ILP limits, memory latency</td></tr>
+  </table>
+</div>
+
+<!-- ===================== 2.9 ===================== -->
+<h2 id="s9">2.9 Real Stuff: Benchmarking the Intel Core i7</h2>
+<div class="panel">
+  <p>How performance is measured using standardized benchmark suites in practice.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Workload</b><span class="d">Actual set of programs a user runs, or a constructed approximation. Forms the basis of performance evaluation.</span></div>
+    <div class="term"><b>Benchmark</b><span class="d">Program specifically chosen to measure performance. Forms an artificial workload for fair comparison across systems.</span></div>
+    <div class="term"><b>SPEC CPU2006</b><span class="d">Standard suite: 12 integer benchmarks (CINT2006) + 17 floating-point (CFP2006). Ranges from C compiler to chess to quantum simulation.</span></div>
+    <div class="term"><b>SPECratio</b><span class="d">Reference_time / Measured_time. Bigger = faster. Summary score = geometric mean of all SPECratios.</span></div>
+  </div>
+
+  <h3>Selected SPEC CPU2006 results on 2.66 GHz Intel Core i7 920</h3>
+  <table>
+    <tr><th>Benchmark</th><th>Description</th><th>IC (&times;10&sup9;)</th><th>CPI</th><th>Exec time (s)</th><th>SPECratio</th></tr>
+    <tr><td>perl</td><td>String processing</td><td>2252</td><td>0.60</td><td>508</td><td>19.2</td></tr>
+    <tr><td>mcf</td><td>Combinatorial opt.</td><td>221</td><td>2.66</td><td>221</td><td>41.2</td></tr>
+    <tr><td>libquantum</td><td>Quantum simulation</td><td>659</td><td>0.44</td><td>109</td><td>190.0</td></tr>
+    <tr><td>omnetpp</td><td>Discrete event sim</td><td>367</td><td>2.10</td><td>290</td><td>21.5</td></tr>
+    <tr><td>h264avc</td><td>Video compression</td><td>3793</td><td>0.50</td><td>713</td><td>31.0</td></tr>
+    <tr><td><b>Geometric mean</b></td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><b>25.7</b></td></tr>
+  </table>
+  <p class="hint">CPI varies by more than 4x across benchmarks on the same CPU. This is why CPI is not a fixed property of a processor &mdash; it depends on the workload.</p>
+
+  <p>SPECpower benchmark measures server power at 10% increments (0%&ndash;100% load) and reports overall <em>ssj_ops per watt</em>. At 0% load, the measured server still consumed 80 W.</p>
+  <p>Geometric mean is used (not arithmetic mean) so the relative ranking is the same regardless of which reference machine is chosen for normalization.</p>
+</div>
+
+<!-- ===================== 2.10 ===================== -->
+<h2 id="s10">2.10 Fallacies &amp; Pitfalls <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>These appear on exams as trap/true-false questions. Know all of them cold.</p>
+
+  <h3>Pitfall: Expecting proportional speedup from a partial improvement</h3>
+  <div class="formula">Amdahl's Law:
+Execution_time_after = (Execution_time_affected / Amount_of_improvement) + Execution_time_unaffected</div>
+  <pre>Example: 100 s program. Multiply = 80 s. Goal: 5x speedup (run in 20 s).
+
+20 = 80/n + (100 &minus; 80)
+20 = 80/n + 20
+0  = 80/n   &rarr;  n = &infin;
+
+CONCLUSION: Impossible. Even making multiply infinitely fast only achieves
+100/20 = 5x if the other 20 s could also be eliminated. Since they can't,
+the maximum speedup from improving multiply alone is 100/20 = 5x only if
+n&rarr;&infin;. In practice the floor is 20 s = 5x maximum, unreachable.</pre>
+
+  <div class="term"><b>Amdahl's Law</b><span class="d">Performance enhancement from improving a feature is limited by how much time that feature is actually used. Quantitative version of the law of diminishing returns. Also limits parallelism speedup.</span></div>
+
+  <h3>Fallacy: Idle servers use little power</h3>
+  <p>Google's WSC runs at 10&ndash;50% utilization most of the time. A well-tuned server still uses ~33% of peak power at 10% load. Power consumption is not proportional to utilization. This motivates "energy-proportional computing."</p>
+
+  <h3>Fallacy: Performance and energy efficiency are unrelated</h3>
+  <p>A faster program uses less total energy if it finishes sooner &mdash; the entire system draws power during execution. Hardware/software optimizations that reduce time can save energy even if instantaneous power is slightly higher.</p>
+
+  <h3>Pitfall: Using MIPS as a performance metric</h3>
+  <div class="formula">MIPS = Instruction_count / (Execution_time &times; 10&sup6;)
+     = Clock_rate / (CPI &times; 10&sup6;)</div>
+  <p>Three fundamental problems:</p>
+  <ul>
+    <li><b>Cannot compare different ISAs</b> &mdash; instruction capability differs, so raw counts are meaningless across architectures</li>
+    <li><b>MIPS varies by program on the same CPU</b> &mdash; CPI changes with instruction mix, so there is no single MIPS rating for a processor</li>
+    <li><b>MIPS can improve while performance worsens</b> &mdash; a program with more instructions each faster can have higher MIPS but longer execution time</li>
+  </ul>
+
+  <div class="term"><b>MIPS (Million Instructions Per Second)</b><span class="d">Instruction execution rate. Higher MIPS does NOT reliably mean faster execution. Execution time is the only valid and unimpeachable measure of performance.</span></div>
+</div>
+
+<!-- ===================== CHEAT SHEET ===================== -->
+<h2 id="cheat">Quick-Reference Cheat Sheet <span class="badge b-key">last 10 minutes</span></h2>
+<div class="panel">
+  <div class="grid grid-2">
+    <div>
+      <h3>Key formulas</h3>
+      <div class="formula">Performance = 1 / Execution_time
+
+CPU_time = IC &times; CPI &times; Clock_period
+         = IC &times; CPI / Clock_rate
+
+Clock_Cycles = IC &times; CPI
+
+"X is n times faster": Time_Y / Time_X = n
+
+Power &prop; C_load &times; V&sup2; &times; Freq
+
+Amdahl: Time_after = Time_affected/n + Time_unaffected
+
+MIPS = IC / (Time &times; 10&sup6;) = Clock_rate / (CPI &times; 10&sup6;)</div>
+    </div>
+    <div>
+      <h3>Eight Great Ideas</h3>
+      <ul>
+        <li>Design for Moore's Law</li>
+        <li>Abstraction to simplify design</li>
+        <li>Make the common case fast</li>
+        <li>Performance via parallelism</li>
+        <li>Performance via pipelining</li>
+        <li>Performance via prediction</li>
+        <li>Hierarchy of memories</li>
+        <li>Dependability via redundancy</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Memory hierarchy (fast &rarr; slow)</h3>
+      <ul>
+        <li><b>Registers</b> &mdash; inside CPU, fastest, volatile</li>
+        <li><b>Cache (SRAM)</b> &mdash; fast, small, volatile</li>
+        <li><b>Main Memory (DRAM)</b> &mdash; ~50 ns, volatile</li>
+        <li><b>Flash</b> &mdash; 5&ndash;50 &mu;s, nonvolatile, wears out</li>
+        <li><b>Magnetic Disk</b> &mdash; 5&ndash;20 ms, nonvolatile, cheapest</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Critical distinctions</h3>
+      <ul>
+        <li>Response time vs. throughput: faster CPU improves both; more CPUs mainly improve throughput</li>
+        <li>Elapsed time vs. CPU time: elapsed includes I/O wait; CPU time does not</li>
+        <li>TB (10&sup1;&sup2;) vs. TiB (2&sup4;&sup0;): TiB ~10% larger</li>
+        <li>DRAM (volatile) vs. flash/disk (nonvolatile)</li>
+        <li>ISA (interface) vs. Implementation (hardware)</li>
+        <li>MIPS is flawed &mdash; execution time is the only valid measure</li>
+        <li>Amdahl: speedup bounded by the unimproved fraction</li>
+        <li>LCD controls light, doesn't generate it</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Chip manufacturing</h3>
+      <ul>
+        <li>Ingot &rarr; Wafer &rarr; Patterning (20&ndash;40 steps)</li>
+        <li>Wafer test &rarr; Dicing into dies &rarr; Packaging</li>
+        <li>Yield = good dies / total dies on wafer</li>
+        <li>Bigger die &rarr; fewer per wafer + lower yield &rarr; higher cost</li>
+        <li>Higher volume &rarr; lower cost (mask amortization + process tuning)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Power wall facts</h3>
+      <ul>
+        <li>Power &prop; V&sup2; &rarr; 15% voltage cut &asymp; 28% power cut</li>
+        <li>Voltage dropped 5 V &rarr; 1 V over 20 years</li>
+        <li>Leakage = ~40% of server chip power</li>
+        <li>Clock rates peaked ~2004 (thermal limits)</li>
+        <li>Post-2002 perf growth: ~22%/year (was 52%)</li>
+        <li>Idle server still uses ~33% of peak power at 10% load</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SELF-TEST ===================== -->
+<h2 id="quiz">Self-Test (Exam-Style Q&amp;A)</h2>
+
+<details open>
+<summary>Computing Classes &amp; Intro (6 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">What are the three traditional classes of computers and what distinguishes each?</div><div class="a">Personal computers (single user, cost-performance balance, third-party software), Servers (multiple simultaneous users, network access, throughput + dependability), Embedded computers (single predetermined application, runs in another device, largest class by count). Post-PC adds PMDs (mobile) and cloud/WSC.</div></div>
+  <div class="qa"><div class="q">What is a supercomputer and how does it relate to servers?</div><div class="a">A supercomputer is the highest-performance, highest-cost computer &mdash; configured as servers but with tens of thousands of processors and many terabytes of memory, costing tens to hundreds of millions of dollars. Used for weather, oil exploration, protein structure. Represents a tiny fraction of total server market revenue.</div></div>
+  <div class="qa"><div class="q">What distinguishes a PMD from a PC?</div><div class="a">PMDs are battery-operated, wirelessly connected, use touch/speech input instead of keyboard/mouse, and install software as downloaded "apps." PCs use plug-in power and install full binary software. Smartphones passed PCs in annual units sold in 2011.</div></div>
+  <div class="qa"><div class="q">What is SaaS? Give examples.</div><div class="a">Software as a Service &mdash; software and data delivered over the Internet via a thin client (browser), with no binary installed locally. Examples: web search, social networking, email services.</div></div>
+  <div class="qa"><div class="q">What is a terabyte vs. a tebibyte?</div><div class="a">Terabyte (TB) = 10&sup1;&sup2; bytes (decimal). Tebibyte (TiB) = 2&sup4;&sup0; bytes (binary). TiB is about 10% larger. The binary notation resolves historical ambiguity about which definition of "terabyte" was meant.</div></div>
+  <div class="qa"><div class="q">A family's home computer used for email and movies is which class? A cardiac pacemaker computer?</div><div class="a">Home computer = PC. Cardiac pacemaker computer = embedded (runs one predetermined application inside another device).</div></div>
+</div>
+</details>
+
+<details>
+<summary>Eight Great Ideas (6 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">Name all eight great ideas in order.</div><div class="a">1. Design for Moore's Law, 2. Abstraction to simplify design, 3. Make the common case fast, 4. Performance via parallelism, 5. Performance via pipelining, 6. Performance via prediction, 7. Hierarchy of memories, 8. Dependability via redundancy.</div></div>
+  <div class="qa"><div class="q">What does Moore's Law state and what does it mean for design timing?</div><div class="a">IC resources double every 18&ndash;24 months (Gordon Moore, 1965). Designers must target where technology will be when the project finishes, not when it starts &mdash; like a skeet shooter leading the target.</div></div>
+  <div class="qa"><div class="q">Soccer player runs to where ball will be &rarr; which idea? Dual truck tires &rarr; which idea?</div><div class="a">Soccer player = Design for Moore's Law. Dual tires = Dependability via redundancy.</div></div>
+  <div class="qa"><div class="q">One person washes dishes, another dries each dish immediately after washing = which idea? Both washing and drying at the same time = which idea?</div><div class="a">One washes, one dries immediately = Pipelining (overlapping stages). Both working simultaneously on different dishes = Parallelism.</div></div>
+  <div class="qa"><div class="q">Why is "make the common case fast" often more effective than optimizing the rare case?</div><div class="a">The common case executes far more frequently, so a modest speedup there yields larger total gains. Also, the common case is often simpler and easier to optimize. Requires measurement to identify what is actually common.</div></div>
+  <div class="qa"><div class="q">Which great idea explains why caches work and why we use them?</div><div class="a">Hierarchy of memories &mdash; small, fast, expensive memory (SRAM cache) at the top provides speed, while large, slow, cheap memory (DRAM, disk) provides capacity. Together they give the programmer the illusion of fast + large + cheap.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Below Your Program (5 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">What is the full translation chain from C source code to machine execution?</div><div class="a">C source &rarr; Compiler &rarr; Assembly language &rarr; Assembler &rarr; Binary machine language &rarr; CPU executes. (Some compilers skip assembly and go directly to binary.)</div></div>
+  <div class="qa"><div class="q">What is the difference between assembly language and machine language?</div><div class="a">Assembly language uses symbolic mnemonics (ADD A,B) &mdash; human-readable. Machine language is binary (1000110010100000) &mdash; directly executed by hardware. The assembler translates one to the other, one instruction at a time.</div></div>
+  <div class="qa"><div class="q">Which of these is a high-level language instruction? 00000000101 / ADD X2,X4,X2 / temp=v[k];</div><div class="a">temp=v[k]; is high-level (C). ADD X2,X4,X2 is assembly. 00000000101 is machine language (binary).</div></div>
+  <div class="qa"><div class="q">What three advantages do high-level languages have over assembly?</div><div class="a">1. More natural thinking (words/algebra instead of cryptic symbols). 2. Greater programmer productivity (fewer lines for same logic). 3. Machine-independence (same source runs on different CPUs after recompiling).</div></div>
+  <div class="qa"><div class="q">What does an operating system do?</div><div class="a">Manages hardware resources for application programs: handles basic I/O, allocates memory and storage, provides protected sharing of the computer among multiple simultaneous applications. Examples: Linux, iOS, Windows.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Hardware Components (10 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">What are the five classic components of a computer?</div><div class="a">Input, Output, Memory, Datapath, Control. Datapath + Control = Processor/CPU. This organization applies to every computer past and present.</div></div>
+  <div class="qa"><div class="q">What is the role of Control vs. Datapath in a processor?</div><div class="a">Datapath performs arithmetic operations ("brawn"). Control tells the datapath, memory, and I/O what to do according to the program's instructions ("brain").</div></div>
+  <div class="qa"><div class="q">Does an LCD display generate light? How does it work?</div><div class="a">No. An LCD controls the transmission of light from a backlight through liquid crystal molecules that twist or straighten based on applied charge. Light passes when bent (no charge), blocked when straightened (charge applied) &mdash; combined with polarizing filters.</div></div>
+  <div class="qa"><div class="q">How many bits represent one color pixel, and how is color encoded?</div><div class="a">24 bits per pixel: 8 bits each for red, green, and blue. This allows ~16 million distinct colors. The image is stored in a frame buffer in memory.</div></div>
+  <div class="qa"><div class="q">What is the difference between DRAM and SRAM?</div><div class="a">DRAM: slower (~50 ns), denser, cheaper per bit &mdash; used for main memory. SRAM: faster (sub-ns), less dense, more expensive per bit &mdash; used for cache. Both are volatile.</div></div>
+  <div class="qa"><div class="q">What is the difference between volatile and nonvolatile memory? Give one example of each.</div><div class="a">Volatile loses data without power (DRAM, SRAM). Nonvolatile retains data (flash memory, magnetic disk). Main memory = volatile; secondary memory = nonvolatile.</div></div>
+  <div class="qa"><div class="q">What is flash memory's key limitation that doesn't affect DRAM or magnetic disk?</div><div class="a">Flash bits wear out after 100,000 to 1,000,000 write cycles. File systems must track write counts and spread writes to avoid wearing out specific locations ("wear leveling").</div></div>
+  <div class="qa"><div class="q">What is an ISA, and why is it important?</div><div class="a">Instruction Set Architecture &mdash; the abstract interface between hardware and lowest-level software. Specifies all instructions, registers, memory access, I/O needed to write machine language. Enables multiple hardware implementations to run identical software at varying cost/performance.</div></div>
+  <div class="qa"><div class="q">What is the difference between an ISA and an implementation?</div><div class="a">ISA = the abstract interface (what programmers see). Implementation = the specific hardware that realizes the ISA. Many implementations can share one ISA. Example: many ARM chip generations share the ARM ISA.</div></div>
+  <div class="qa"><div class="q">Ethernet is an example of which type of network? What bandwidth can it reach?</div><div class="a">LAN (Local Area Network). Ethernet can reach up to 40 Gbps. WANs span continents via optical fiber and form the Internet backbone.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Chip Manufacturing (4 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">What is the manufacturing sequence from silicon to a packaged chip?</div><div class="a">Silicon crystal ingot &rarr; Slicer &rarr; Blank wafers &rarr; 20&ndash;40 processing steps &rarr; Patterned wafers &rarr; Wafer tester &rarr; Dicer (cuts dies) &rarr; Bond good dies to packages &rarr; Part tester &rarr; Ship to customers.</div></div>
+  <div class="qa"><div class="q">What is a die, and what is yield?</div><div class="a">A die is an individual rectangular section cut from a patterned wafer (informally: a "chip"). Yield = percentage of good dies / total dies on wafer. Defects make some dies fail &mdash; only good dies are packaged and sold.</div></div>
+  <div class="qa"><div class="q">Why does a larger die cost more per unit than a smaller die?</div><div class="a">Two compounding reasons: (1) fewer dies fit on a fixed-size wafer, and (2) larger dies have more area and thus higher probability of containing a defect &mdash; lower yield. Both effects sharply increase cost per good die.</div></div>
+  <div class="qa"><div class="q">Why does higher production volume lower chip cost?</div><div class="a">Expensive one-time mask costs are amortized over more units; engineering development costs spread over more units; the manufacturing process can be tuned to the specific design, raising yield.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Performance Equations (10 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">Computer A runs a program in 10 s, Computer B in 15 s. How much faster is A?</div><div class="a">Perf_A/Perf_B = Time_B/Time_A = 15/10 = 1.5. A is 1.5 times as fast as B.</div></div>
+  <div class="qa"><div class="q">Write the CPU performance equation in two equivalent forms.</div><div class="a">CPU_time = IC &times; CPI &times; Clock_period. Equivalently: CPU_time = (IC &times; CPI) / Clock_rate.</div></div>
+  <div class="qa"><div class="q">Computer A: 250 ps clock, CPI 2.0. Computer B: 500 ps clock, CPI 1.2. Same ISA. Which is faster and by how much?</div><div class="a">Time_A = I&times;2.0&times;250 = 500I ps. Time_B = I&times;1.2&times;500 = 600I ps. A is faster. A is 600/500 = 1.2x faster than B.</div></div>
+  <div class="qa"><div class="q">Program runs in 10 s on A (2 GHz). Want 6 s on B which needs 1.2x the cycles of A. What clock rate must B have?</div><div class="a">Cycles_A = 10&times;2&times;10&sup9; = 20&times;10&sup9;. Cycles_B = 1.2&times;20&times;10&sup9; = 24&times;10&sup9;. Rate_B = 24&times;10&sup9;/6 = 4 GHz.</div></div>
+  <div class="qa"><div class="q">CPI per class: A=1, B=2, C=3. Code 1: 2A+1B+2C. Code 2: 4A+1B+1C. Which is faster? What is each CPI?</div><div class="a">Cycles_1 = 2+2+6 = 10. Cycles_2 = 4+2+3 = 9. Code 2 is faster despite more instructions (6 vs 5). CPI_1 = 10/5 = 2.0. CPI_2 = 9/6 = 1.5.</div></div>
+  <div class="qa"><div class="q">What is the difference between elapsed time and CPU time?</div><div class="a">Elapsed (wall-clock) time includes everything: I/O waits, OS overhead, other programs running. CPU time includes only cycles the CPU spent on your task. CPU time = user CPU time + system CPU time.</div></div>
+  <div class="qa"><div class="q">If CPI increases 20% and clock cycle time decreases 10%, does execution time increase or decrease?</div><div class="a">New time = IC &times; (1.2&times;CPI) &times; (0.9&times;Period) = 1.08 &times; original. Execution time increases by 8%.</div></div>
+  <div class="qa"><div class="q">A new compiler reduces IC to 0.6x but increases CPI by 1.1x. Original time: 15 s. New time?</div><div class="a">New time = 15 &times; 0.6 &times; 1.1 = 9.9 s.</div></div>
+  <div class="qa"><div class="q">Can CPI ever be less than 1? What is it called?</div><div class="a">Yes. Some processors fetch and execute multiple instructions per clock cycle. If average is 2 instructions/cycle, CPI = 0.5. The inverse (2) is called IPC (instructions per clock cycle).</div></div>
+  <div class="qa"><div class="q">Why can't you compare performance just by looking at instruction count?</div><div class="a">Execution time = IC &times; CPI &times; Clock_period. Fewer instructions may have higher CPI and thus run slower. All three factors must be considered together.</div></div>
+</div>
+</details>
+
+<details>
+<summary>Power, Multicore, Benchmarks, Fallacies (11 questions)</summary>
+<div class="body">
+  <div class="qa"><div class="q">What is CMOS dynamic power and what does it depend on?</div><div class="a">Energy consumed when transistors switch states (0&harr;1). Power = Capacitive_load &times; Voltage&sup2; &times; Switching_frequency. Power scales with voltage squared.</div></div>
+  <div class="qa"><div class="q">Why did clock rates stop increasing around 2004?</div><div class="a">Power hit a practical cooling limit for commodity chips (~100 W). Further voltage reduction causes transistor leakage (static power &mdash; ~40% of server chip power today). Pentium 4 Prescott (103 W, 2004) was abandoned due to thermal problems.</div></div>
+  <div class="qa"><div class="q">If voltage is reduced by 25%, by what factor does dynamic power change?</div><div class="a">Power &prop; V&sup2;. New power = (0.75)&sup2; = 0.5625 of original &mdash; approximately a 44% reduction.</div></div>
+  <div class="qa"><div class="q">Why is energy (joules) a better metric than power (watts) for efficiency comparisons?</div><div class="a">Power is joules/second &mdash; it says nothing about how long the task takes. Total energy = power &times; time. A faster, slightly power-hungry processor may consume less total energy than a slow, low-power one because the whole system draws power during execution.</div></div>
+  <div class="qa"><div class="q">What forced the switch from uniprocessors to multicore chips?</div><div class="a">The power wall &mdash; increasing clock rate requires proportionally more power, which hits thermal limits. Multiple cores at lower clock rates achieve higher throughput without exceeding the power budget.</div></div>
+  <div class="qa"><div class="q">What is Amdahl's Law and what does it imply about the limits of improvement?</div><div class="a">Performance enhancement from improving a feature is bounded by how much time that feature is used. If 20% of runtime can't be improved, the maximum speedup from any enhancement is 1/0.2 = 5x, regardless of how much you improve the other 80%.</div></div>
+  <div class="qa"><div class="q">A program runs 100 s. Multiply = 80 s. You improve multiply by 4x. What is the new execution time and speedup?</div><div class="a">New time = 80/4 + 20 = 20 + 20 = 40 s. Speedup = 100/40 = 2.5x.</div></div>
+  <div class="qa"><div class="q">What is a SPECratio and why is the geometric mean used for the overall score?</div><div class="a">SPECratio = reference_time / measured_time. Bigger = faster. Geometric mean is used so the overall score gives the same relative ranking regardless of which reference machine is chosen (arithmetic mean does not have this property).</div></div>
+  <div class="qa"><div class="q">Why is MIPS a misleading performance metric? Give all three reasons.</div><div class="a">1. Can't compare different ISAs (instructions differ in capability). 2. MIPS varies program-to-program on the same CPU (CPI varies with instruction mix). 3. Higher MIPS can accompany worse performance (more instructions each faster can yield lower execution time with higher MIPS).</div></div>
+  <div class="qa"><div class="q">A server runs at 10% utilization. Does it use about 10% of peak power?</div><div class="a">No. Even a specially tuned server uses ~33% of peak power at 10% load. Real-world servers that aren't tuned for this benchmark do even worse. This is why "energy-proportional computing" is a design goal, not a current reality.</div></div>
+  <div class="qa"><div class="q">Does designing for better performance always hurt energy efficiency?</div><div class="a">No. This is a fallacy. A faster program finishes sooner, reducing the time the entire system consumes power. Hardware/software optimizations that reduce execution time can save total energy even if instantaneous power is slightly higher.</div></div>
+</div>
+</details>
+
+<!-- ===================== TRAPS ===================== -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"An LCD display generates its own light."</b> <span class="no">No.</span> An LCD <em>controls</em> the transmission of light from a separate backlight &mdash; it does not emit light.</li>
+    <li><b>"A terabyte equals a tebibyte."</b> <span class="no">No.</span> TB = 10&sup1;&sup2; bytes (decimal). TiB = 2&sup4;&sup0; bytes (binary). TiB is about 10% larger than TB.</li>
+    <li><b>"Cache memory uses DRAM because it needs to be fast."</b> <span class="no">No.</span> Cache uses SRAM. DRAM is slower &mdash; it's used for main memory. SRAM is faster but more expensive and less dense.</li>
+    <li><b>"Flash memory is nonvolatile and never degrades."</b> <span class="no">No.</span> Flash is nonvolatile, but bits wear out after 100,000&ndash;1,000,000 write cycles. File systems must use wear leveling to manage this.</li>
+    <li><b>"Pipelining requires programmers to rewrite code."</b> <span class="no">No.</span> Pipelining (instruction-level parallelism) is transparent to programmers &mdash; the hardware/compiler handles it. Multicore parallelism, however, does require explicit programmer effort.</li>
+    <li><b>"The computer with fewer instructions executed always runs faster."</b> <span class="no">Not necessarily.</span> Fewer instructions with higher CPI can run slower. Execution time = IC &times; CPI &times; Clock_period. All three factors matter.</li>
+    <li><b>"MIPS is a reliable way to compare computer performance."</b> <span class="no">No.</span> MIPS varies by program on the same CPU, can't compare across ISAs, and can be inversely correlated with actual performance. Execution time is the only valid measure.</li>
+    <li><b>"Improving multiply by 5x will make a program 5x faster if multiply uses 80% of runtime."</b> <span class="no">No.</span> By Amdahl's Law: new time = 80/5 + 20 = 36 s (was 100 s) &rarr; only 100/36 &asymp; 2.78x speedup.</li>
+    <li><b>"A server at 10% utilization uses about 10% of peak power."</b> <span class="no">No.</span> Real servers use ~33% of peak power even at 10% load. Power is not proportional to utilization.</li>
+    <li><b>"Better performance always means worse energy efficiency."</b> <span class="no">No.</span> Faster execution means less total time the whole system draws power. Performance and energy efficiency can both improve together.</li>
+    <li><b>"ISA and implementation are the same thing."</b> <span class="no">No.</span> ISA is the abstract interface (what programmers write to). Implementation is the specific hardware realizing the ISA. Multiple implementations at different cost/performance can share one ISA.</li>
+    <li><b>"Replacing a uniprocessor with multicore always improves response time for any program."</b> <span class="no">No.</span> Multicore primarily improves throughput. A single-threaded sequential program does not benefit unless it is explicitly rewritten to use multiple cores.</li>
+    <li><b>"Embedded computers are just small PCs."</b> <span class="no">No.</span> Embedded computers run one predetermined application, are integrated into another device, are optimized for cost/power in a specific context, and often have no visible OS to users. They are not general-purpose.</li>
+    <li><b>"A program with a higher MIPS rating always runs faster."</b> <span class="no">No.</span> If the program with more MIPS executes more (but simpler) instructions with shorter clock cycles, MIPS can be higher while execution time is longer. Example: same task, one program uses 8 billion fast instructions, another uses 10 billion even faster ones &mdash; check all three factors.</li>
+  </ul>
+</div>
+
+<hr/>
+<p style="color:var(--muted);font-size:12px;">Built from ch2.pdf (zyBooks C952, exported 2026-04-22). If anything here disagrees with the source, trust the source.</p>
+
+</div>
+<script>
+  (function() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    var mq = window.matchMedia('(prefers-color-scheme: light)');
+    function currentTheme() {
+      var t = root.getAttribute('data-theme');
+      if (t === 'light' || t === 'dark') return t;
+      return mq.matches ? 'light' : 'dark';
+    }
+    function updateLabel() {
+      var t = currentTheme();
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.setAttribute('title', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    btn.addEventListener('click', function() {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+      updateLabel();
+    });
+    mq.addEventListener && mq.addEventListener('change', function() {
+      var saved = null;
+      try { saved = localStorage.getItem('study-guide-theme'); } catch (e) {}
+      if (saved !== 'light' && saved !== 'dark') updateLabel();
+    });
+    updateLabel();
+  })();
+</script>
+</body>
+</html>
