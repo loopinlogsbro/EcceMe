@@ -164,7 +164,7 @@
   <a href="#s9">4.9 Procedure calls</a>
   <a href="#s10">4.10 Nested procedures</a>
   <a href="#cheat">Cheat sheet</a>
-  <a href="#quiz">Self-test (Q&amp;A)</a>
+  <a href="#mc">Multiple-Choice Quiz (60 Qs)</a>
   <a href="#trap">Common exam traps</a>
 </div>
 
@@ -542,85 +542,6 @@ B   End
   </div>
 </div>
 
-<!-- ===================== SELF-TEST ===================== -->
-<h2 id="quiz">Self-test (likely exam-style Q&amp;A)</h2>
-
-<details open>
-<summary>Instruction set &amp; simulator basics (4.1)</summary>
-<div class="body">
-  <div class="qa"><div class="q">Which arithmetic instructions are supported by the zyLab platform?</div><div class="a">ADD, ADDS, ADDI, ADDIS, MUL, SDIV, SUB, SUBS, SUBI, SUBIS.</div></div>
-  <div class="qa"><div class="q">Which data-transfer instructions are supported?</div><div class="a">LDURB, LDUR, LDURH, LDURSW, MOVK, MOVZ, STURB, STUR, STURH, STURW.</div></div>
-  <div class="qa"><div class="q">Which logical instructions are supported?</div><div class="a">AND, ANDI, EOR, EORI, ORR, ORRI, LSL, LSR.</div></div>
-  <div class="qa"><div class="q">Which unconditional jump instructions are supported?</div><div class="a">B, BL, BR.</div></div>
-  <div class="qa"><div class="q">Should you initialize registers and memory inside your assembly code?</div><div class="a">No. The auto-grader has its own initialization mechanism; initializing in code breaks grading.</div></div>
-  <div class="qa"><div class="q">What does <code>LDUR X9, [X19, #0]</code> do?</div><div class="a">Loads the doubleword at memory address X19+0 into register X9.</div></div>
-  <div class="qa"><div class="q">In 4.1, where is variable A stored, and where must B be stored?</div><div class="a">A at memory address 4000, B at 4008. X19=4000, X20=4008.</div></div>
-  <div class="qa"><div class="q">How do you add a register or memory cell in the simulator UI?</div><div class="a">Click the + button under Registers or Memory and enter the register name or address in the popup.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Arithmetic labs (4.2, 4.3)</summary>
-<div class="body">
-  <div class="qa"><div class="q">In 4.2, which register holds the result Z?</div><div class="a">X23. Inputs A,B,C,D are in X19, X20, X21, X22.</div></div>
-  <div class="qa"><div class="q">In 4.2, which register is the only allowed temporary?</div><div class="a">X9.</div></div>
-  <div class="qa"><div class="q">In 4.3, which registers map to A, B, C, D, Z?</div><div class="a">X9=A, X10=B, X11=C, X12=D, X19=Z.</div></div>
-  <div class="qa"><div class="q">Which mnemonic performs signed integer multiplication?</div><div class="a"><code>MUL</code> (signed division is <code>SDIV</code>).</div></div>
-  <div class="qa"><div class="q">Given X9=2, X10=4, X11=6, X12=3, the lab expects X19 = 18 &mdash; what does that imply about the expression?</div><div class="a">It must combine those four inputs to evaluate to 18 (e.g. it includes a multiplication; the exact form is given in the source figure).</div></div>
-</div>
-</details>
-
-<details>
-<summary>Loads, stores, arrays (4.4, 4.6, 4.8)</summary>
-<div class="body">
-  <div class="qa"><div class="q">Why does the array of squares in 4.4 step memory addresses by 8?</div><div class="a">Because each element is a 64-bit doubleword (8 bytes).</div></div>
-  <div class="qa"><div class="q">If X19=4000, what's the address of the third element of the source array in 4.4?</div><div class="a">4000 + 16 = 4016.</div></div>
-  <div class="qa"><div class="q">In 4.4 with X20=5000 and source [1,2,3,4], what does memory at 5024 hold after the program runs?</div><div class="a">16 (4 squared).</div></div>
-  <div class="qa"><div class="q">What is the first Fibonacci value written in 4.6, and to which address if X20=5000?</div><div class="a">0, written to address 5000.</div></div>
-  <div class="qa"><div class="q">For X19=5, X20=5000 in 4.6, what does memory at 5032 contain?</div><div class="a">3 (sequence: 0,1,1,2,3).</div></div>
-  <div class="qa"><div class="q">In 4.8, which addresses hold Length, Width, Height?</div><div class="a">4000, 4016, 4032.</div></div>
-  <div class="qa"><div class="q">In 4.8, where is the result stored?</div><div class="a">Memory address 4400.</div></div>
-  <div class="qa"><div class="q">Why are the 4.8 dimension offsets 0/16/32 instead of 0/8/16?</div><div class="a">The lab specifies that exact memory layout; the LDUR offsets must match those addresses literally.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Branching and loops (4.5, 4.6)</summary>
-<div class="body">
-  <div class="qa"><div class="q">Where does 4.5 store the maximum of three values?</div><div class="a">X24 (inputs are X19, X20, X21).</div></div>
-  <div class="qa"><div class="q">Why use SUBS instead of SUB when comparing?</div><div class="a">SUBS sets the condition flags so that B.GT/B.LT/B.GE etc. work; SUB does not update flags.</div></div>
-  <div class="qa"><div class="q">What's a clean idiom for "compare only, throw away the difference"?</div><div class="a"><code>SUBS XZR, Xa, Xb</code> &mdash; XZR discards the result while flags still update.</div></div>
-  <div class="qa"><div class="q">Which two instructions branch based purely on whether a register is zero?</div><div class="a"><code>CBZ</code> (branch if zero) and <code>CBNZ</code> (branch if non-zero).</div></div>
-  <div class="qa"><div class="q">In 4.6, which register holds the loop count and which holds the array address?</div><div class="a">X19 holds the size, X20 holds the base address.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Shifts as mul/div (4.7)</summary>
-<div class="body">
-  <div class="qa"><div class="q">Shifting left by i bits is equivalent to what arithmetic operation on a positive integer?</div><div class="a">Multiplying by 2^i.</div></div>
-  <div class="qa"><div class="q">Shifting right by i bits is equivalent to what?</div><div class="a">Integer division by 2^i (the fractional part is dropped).</div></div>
-  <div class="qa"><div class="q">How do you compute N&times;8 with a shift?</div><div class="a"><code>LSL Xd, Xn, #3</code>.</div></div>
-  <div class="qa"><div class="q">How do you compute N/16 with a shift?</div><div class="a"><code>LSR Xd, Xn, #4</code>.</div></div>
-  <div class="qa"><div class="q">If X19=64, what end up in X20 and X21 after N&times;8 and N/16?</div><div class="a">X20=512, X21=4.</div></div>
-  <div class="qa"><div class="q">What happens to digits after the decimal point during LSR?</div><div class="a">They are discarded &mdash; LSR performs integer division.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Procedure calls (4.9, 4.10)</summary>
-<div class="body">
-  <div class="qa"><div class="q">Per the lab hint, which registers carry procedure arguments and which carries the return value?</div><div class="a">X0 and X1 are the arguments; X2 is the return value.</div></div>
-  <div class="qa"><div class="q">What does BL do?</div><div class="a">Branch and link &mdash; jumps to the label and stores the return address in X30 (the link register).</div></div>
-  <div class="qa"><div class="q">How does a procedure return?</div><div class="a"><code>BR X30</code> &mdash; branches to the address held in the link register.</div></div>
-  <div class="qa"><div class="q">In 4.9, in what order do you set up arguments before <code>BL Dif</code> for <code>z = Dif(y, x)</code>?</div><div class="a">X0 &larr; y (X20), X1 &larr; x (X19), then BL Dif. Result lands in X2.</div></div>
-  <div class="qa"><div class="q">Why must Sum in 4.10 save X30 before calling Dif?</div><div class="a">Because BL Dif overwrites X30. Without saving it, Sum loses its own return address and BR X30 will jump back to the wrong place.</div></div>
-  <div class="qa"><div class="q">What does the line <code>ADDI X28, XZR, #1000</code> in the 4.10 template do?</div><div class="a">Initializes X28 (used as the stack pointer) to 1000, giving Sum a place to push X30 and any other saved registers.</div></div>
-  <div class="qa"><div class="q">For 4.10 with X19=5, X20=10, what is the expected X21?</div><div class="a">11.</div></div>
-</div>
-</details>
-
-<!-- ===================== TRAPS ===================== -->
 <h2 id="trap">Common exam traps</h2>
 <div class="panel">
   <ul>
@@ -637,6 +558,201 @@ B   End
     <li><b>"<code>XZR</code> can hold any value you write to it."</b> <span class="no">No.</span> XZR always reads as 0; writes to it are discarded &mdash; that's why <code>SUBS XZR, Xa, Xb</code> is the standard compare idiom.</li>
   </ul>
 </div>
+
+
+<style>
+  .q-btn{border:none;border-radius:6px;padding:9px 20px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:background .12s,transform .1s;}
+  .q-start{background:var(--accent);color:#0f1115;}
+  .q-start:hover{filter:brightness(1.12);transform:translateY(-1px);}
+  .q-next{background:var(--panel-2);color:var(--text);border:1px solid var(--border);margin-top:6px;}
+  .q-next:hover{background:var(--border);}
+  .q-opt{display:block;width:100%;text-align:left;background:var(--panel-2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:13.5px;font-family:inherit;color:var(--text);transition:background .1s,border-color .1s;line-height:1.45;}
+  .q-opt:hover:not(:disabled){background:var(--hl);border-color:var(--accent);}
+  .q-opt.correct{background:rgba(106,210,154,.15)!important;border-color:var(--good)!important;color:var(--good)!important;}
+  .q-opt.wrong{background:rgba(255,138,122,.12)!important;border-color:var(--bad)!important;color:var(--bad)!important;}
+  .q-opt.reveal{background:rgba(106,210,154,.1)!important;border-color:var(--good)!important;}
+  #q-progress-wrap{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px;}
+  #q-bar{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
+</style>
+
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">60 questions</span></h2>
+<div class="panel">
+  <div id="quiz-shell">
+    <div id="quiz-start">
+      <p>60 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA. Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quizStart()">Start Quiz</button>
+    </div>
+    <div id="quiz-active" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q-counter" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q-score-disp" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q-progress-wrap"><div id="q-bar"></div></div>
+      <div id="q-text" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q-opts"></div>
+      <div id="q-feedback" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn-next" class="q-btn q-next" style="display:none" onclick="quizNext()">Next &rarr;</button>
+    </div>
+    <div id="quiz-done" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done-score" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done-pct" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quizRestart()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>(function(){
+var Q=[
+// --- 4.1 Basics (7) ---
+{q:"What does <code>LDUR X9, [X19, #0]</code> do?",opts:["Stores X9 into memory at address X19+0","Loads the doubleword at memory address X19+0 into X9","Loads a byte from address X19 into X9","Adds 0 to X19 and places the result in X9"],ans:1},
+{q:"In the zyLab simulator, should you initialize register values inside your assembly code?",opts:["Yes, always set every register your code uses","No &mdash; the auto-grader uses its own initialization; setting values in code breaks grading","Yes, but only for address registers like X19 and X20","Only when the register holds a memory address"],ans:1},
+{q:"In Lab 4.1, variable A is at address 4000 and variable B must be stored at 4008. Which register holds 4000?",opts:["X20","X9","X19","X28"],ans:2},
+{q:"Which instruction stores a doubleword from a register into memory?",opts:["LDUR","STUR","MOVZ","STURH"],ans:1},
+{q:"Which instruction group does <code>SDIV</code> belong to?",opts:["Logical","Data transfer","Conditional branch","Arithmetic"],ans:3},
+{q:"Which of the following is a supported unconditional jump instruction in the zyLab platform?",opts:["JMP","CALL","BL","BNE"],ans:2},
+{q:"Which instruction loads a halfword (16-bit value) from memory into a register?",opts:["LDUR","LDURB","LDURH","LDURSW"],ans:2},
+// --- 4.2 Arithmetic ADD/SUB (6) ---
+{q:"In Lab 4.2, which register holds the result Z?",opts:["X9","X22","X23","X20"],ans:2},
+{q:"In Lab 4.2 (Z = A - B - C + D) with A=2, B=4, C=6, D=5, what is Z?",opts:["-3","7","-7","11"],ans:1},
+{q:"In Lab 4.2, which registers hold the four input variables A, B, C, D respectively?",opts:["X0, X1, X2, X3","X9, X10, X11, X12","X19, X20, X21, X22","X20, X21, X22, X23"],ans:2},
+{q:"Which instruction subtracts two registers and also updates the condition flags (NZCV)?",opts:["SUB","SUBI","SUBS","SUBIS"],ans:2},
+{q:"In Lab 4.2, only one scratch register is allowed besides the input/output registers. Which one?",opts:["X8","X9","X0","X28"],ans:1},
+{q:"Which instruction sequence correctly computes <code>X23 = X19 - X20 - X21 + X22</code> using only X9 as temp?",opts:["SUB X9,X19,X20 / SUB X9,X9,X21 / ADD X23,X9,X22","ADD X9,X19,X20 / SUB X9,X9,X21 / ADD X23,X9,X22","SUB X9,X19,X20 / ADD X9,X9,X21 / SUB X23,X9,X22","SUB X23,X19,X22 / ADD X23,X23,X20"],ans:0},
+// --- 4.3 Arithmetic ADD/SUB/MUL (5) ---
+{q:"In Lab 4.3, which register holds the result Z?",opts:["X12","X19","X9","X22"],ans:1},
+{q:"The MUL instruction syntax is <code>MUL Xd, Xn, Xm</code>. What does it compute?",opts:["Xd = Xn + Xm","Xd = Xn - Xm","Xd = Xn * Xm","Xd = Xn / Xm"],ans:2},
+{q:"To compute <code>X19 = X9*X10 + X11*X12</code>, which sequence is correct?",opts:["MUL X13,X9,X10 / MUL X14,X11,X12 / ADD X19,X13,X14","MUL X19,X9,X10 / ADD X19,X19,X11 / MUL X19,X19,X12","SDIV X19,X9,X10 / ADD X19,X19,X12","MUL X9,X9,X10 / ADD X19,X9,X12"],ans:0},
+{q:"In Lab 4.3 with A=2, B=4, C=6, D=3, Z=18 &mdash; which expression matches?",opts:["A - B + C*D","A*B + C - D","A*B + C*D - 2","A*B + C/D"],ans:1},
+{q:"Which instruction computes signed integer division in the zyLab instruction set?",opts:["DIV","UDIV","SDIV","DIVS"],ans:2},
+// --- 4.4 Array of squares (6) ---
+{q:"In Lab 4.4, why is each consecutive array address 8 bytes apart?",opts:["LEGv8 pads all data to 16-byte cache lines","Each element is a 64-bit doubleword (8 bytes)","X19 can only address multiples of 8","The zyLab grader requires 8-byte alignment on all stores"],ans:1},
+{q:"In Lab 4.4 with source base X19=4000, what LDUR offset selects the third element (index 2)?",opts:["#8","#12","#16","#24"],ans:2},
+{q:"Which instruction correctly squares a value in X9 and places the result in X10?",opts:["MUL X10, X9, #2","LSL X10, X9, #2","MUL X10, X9, X9","MUL X10, X10, X9"],ans:2},
+{q:"With source array at 4000 holding [1,2,3,4] and destination at 5000, what value is stored at address 5024 after Lab 4.4?",opts:["4","9","12","16"],ans:3},
+{q:"In Lab 4.4, which register holds the base address of the destination (squares) array?",opts:["X19","X21","X20","X9"],ans:2},
+{q:"To load the element at offset #8 from X19, square it, and store the result at offset #8 from X20, which sequence is correct?",opts:["LDUR X9,[X19,#8] / MUL X10,X9,X9 / STUR X10,[X20,#8]","LDUR X9,[X19,#8] / LSL X10,X9,#2 / STUR X10,[X20,#8]","STUR X9,[X19,#8] / MUL X10,X9,X9 / LDUR X10,[X20,#8]","LDUR X9,[X19,#1] / MUL X10,X9,X9 / STUR X10,[X20,#1]"],ans:0},
+// --- 4.5 Max of 3 (6) ---
+{q:"In Lab 4.5, inputs are in X19, X20, X21. Where is the maximum stored?",opts:["X22","X23","X24","X25"],ans:2},
+{q:"Why must you use <code>SUBS</code> instead of <code>SUB</code> before a conditional branch like <code>B.GE</code>?",opts:["SUBS uses immediate operands; SUB uses registers","SUBS sets the condition flags (NZCV); plain SUB does not","SUBS is only valid for unsigned comparisons","B.GE only works with SUBS-family comparisons"],ans:1},
+{q:"What is the purpose of using <code>XZR</code> as the destination in <code>SUBS XZR, X24, X20</code>?",opts:["To zero out X24 before comparing","To discard the difference while still setting the condition flags","To swap X24 and X20","To perform an unsigned comparison of two addresses"],ans:1},
+{q:"Which conditional branch instruction means &lsquo;branch if greater than or equal&rsquo; (signed)?",opts:["B.GT","B.LE","B.GE","B.HI"],ans:2},
+{q:"Which two instructions branch based purely on whether a register value equals zero?",opts:["B.EQ and B.NE","CBZ and CBNZ","B.MI and B.PL","B.LS and B.HI"],ans:1},
+{q:"After <code>ADD X24,XZR,X19</code> (assuming X19 is max), which SUBS correctly compares the running max with X20?",opts:["SUBS X24,X20,X19","SUBS XZR,X20,X24","SUBS XZR,X24,X20","SUBS X20,X24,XZR"],ans:2},
+// --- 4.6 Fibonacci loop (6) ---
+{q:"In Lab 4.6, which register holds the array size and which holds the base address?",opts:["X20=size, X19=base","X19=size, X20=base","X21=size, X22=base","X9=size, X10=base"],ans:1},
+{q:"What are the first two values written to the Fibonacci array?",opts:["1, 1","0, 0","1, 2","0, 1"],ans:3},
+{q:"With X19=5 and X20=5000, what value appears at address 5032 after Lab 4.6?",opts:["2","3","5","8"],ans:1},
+{q:"Which instruction correctly decrements a loop-counter register by the immediate value 1?",opts:["SUB Xn, Xn, #1","SUBI Xn, Xn, #1","SUBIS Xn, Xn, #1","SUBS Xn, Xn, XZR"],ans:1},
+{q:"In the Fibonacci loop, what are &lsquo;prev&rsquo; and &lsquo;curr&rsquo; just before writing element index 3 (address 5024, base=5000)?",opts:["prev=0, curr=1","prev=1, curr=1","prev=1, curr=2","prev=2, curr=3"],ans:2},
+{q:"After writing the Fibonacci value at address 5000 (index 0), by how many bytes is the pointer advanced before writing index 1?",opts:["4","8","16","1"],ans:1},
+// --- 4.7 Shifts as mul/div (6) ---
+{q:"<code>LSL X20, X19, #3</code> is equivalent to which arithmetic operation on X19?",opts:["X20 = X19 / 8","X20 = X19 * 3","X20 = X19 * 8","X20 = X19 + 8"],ans:2},
+{q:"<code>LSR X21, X19, #4</code> is equivalent to which arithmetic operation?",opts:["X21 = X19 * 16","X21 = X19 / 4","X21 = X19 / 16","X21 = X19 - 4"],ans:2},
+{q:"What shift amount multiplies a register value by 32?",opts:["LSL #3","LSL #5","LSL #32","LSR #5"],ans:1},
+{q:"If X19=64, what values are in X20 and X21 after <code>LSL X20,X19,#3</code> and <code>LSR X21,X19,#4</code>?",opts:["X20=192, X21=16","X20=512, X21=4","X20=512, X21=8","X20=8, X21=512"],ans:1},
+{q:"What happens to bits shifted off the right end by LSR?",opts:["They wrap to the high end of the register","They are preserved in a condition flag","They are discarded (integer truncation)","They are placed in a separate holding register"],ans:2},
+{q:"To compute N*8 using a shift instruction, which is correct?",opts:["LSR X20, X19, #8","LSL X20, X19, #8","LSR X20, X19, #3","LSL X20, X19, #3"],ans:3},
+// --- 4.8 Volume of box (5) ---
+{q:"In Lab 4.8, what are the memory offsets of Width and Height relative to base address 4000?",opts:["8 and 16","16 and 32","4 and 8","16 and 24"],ans:1},
+{q:"In Lab 4.8 with L=5, W=4, H=3, what value is stored at address 4400?",opts:["12","20","60","120"],ans:2},
+{q:"Which instruction loads Width given X19=4000 and Width is at address 4016?",opts:["LDUR X10,[X19,#8]","LDUR X10,[X19,#16]","LDUR X10,[X19,#0]","LDUR X10,[X19,#32]"],ans:1},
+{q:"In Lab 4.8, where is the computed volume written?",opts:["Register X19","Memory address 4000","Memory address 4400","Register X12"],ans:2},
+{q:"Why are the Lab 4.8 offsets (0/16/32) different from Lab 4.4 (0/8/16)?",opts:["Lab 4.8 uses 32-bit words so elements are 4 bytes wide","Lab 4.8 specifies that exact memory layout; LDUR offsets must match","Lab 4.4 uses byte addressing but 4.8 uses word addressing","Lab 4.8 stores doubles which are 16 bytes each"],ans:1},
+// --- 4.9 Procedure calls (7) ---
+{q:"Per the Lab 4.9 calling convention, which registers hold the first two arguments?",opts:["X19, X20","X0, X1","X2, X3","X28, X30"],ans:1},
+{q:"Per the Lab 4.9 calling convention, which register holds the return value?",opts:["X0","X1","X2","X30"],ans:2},
+{q:"What does <code>BL Sum</code> do?",opts:["Branches to Sum and discards the return address","Branches to Sum and stores the return PC in X30","Calls Sum via the hardware stack like a C function","Jumps to Sum only if a flag is set"],ans:1},
+{q:"How does a procedure return to its caller in LEGv8?",opts:["B End","BR X30","BL X30","RET"],ans:1},
+{q:"To call <code>z = Dif(y, x)</code> where y is in X20 and x is in X19, which argument setup is correct?",opts:["ADD X0,XZR,X19 then ADD X1,XZR,X20","ADD X0,XZR,X20 then ADD X1,XZR,X19","The order of X0/X1 does not matter for Dif","STUR X20,[X28,#0] then STUR X19,[X28,#8]"],ans:1},
+{q:"In Lab 4.9, which register holds variable w (the result of calling Sum)?",opts:["X19","X20","X21","X22"],ans:2},
+{q:"What role does X30 play in the LEGv8 procedure call mechanism?",opts:["Stack pointer for saving local variables","Link register holding the return address written by BL","Program counter holding the next instruction","Base register for memory addressing"],ans:1},
+// --- 4.10 Nested procedures (7) ---
+{q:"In Lab 4.10, why must Sum save X30 before calling Dif?",opts:["BL Dif overwrites X30, destroying Sum's own return address","X30 is a data register inside Dif and gets zeroed","The hardware saves X30 automatically on any BL","BR X30 can only be executed once per procedure"],ans:0},
+{q:"The Lab 4.10 template initializes X28 with <code>ADDI X28, XZR, #1000</code>. What role does X28 play here?",opts:["Return value register for the nested call","Stack pointer region for pushing/popping callee-saved registers","Loop counter for the Fibonacci sequence","Base address register for the input array"],ans:1},
+{q:"What is the correct sequence for Sum to push X30 onto the stack before calling Dif (X28 is SP)?",opts:["STUR X30,[X28,#0] then SUBI X28,X28,#8","SUBI X28,X28,#8 then STUR X30,[X28,#0]","BL Dif then STUR X30,[X28,#0]","LDUR X30,[X28,#0] then SUBI X28,X28,#8"],ans:1},
+{q:"After calling Dif, the correct sequence to restore X30 (X28 is SP) is:",opts:["LDUR X30,[X28,#0] then ADDI X28,X28,#8","ADDI X28,X28,#8 then LDUR X30,[X28,#0]","STUR X30,[X28,#0] then ADDI X28,X28,#8","BR X30 then LDUR X30,[X28,#0]"],ans:0},
+{q:"In the Lab 4.10 C code provided, <code>Dif(a, b)</code> returns:",opts:["a - b","b - a","a + b","a * b"],ans:1},
+
+{q:"In Lab 4.10 with X19=5 and X20=10, the provided Main template computes z = x + y + Sum(x,y). Which two lines do the final accumulation?",opts:["ADD X21,X20,X19 then ADD X21,X21,X2","STUR X2,[X19,#0] then LDUR X21,[X20,#0]","BL Sum then ADD X21,X0,X1","ADD X21,X2,X28"],ans:0},
+];
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quizStart=function(){
+  order=shuffle(Array.from({length:Q.length},(_,i)=>i));
+  idx=0;score=0;answered=false;
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-done').style.display='none';
+  document.getElementById('quiz-active').style.display='block';
+  render();
+};
+window.quizNext=function(){
+  idx++;
+  if(idx>=order.length){showDone();return;}
+  render();
+};
+window.quizRestart=function(){
+  document.getElementById('quiz-done').style.display='none';
+  document.getElementById('quiz-start').style.display='block';
+};
+function render(){
+  answered=false;
+  var q=Q[order[idx]];
+  document.getElementById('q-counter').textContent='Question '+(idx+1)+' of '+Q.length;
+  document.getElementById('q-score-disp').textContent='Score: '+score+'/'+idx;
+  document.getElementById('q-bar').style.width=((idx/Q.length)*100)+'%';
+  document.getElementById('q-text').innerHTML=q.q;
+  document.getElementById('q-feedback').innerHTML='';
+  document.getElementById('btn-next').style.display='none';
+  var opts=document.getElementById('q-opts');
+  opts.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    b.className='q-opt';
+    b.innerHTML=['A','B','C','D'][i]+'. '+o;
+    b.dataset.i=i;
+    b.onclick=function(){pick(i,q.ans);};
+    opts.appendChild(b);
+  });
+}
+function pick(chosen,correct){
+  if(answered)return;
+  answered=true;
+  var allBtns=document.querySelectorAll('#q-opts .q-opt');
+  allBtns.forEach(function(b){b.disabled=true;});
+  if(chosen===correct){
+    score++;
+    allBtns[chosen].classList.add('correct');
+    document.getElementById('q-feedback').innerHTML='<span class="ok">&#x2713; Correct!</span>';
+  } else {
+    allBtns[chosen].classList.add('wrong');
+    allBtns[correct].classList.add('reveal');
+    document.getElementById('q-feedback').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';
+  }
+  document.getElementById('q-score-disp').textContent='Score: '+score+'/'+(idx+1);
+  document.getElementById('btn-next').style.display='inline-block';
+}
+function showDone(){
+  document.getElementById('quiz-active').style.display='none';
+  document.getElementById('quiz-done').style.display='block';
+  var pct=Math.round(score/Q.length*100);
+  document.getElementById('done-score').textContent=score+' / '+Q.length;
+  var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';
+  document.getElementById('done-pct').textContent=pct+'% — '+msg;
+}
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('quiz-active').style.display==='none')return;
+  if(!answered&&['1','2','3','4'].includes(e.key)){
+    var i=parseInt(e.key)-1;
+    var btns=document.querySelectorAll('#q-opts .q-opt');
+    if(btns[i])btns[i].click();
+  }
+  if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){
+    e.preventDefault();
+    var nb=document.getElementById('btn-next');
+    if(nb.style.display!=='none')nb.click();
+  }
+});
+})();</script>
 
 <hr/>
 <p style="color:var(--muted);font-size:12px;">Built from C952 ch4.pdf (zyBooks &mdash; LEGv8 zyLab labs 4.1&ndash;4.10). If anything here disagrees with the source, trust the source.</p>
