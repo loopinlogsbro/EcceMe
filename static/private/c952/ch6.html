@@ -106,6 +106,10 @@
     :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
     :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
   }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
+  .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .chnav a:hover { border-color: var(--accent); }
+  .chnav .spacer { visibility: hidden; }
 </style>
 <script>
   (function() {
@@ -124,6 +128,11 @@
   <span class="icon-moon" aria-hidden="true">&#9790;</span>
 </button>
 <div class="wrap">
+  <nav class="chnav">
+    <a href="ch5.html">&larr; Ch 5</a>
+    <a href="index.html">All chapters</a>
+    <a href="ch7.html">Ch 7 &rarr;</a>
+  </nav>
 
 <header>
   <h1>C952 — Chapter 6 Study Guide <span class="badge b-key">Processor Datapath &amp; Control</span></h1>
@@ -143,7 +152,7 @@
   <a href="#s10">6.10 Parallelism via Instructions (ILP)</a>
   <a href="#s11">6.11 Real Stuff: Cortex-A53 &amp; Core i7</a>
   <a href="#cheat">Cheat Sheet</a>
-  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#mc">Multiple-Choice Quiz (100 Qs)</a>
   <a href="#trap">Common Exam Traps</a>
 </div>
 
@@ -633,115 +642,6 @@ IPC = 1 / CPI
 </div>
 
 <!-- SELF-TEST -->
-<h2 id="quiz">Self-Test (Likely Exam-Style Q&amp;A)</h2>
-
-<details open>
-<summary>Logic Design Fundamentals</summary>
-<div class="body">
-  <div class="qa"><div class="q">What is the difference between a combinational element and a state element?</div><div class="a">Combinational: output depends only on current inputs, no internal storage (e.g., ALU, adder). State element: has internal storage; output depends on inputs AND stored state; requires a clock signal (e.g., register file, PC, memory).</div></div>
-  <div class="qa"><div class="q">What is edge-triggered clocking and why is it important?</div><div class="a">All state element writes occur on a clock edge (rising edge). This allows reading and writing the same register in one clock cycle without creating a data race or indeterminate values.</div></div>
-  <div class="qa"><div class="q">What does "asserted" mean for a control signal?</div><div class="a">Asserted means the signal is logically high (1). Deasserted means logically low (0). These terms are used because the actual voltage polarity may vary by implementation.</div></div>
-  <div class="qa"><div class="q">Does the PC need a write control signal? Why or why not?</div><div class="a">No. The PC is written on every clock cycle, so no explicit write control is needed. Elements that are not updated every cycle require an explicit write control.</div></div>
-  <div class="qa"><div class="q">What determines the length of the clock cycle in a synchronous digital system?</div><div class="a">The time required for signals to propagate through the longest combinational logic path between two state elements. All signals must be stable before the next clock edge.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Datapath Construction</summary>
-<div class="body">
-  <div class="qa"><div class="q">Why does a single-cycle LEGv8 implementation require separate instruction memory and data memory?</div><div class="a">No datapath resource can be used more than once per instruction in a single-cycle design. Both LDUR and instruction fetch require memory access in the same clock cycle.</div></div>
-  <div class="qa"><div class="q">How wide are the register number inputs to the register file? How wide are the data outputs?</div><div class="a">Register number inputs are 5 bits (to address one of 32 registers). Data inputs and outputs are 64 bits (LEGv8 is 64-bit).</div></div>
-  <div class="qa"><div class="q">What does the sign-extend unit do for LDUR vs. CBZ?</div><div class="a">For LDUR/STUR: sign-extends the 9-bit offset field (instruction bits 20:12) to 64 bits. For CBZ: sign-extends the 19-bit offset (instruction bits 23:5) to 64 bits. Opcode bit 26 selects which: 0=9-bit, 1=19-bit.</div></div>
-  <div class="qa"><div class="q">How is the branch target address computed for CBZ?</div><div class="a">Branch target = PC + (sign-extended 19-bit offset × 4). The ×4 is achieved by shifting left 2 (concatenating 00 to the low end of the sign-extended value). No actual hardware shifter is needed — just rewiring.</div></div>
-  <div class="qa"><div class="q">How many multiplexors are needed in the combined single-cycle datapath, and what do they select?</div><div class="a">At minimum three: (1) ALUSrc — selects register vs. sign-extended immediate for ALU input 2. (2) MemtoReg — selects ALU result vs. memory data for register write-back. (3) PCSrc — selects PC+4 vs. branch target for next PC. UncondBranch adds a fourth (or an OR gate).</div></div>
-</div>
-</details>
-
-<details>
-<summary>Control Unit and ALU Control</summary>
-<div class="body">
-  <div class="qa"><div class="q">What are the ALUOp values and what do they mean?</div><div class="a">00 = add (LDUR/STUR address calculation). 01 = pass input b (CBZ zero test). 10 = R-type: consult opcode bits to determine operation (ADD, SUB, AND, ORR).</div></div>
-  <div class="qa"><div class="q">What ALU control value is used for a STUR instruction?</div><div class="a">0010 (add). STUR uses ALUOp=00, which always maps to add, regardless of opcode. It needs to compute the memory address = base register + offset.</div></div>
-  <div class="qa"><div class="q">What is a don't-care term in a truth table?</div><div class="a">An X input: the output does not depend on that input's value for that row. For example, when ALUOp=00, the opcode bits are don't-cares because we always add regardless.</div></div>
-  <div class="qa"><div class="q">How is the PCSrc signal generated? Why is it not directly from the control unit?</div><div class="a">PCSrc = Branch AND Zero. The control unit asserts Branch for CBZ instructions; the ALU Zero output indicates the register was 0. Only if both are true should we branch. This is a derived signal — the control unit doesn't know the register value at decode time.</div></div>
-  <div class="qa"><div class="q">For a load instruction (LDUR), what are the values of ALUSrc, MemRead, MemtoReg, RegWrite?</div><div class="a">ALUSrc=1 (immediate offset), MemRead=1, MemtoReg=1 (memory data goes to register), RegWrite=1.</div></div>
-  <div class="qa"><div class="q">For a store instruction (STUR), what are the values of MemWrite, RegWrite, MemRead?</div><div class="a">MemWrite=1, RegWrite=0 (no register is written), MemRead=0.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Pipelining Concepts and Performance</summary>
-<div class="body">
-  <div class="qa"><div class="q">Does pipelining reduce instruction latency? Does it improve throughput?</div><div class="a">No, pipelining does NOT reduce latency. A 5-stage pipeline still takes 5 clock cycles per instruction. Pipelining improves throughput by overlapping multiple instructions.</div></div>
-  <div class="qa"><div class="q">What sets the clock cycle time in a pipelined processor?</div><div class="a">The slowest pipeline stage. In the LEGv8 example, the slowest stage is 200 ps (memory access or ALU), so the clock cycle is 200 ps even though register file access is only 100 ps.</div></div>
-  <div class="qa"><div class="q">What is the ideal speedup from pipelining, and when is it achieved?</div><div class="a">Ideal speedup = number of stages (5x for 5 stages). This is approached when all stages take equal time and the number of instructions is much larger than the number of stages (pipeline is full most of the time).</div></div>
-  <div class="qa"><div class="q">What does the laundry analogy teach about pipelining?</div><div class="a">Pipelining doesn't make a single load of laundry finish faster — it makes many loads finish faster by keeping all resources busy simultaneously. Throughput improves; latency does not.</div></div>
-  <div class="qa"><div class="q">What three properties of the LEGv8 ISA make pipelining easier?</div><div class="a">(1) Fixed-length instructions (32 bits) — easy to fetch and decode. (2) Regular format — source and destination register fields at consistent bit positions. (3) Memory operands only in loads/stores — address calculation and memory access can be cleanly separated into EX and MEM stages.</div></div>
-  <div class="qa"><div class="q">What registers are written during the first half of WB? What happens in the second half of ID?</div><div class="a">Register writes occur in the first half of WB; register reads occur in the second half of ID. This means an instruction in WB writing a register and an instruction in ID reading the same register in the same clock cycle is safe — the read gets the newly written value.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Data Hazards and Forwarding</summary>
-<div class="body">
-  <div class="qa"><div class="q">What are the two hazard conditions that trigger EX-stage forwarding (ForwardA/B = 10)?</div><div class="a">EX/MEM.RegWrite is asserted AND EX/MEM.RegisterRd ≠ 31 (not XZR) AND EX/MEM.RegisterRd matches ID/EX.RegisterRn1 (or Rm2 for ForwardB).</div></div>
-  <div class="qa"><div class="q">When is MEM-stage forwarding used instead of EX-stage forwarding?</div><div class="a">When the hazard is two instructions back (MEM/WB has the value, not EX/MEM). Same conditions but using MEM/WB.RegisterRd. If both EX and MEM hazards exist for the same register, EX takes priority (more recent).</div></div>
-  <div class="qa"><div class="q">Why can't forwarding alone resolve a load-use hazard?</div><div class="a">The loaded data from LDUR is not available until the end of the MEM stage (clock cycle 4 for LDUR), but the instruction immediately after needs it at the start of EX (also clock cycle 4 for that instruction). The data would need to go backward in time. One stall cycle is required.</div></div>
-  <div class="qa"><div class="q">What happens in the pipeline when a load-use stall is inserted?</div><div class="a">The PC and IF/ID pipeline register are frozen (instruction in IF is re-fetched with the same PC). The ID/EX control signals are zeroed to create a nop (bubble). After one stall cycle, forwarding from MEM/WB handles the hazard.</div></div>
-  <div class="qa"><div class="q">Does forwarding help STUR and CBZ instructions in addition to R-type instructions?</div><div class="a">Yes. STUR uses Rt (bits 4:0) for the data to store, and CBZ tests a register. The pipeline uses the Reg2Loc mux output (which handles the Rt field) in place of Rm when detecting hazards, so forwarding is correctly applied to these instructions too.</div></div>
-  <div class="qa"><div class="q">Given: ADD X1,X1,X2 / ADD X1,X1,X3 / ADD X1,X1,X4 — what forwarding is used?</div><div class="a">For the second ADD: EX hazard, forward X1 from EX/MEM. For the third ADD: EX hazard from second ADD (EX/MEM), which takes priority over MEM hazard from first ADD (MEM/WB). Most recent result wins.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Control Hazards and Branch Prediction</summary>
-<div class="body">
-  <div class="qa"><div class="q">In the unoptimized pipeline, how many instructions are fetched after a branch before the outcome is known?</div><div class="a">3 instructions. Branch outcome is determined in MEM (clock cycle 4). So instructions at PC+4, PC+8, PC+12 are fetched before we know whether to branch.</div></div>
-  <div class="qa"><div class="q">After moving branch evaluation to the ID stage, how many instructions must be flushed when a branch is taken?</div><div class="a">Only 1 — the instruction fetched at PC+4 while the branch was in ID. It is converted to a nop via the IF.Flush signal that zeros the IF/ID pipeline register.</div></div>
-  <div class="qa"><div class="q">What is the performance impact of always stalling on branches (for a 5-stage pipeline)?</div><div class="a">Branches are ~17% of instructions (SPECint). Stalling one cycle per branch yields CPI = 1 + 0.17×1 = 1.17, a 17% slowdown. Longer pipelines incur a larger penalty.</div></div>
-  <div class="qa"><div class="q">What is the weakness of a 1-bit branch predictor for a loop that iterates 9 times?</div><div class="a">It mispredicts twice per loop execution: once on the first iteration (prediction was flipped by the previous exit) and once on the last iteration (predicts taken, but branch exits). 80% accuracy despite 90% taken rate.</div></div>
-  <div class="qa"><div class="q">How does a 2-bit predictor fix the 1-bit predictor's weakness?</div><div class="a">A prediction must be wrong twice before it changes. A loop that exits occasionally mispredicts only once (on exit), not twice. Best-case accuracy for a 90%-taken branch goes to 90%.</div></div>
-  <div class="qa"><div class="q">What is a correlating predictor?</div><div class="a">Uses both local branch history (behavior of this specific branch) and global history (recent behavior of all branches) to choose a prediction. More accurate than pure local or global alone for the same number of bits.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Exceptions</summary>
-<div class="body">
-  <div class="qa"><div class="q">What registers are used to handle exceptions in LEGv8?</div><div class="a">ELR (Exception Link Register): saves address of the offending instruction. ESR (Exception Syndrome Register): records cause code (8=undefined instruction, 10=arithmetic overflow/underflow, 12=hardware malfunction).</div></div>
-  <div class="qa"><div class="q">What is the LEGv8 exception entry address?</div><div class="a">0x0000_0000_1C09_0000. All exceptions jump to this single entry point; the OS reads ESR to determine the cause.</div></div>
-  <div class="qa"><div class="q">What is the difference between LEGv8's approach and vectored interrupts?</div><div class="a">LEGv8 uses a single entry point for all exceptions; the OS reads ESR to distinguish causes. Vectored interrupts use different addresses for different exception types, so the OS knows the cause from the address itself.</div></div>
-  <div class="qa"><div class="q">What is a precise interrupt?</div><div class="a">An interrupt precisely associated with the instruction that caused it. All prior instructions complete normally; all following instructions are flushed. LEGv8 and nearly all modern processors support precise interrupts.</div></div>
-  <div class="qa"><div class="q">If an exception is detected in the EX stage for instruction ADD X1,X2,X1, which instructions continue and which are flushed?</div><div class="a">Instructions before ADD in the pipeline (AND, ORR if present) complete normally. ADD and all instructions fetched after it are flushed. The address of ADD's successor is saved in ELR, not ADD itself — the OS can restart ADD from there.</div></div>
-  <div class="qa"><div class="q">When multiple exceptions occur simultaneously, which is handled first?</div><div class="a">The earliest instruction's exception takes priority. Hardware sorts exceptions so the exception associated with the earliest (oldest in program order) instruction is serviced first.</div></div>
-</div>
-</details>
-
-<details>
-<summary>ILP, Multiple Issue, and Superscalar</summary>
-<div class="body">
-  <div class="qa"><div class="q">What is the maximum theoretical CPI for a 4-way multiple-issue processor?</div><div class="a">0.25 (CPI = 1/IPC = 1/4). In practice, data/control dependences and memory stalls prevent reaching this maximum.</div></div>
-  <div class="qa"><div class="q">What is VLIW and what is its main advantage/disadvantage?</div><div class="a">Very Long Instruction Word — static multiple issue where the compiler packs operations into fixed-format wide instructions. Advantage: simple hardware. Disadvantage: code is not portable across different pipeline implementations; recompilation needed.</div></div>
-  <div class="qa"><div class="q">Why does a superscalar processor use dynamic scheduling even though the compiler can also schedule code?</div><div class="a">Three reasons: (1) cache misses create unpredictable stalls the compiler can't see. (2) Dynamic branch prediction creates runtime instruction order the compiler can't know. (3) Pipeline structure changes between implementations; hardware adaptation is transparent to software.</div></div>
-  <div class="qa"><div class="q">What is the purpose of the reorder buffer in a dynamically scheduled pipeline?</div><div class="a">Holds results until they can be committed in program order (in-order commit). Enables out-of-order execution while maintaining precise interrupt support and correct exception handling.</div></div>
-  <div class="qa"><div class="q">What is register renaming, and what problem does it solve?</div><div class="a">Renaming architectural registers to a larger physical register set. Solves antidependences (name dependences) — cases where two independent instruction sequences happen to use the same register name but share no actual data. Allows them to execute in parallel.</div></div>
-  <div class="qa"><div class="q">What is loop unrolling and what is its cost?</div><div class="a">Replicating the loop body multiple times to expose more ILP. Cost: larger code size and more registers used. Benefit: reduced loop overhead and more opportunities for parallel issue.</div></div>
-  <div class="qa"><div class="q">What is in-order commit and why is it required?</div><div class="a">Results are committed (written to register file/memory) in program fetch order, even if executed out of order. Required to support precise interrupts — if an exception occurs, all prior instructions have committed and none after have.</div></div>
-</div>
-</details>
-
-<details>
-<summary>ARM Cortex-A53 and Intel Core i7</summary>
-<div class="body">
-  <div class="qa"><div class="q">How many pipeline stages does the ARM Cortex-A53 have?</div><div class="a">8 stages total: 3 fetch stages + 3 decode stages + 3 execute stages (with 2 additional for FP/SIMD). The AGU (Address Generation Unit) manages branch prediction.</div></div>
-  <div class="qa"><div class="q">What is the ARM Cortex-A53's branch misprediction penalty?</div><div class="a">8 clock cycles. The misprediction empties the pipeline because the instruction queue cannot decouple fetch from execute during a misprediction.</div></div>
-  <div class="qa"><div class="q">Why does the Intel Core i7 translate x86 instructions to micro-ops?</div><div class="a">x86 instructions have variable length (1–15 bytes) and complex semantics. Translating to fixed, simple micro-ops allows using a clean, efficient dynamically scheduled pipeline. The pipeline operates on micro-ops, not native x86 instructions.</div></div>
-  <div class="qa"><div class="q">What is the Intel Core i7's ideal CPI and actual median CPI for SPEC2006?</div><div class="a">Ideal CPI = 0.25 (4-way issue in theory). Actual median CPI = 0.79. Best case = 0.44, worst case = 2.67.</div></div>
-  <div class="qa"><div class="q">What fraction of the ARM Cortex-A53's stalls come from pipeline hazards vs. memory hierarchy?</div><div class="a">60% from pipeline hazards (branch mispredictions, structural hazards, data dependences between paired instructions). 40% from memory hierarchy stalls.</div></div>
-</div>
-</details>
-
-<!-- TRAPS -->
 <h2 id="trap">Common Exam Traps</h2>
 <div class="panel">
   <ul>
@@ -761,6 +661,173 @@ IPC = 1 / CPI
     <li><b>"A structural hazard is the same as a data hazard."</b> <span class="no">No.</span> Structural: hardware conflict (two instructions need same resource). Data: an instruction needs a value not yet produced. Control: next instruction unknown (branches). Three distinct types.</li>
   </ul>
 </div>
+
+
+<style>
+  .q-btn{border:none;border-radius:6px;padding:9px 20px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:background .12s,transform .1s;}
+  .q-start{background:var(--accent);color:#0f1115;}
+  .q-start:hover{filter:brightness(1.12);transform:translateY(-1px);}
+  .q-next{background:var(--panel-2);color:var(--text);border:1px solid var(--border);margin-top:6px;}
+  .q-next:hover{background:var(--border);}
+  .q-opt{display:block;width:100%;text-align:left;background:var(--panel-2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:13.5px;font-family:inherit;color:var(--text);transition:background .1s,border-color .1s;line-height:1.45;}
+  .q-opt:hover:not(:disabled){background:var(--hl);border-color:var(--accent);}
+  .q-opt.correct{background:rgba(106,210,154,.15)!important;border-color:var(--good)!important;color:var(--good)!important;}
+  .q-opt.wrong{background:rgba(255,138,122,.12)!important;border-color:var(--bad)!important;color:var(--bad)!important;}
+  .q-opt.reveal{background:rgba(106,210,154,.1)!important;border-color:var(--good)!important;}
+  #q-progress-wrap{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px;}
+  #q-bar{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
+</style>
+
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">90 questions</span></h2>
+<div class="panel">
+  <div id="quiz-shell">
+    <div id="quiz-start">
+      <p>90 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA. Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quizStart()">Start Quiz</button>
+    </div>
+    <div id="quiz-active" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q-counter" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q-score-disp" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q-progress-wrap"><div id="q-bar"></div></div>
+      <div id="q-text" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q-opts"></div>
+      <div id="q-feedback" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn-next" class="q-btn q-next" style="display:none" onclick="quizNext()">Next &rarr;</button>
+    </div>
+    <div id="quiz-done" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done-score" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done-pct" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quizRestart()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>(function(){
+var Q=[
+// --- 6.1 Introduction & Performance (8) ---
+{q:"CPU time is calculated as:",opts:["Instruction count &times; CPI &times; Clock cycle time","Instruction count + CPI + Clock rate","Clock rate &divide; (Instruction count &times; CPI)","CPI &divide; (Instruction count &times; Clock cycle time)"],ans:0},
+{q:"Which THREE factors determine CPU performance?",opts:["Instruction count, CPI, and clock cycle time","Cache size, RAM speed, and bus bandwidth","Pipeline depth, branch predictor accuracy, and TLB hit rate","Register count, ALU width, and memory latency"],ans:0},
+{q:"A program runs in 10 seconds on a 2 GHz processor with CPI = 4. How many instructions were executed?",opts:["5 &times; 10<sup>9</sup>","2 &times; 10<sup>9</sup>","8 &times; 10<sup>9</sup>","20 &times; 10<sup>9</sup>"],ans:0},
+{q:"Which subset of LEGv8 instructions does Chapter 6 implement for its datapath?",opts:["LDUR, STUR, ADD, SUB, AND, ORR, CBZ, B","LDUR, STUR, MUL, DIV, AND, ORR, CBZ, BL","MOV, LDR, STR, ADD, SUB, CMP, BEQ, BAL","LDUR, STUR, ADD, SUB, LSL, LSR, CBZ, CBNZ"],ans:0},
+{q:"A processor executes 15 &times; 10<sup>9</sup> cycles at 3 GHz. What is the execution time?",opts:["5 seconds","3 seconds","45 seconds","0.2 seconds"],ans:0},
+{q:"Reducing which factor does NOT directly reduce CPU time according to the CPU performance equation?",opts:["Cache associativity","Instruction count","CPI","Clock cycle time"],ans:0},
+{q:"Which statement about the single-cycle LEGv8 implementation is correct?",opts:["The clock period must accommodate the slowest instruction","Each instruction executes in a different number of cycles","The ALU is shared between instruction fetch and execute","Control signals are generated after the memory access stage"],ans:0},
+{q:"If CPI increases from 2 to 4 but clock rate doubles, execution time:",opts:["Stays the same","Halves","Doubles","Quadruples"],ans:0},
+// --- 6.2 Logic Design Conventions (5) ---
+{q:"Which best describes a combinational logic element?",opts:["Output depends only on current inputs","Output depends on current inputs and stored state","It requires a clock edge to update its output","It stores a single bit between clock cycles"],ans:0},
+{q:"A D flip-flop is a:",opts:["Sequential element that stores one bit, updated on clock edge","Combinational element that selects between two inputs","Decoder that converts binary to one-hot encoding","Multiplexor with a registered output"],ans:0},
+{q:"Setup time in a clocked circuit refers to:",opts:["Minimum time input must be stable before the clock edge","Minimum time input must remain stable after the clock edge","Time for output to propagate through a combinational circuit","Time for the flip-flop to reset to zero"],ans:0},
+{q:"A multiplexor (MUX) is classified as:",opts:["Combinational logic","Sequential logic","A state element","A register file"],ans:0},
+{q:"Hold time in a clocked system is the minimum time that:",opts:["The input must remain stable after the active clock edge","The input must be stable before the active clock edge","The clock period must exceed combinational delay","The output remains valid after the clock edge"],ans:0},
+// --- 6.3 Building a Datapath (10) ---
+{q:"During the instruction fetch (IF) stage, which two actions occur simultaneously?",opts:["PC is sent to instruction memory AND PC+4 is computed","Register file is read AND ALU performs sign extension","Data memory is read AND result is written back","Control signals are generated AND branch target is computed"],ans:0},
+{q:"The sign-extend unit in the LEGv8 datapath:",opts:["Extends a 9-bit or 19-bit immediate to 64 bits","Converts a 32-bit instruction to 64-bit format","Selects between the register output and an immediate","Shifts the PC left by 2 for branch target calculation"],ans:0},
+{q:"In the single-cycle LEGv8 datapath, the register file has how many read ports and write ports?",opts:["2 read ports, 1 write port","1 read port, 1 write port","3 read ports, 2 write ports","2 read ports, 2 write ports"],ans:0},
+{q:"Why must instruction memory and data memory be SEPARATE in the single-cycle design?",opts:["A single datapath resource cannot be used more than once per instruction","Harvard architecture is always faster than Von Neumann","The instruction memory is read-only while data memory is write-only","They use different address widths in LEGv8"],ans:0},
+{q:"The PC (Program Counter) is updated every clock cycle without an explicit write-control signal. Why?",opts:["It is written on every cycle by design; no conditional write is needed","It is a combinational element, not a register","The branch logic disables it when not branching","It uses hold time rather than a write enable"],ans:0},
+{q:"The datapath element that computes the branch target address is:",opts:["An adder that adds the sign-extended offset to PC","The ALU configured in subtract mode","The sign extender output directly","The register file output B"],ans:0},
+{q:"Which datapath element is responsible for selecting whether the second ALU input comes from a register or an immediate?",opts:["ALUSrc multiplexor","MemtoReg multiplexor","PCSrc multiplexor","Reg2Loc multiplexor"],ans:0},
+{q:"In instruction decode (ID), the register file reads fields from the instruction. For an R-type ADD, which registers are read?",opts:["Rn and Rm (source registers)","Rd and Rn","Rt and Rn","Rm and Rd"],ans:0},
+{q:"The MemtoReg MUX selects the write-back data from:",opts:["Either the ALU result or the data memory output","Either the PC+4 or the sign-extended immediate","Either the register file output or the instruction memory","Either the branch target or the ALU result"],ans:0},
+{q:"Which stage of the single-cycle datapath uses BOTH the ALU result and a comparison to zero?",opts:["Execute (EX) — ALU computes result and sets Zero flag for CBZ","Memory (MEM) — data memory reads based on Zero flag","Write-back (WB) — writes only if Zero flag set","Decode (ID) — branch condition tested before ALU"],ans:0},
+// --- 6.4 Simple Implementation & Control (12) ---
+{q:"How many distinct control signals does the single-cycle LEGv8 control unit generate?",opts:["7","4","9","12"],ans:0},
+{q:"The RegWrite control signal is asserted for which instruction types?",opts:["R-type and LDUR (load)","STUR and CBZ","B (unconditional branch) and STUR","CBZ and R-type"],ans:0},
+{q:"For a STUR instruction, which control signals are asserted?",opts:["ALUSrc=1, MemWrite=1, RegWrite=0","ALUSrc=0, MemRead=1, RegWrite=1","ALUSrc=1, MemRead=1, MemWrite=1","ALUSrc=0, MemWrite=1, RegWrite=1"],ans:0},
+{q:"The ALUOp field tells the ALU control unit:",opts:["The category of instruction (R-type, load/store, or branch)","The exact operation (ADD, SUB, AND, ORR) directly","The register source for the second operand","Whether to sign-extend the offset"],ans:0},
+{q:"For an unconditional branch (B), PCSrc is:",opts:["Always 1 (branch taken)","Determined by the Zero flag from the ALU","Always 0 (sequential execution)","Determined by a comparison of two registers"],ans:0},
+{q:"For CBZ, PCSrc is asserted when:",opts:["The Zero flag from the ALU is 1 AND Branch control is 1","The Zero flag is 0 AND Branch control is 1","Branch control is 1 regardless of Zero flag","RegWrite is 0 and MemRead is 1"],ans:0},
+{q:"Which control signal distinguishes a load (LDUR) from a store (STUR)?",opts:["RegWrite / MemWrite (load sets RegWrite; store sets MemWrite)","ALUSrc (load=0, store=1)","MemtoReg (load=1, store=0) alone","PCSrc (load=0, store=1)"],ans:0},
+{q:"In the single-cycle implementation, the ALU control unit receives:",opts:["ALUOp from main control + function bits from the instruction","Only the opcode from the main control unit","Only the function bits (bits 31:21) of the instruction","The full 32-bit instruction word"],ans:0},
+{q:"For an R-type instruction, which of the following control signal combinations is correct?",opts:["ALUSrc=0, MemtoReg=0, RegWrite=1, MemRead=0, MemWrite=0","ALUSrc=1, MemtoReg=1, RegWrite=1, MemRead=1, MemWrite=0","ALUSrc=0, MemtoReg=0, RegWrite=0, MemRead=0, MemWrite=1","ALUSrc=1, MemtoReg=0, RegWrite=1, MemRead=0, MemWrite=0"],ans:0},
+{q:"The Reg2Loc control signal selects:",opts:["Whether register field Rm or Rt is used as the second register read address","Whether the second ALU input comes from a register or immediate","Which register receives the write-back value","Whether the branch offset or PC+4 feeds the PC"],ans:0},
+{q:"Which instruction has MemRead=1 asserted?",opts:["LDUR","STUR","ADD","CBZ"],ans:0},
+{q:"The single-cycle datapath&apos;s critical path (longest path) is typically through:",opts:["Instruction memory &rarr; register file &rarr; ALU &rarr; data memory &rarr; register file write","Instruction memory &rarr; sign extender &rarr; ALU &rarr; PC update","Register file &rarr; ALU &rarr; branch adder &rarr; PC MUX","PC adder &rarr; instruction memory &rarr; control unit &rarr; register file"],ans:0},
+// --- 6.5 Overview of Pipelining (18) ---
+{q:"The five stages of the LEGv8 pipeline in order are:",opts:["IF, ID, EX, MEM, WB","IF, ID, ALU, MEM, WB","IF, DC, EX, MA, WB","FE, DE, EX, ME, WR"],ans:0},
+{q:"Pipelining improves processor performance by increasing:",opts:["Instruction throughput","Individual instruction latency","Clock cycle time","CPI for each instruction"],ans:0},
+{q:"In a 5-stage pipeline, the clock period is determined by:",opts:["The slowest (longest) pipeline stage","The average of all stage delays","The fastest pipeline stage","The sum of all stage delays"],ans:0},
+{q:"After the pipeline is full, ideally one instruction completes every:",opts:["1 clock cycle","5 clock cycles","2 clock cycles","4 clock cycles"],ans:0},
+{q:"The laundry pipelining analogy: 4 loads with wash=30 min, dry=40 min, fold=20 min. The dryer is the bottleneck. Total pipelined time is:",opts:["170 minutes","160 minutes","40 minutes","120 minutes"],ans:0},
+{q:"Why does pipelining NOT reduce the latency of a single instruction?",opts:["The instruction still passes through all five stages sequentially","Forwarding adds extra cycles to each instruction","The clock cycle is shorter but there are more cycles per instruction","Pipeline registers add delays that cancel the speedup"],ans:0},
+{q:"Pipelining improves throughput of a complete instruction stream approximately by a factor of:",opts:["The number of pipeline stages (for long programs)","2, regardless of stage count","The CPI of the unpipelined version","The ratio of longest to shortest stage"],ans:0},
+{q:"Which statement about pipelining is TRUE?",opts:["Instructions overlap in execution across different pipeline stages","All instructions share the same ALU hardware simultaneously","Pipelining reduces total cycles needed for one instruction","The clock rate decreases when pipelining is added"],ans:0},
+{q:"In the pipelined LEGv8 processor, which stage fetches the instruction from instruction memory?",opts:["IF (Instruction Fetch)","ID (Instruction Decode)","EX (Execute)","WB (Write Back)"],ans:0},
+{q:"In the pipelined LEGv8 processor, which stage reads the register file?",opts:["ID (Instruction Decode)","IF (Instruction Fetch)","EX (Execute)","MEM (Memory Access)"],ans:0},
+{q:"Which stage performs the ALU computation for an R-type instruction?",opts:["EX (Execute)","ID (Instruction Decode)","MEM (Memory Access)","WB (Write Back)"],ans:0},
+{q:"The MEM stage of the pipeline is most active for which instruction type?",opts:["LDUR and STUR (memory instructions)","R-type (register-register)","CBZ (conditional branch)","B (unconditional branch)"],ans:0},
+{q:"The WB (Write Back) stage writes a result to:",opts:["The register file","Data memory","Instruction memory","The pipeline register"],ans:0},
+{q:"For a 5-step widget assembly line with 10 items, if each step takes roughly 0.2 days, the throughput averages approximately:",opts:["1.4 days per item (pipeline fill cost amortized)","1.0 day per item","2.0 days per item","5.0 days per item"],ans:0},
+{q:"Which change to an instruction set would most directly improve pipelined CPU performance?",opts:["Uniform 32-bit instruction length","Variable-length instructions","Fewer registers","More addressing modes"],ans:0},
+{q:"Pipelining is analogous to which concept in everyday life (as used in the textbook)?",opts:["Laundry — overlapping wash, dry, and fold for multiple loads","Assembly-line car manufacturing with shared tools","Grocery checkout with a single cashier serving multiple customers","A relay race where one runner carries the baton the entire way"],ans:0},
+{q:"A non-pipelined processor executes 4 instruction types each taking 800 ps. A pipelined version with 5 stages at 200 ps each takes how long per instruction?",opts:["1000 ps (5 &times; 200 ps)","800 ps (same as before)","200 ps (one stage)","160 ps (800/5)"],ans:0},
+{q:"Which best describes the relationship between pipeline depth and potential speedup?",opts:["More stages allow higher clock rates but hazards limit actual gain","More stages always produce proportional speedup with no tradeoffs","Deeper pipelines reduce the number of instructions needed","Pipeline depth has no effect on branch prediction accuracy"],ans:0},
+// --- 6.6 Pipelined Datapath & Control (8) ---
+{q:"Pipeline registers in the pipelined datapath serve what purpose?",opts:["Hold intermediate values between stages so each stage can operate independently","Eliminate the need for a register file","Cache recently used instructions","Store branch prediction history bits"],ans:0},
+{q:"The four pipeline registers in the LEGv8 pipelined datapath are:",opts:["IF/ID, ID/EX, EX/MEM, MEM/WB","PC, IR, MAR, MDR","RF/ALU, ALU/MEM, MEM/WB, PC/IF","Fetch, Decode, Execute, Memory"],ans:0},
+{q:"Control signals generated in the ID stage travel through the pipeline because:",opts:["Each subsequent stage needs its own set of control signals at the right time","Control signals are recomputed fresh at every stage","The control unit is distributed across all five stages","Only the EX and WB stages require control signals"],ans:0},
+{q:"WB-stage control signals (RegWrite, MemtoReg) must travel through how many pipeline registers before use?",opts:["3 (ID/EX &rarr; EX/MEM &rarr; MEM/WB)","1","2","4"],ans:0},
+{q:"MEM-stage control signals (MemRead, MemWrite) are generated in ID and used:",opts:["Two stages later, after passing through ID/EX and EX/MEM registers","Immediately in the same cycle","One stage later, in EX","Three stages later, in WB"],ans:0},
+{q:"In the pipelined datapath, which pipeline register carries the sign-extended immediate from decode to execute?",opts:["ID/EX","IF/ID","EX/MEM","MEM/WB"],ans:0},
+{q:"The pipelined datapath requires that instruction memory and data memory be separate mainly because:",opts:["IF and MEM stages both access memory in the same clock cycle","The pipeline registers cannot hold instruction bits","Data memory is faster than instruction memory","Harvard architecture reduces CPI to exactly 1"],ans:0},
+{q:"In pipelined execution, the register write (WB stage) and register read (ID stage) happen in the same clock cycle for different instructions. This is handled by:",opts:["Writing in the first half of the cycle and reading in the second half","Using a write buffer to delay register updates","Stalling the pipeline for one cycle whenever this occurs","Adding a dedicated forwarding path from WB to ID"],ans:0},
+// --- 6.7 Data Hazards: Forwarding vs Stalling (12) ---
+{q:"A RAW (Read After Write) hazard occurs when:",opts:["An instruction tries to read a register before a prior instruction has written it","An instruction tries to write a register that another instruction is reading","Two instructions simultaneously read the same register","A branch causes the wrong instruction to read a register"],ans:0},
+{q:"Forwarding (bypassing) resolves RAW hazards by:",opts:["Routing the ALU result directly to the next instruction&apos;s ALU input without waiting for WB","Inserting NOP instructions between dependent instructions","Reordering instructions so dependent ones are separated by 2 cycles","Stalling the pipeline for one cycle and then continuing"],ans:0},
+{q:"An EX hazard (forwarding from EX/MEM register) occurs when the dependent instruction is:",opts:["1 instruction after the producing instruction","2 instructions after the producing instruction","3 instructions after the producing instruction","Immediately after a load instruction"],ans:0},
+{q:"A MEM hazard (forwarding from MEM/WB register) occurs when the dependent instruction is:",opts:["2 instructions after the producing instruction","1 instruction after the producing instruction","3 instructions after the producing instruction","Immediately after a branch"],ans:0},
+{q:"A load-use hazard cannot be resolved by forwarding alone because:",opts:["The loaded data is not available until after the MEM stage, which is too late for the next EX stage","Forwarding only works for R-type instructions","The load instruction does not use the ALU","The register file cannot be read and written simultaneously"],ans:0},
+{q:"The hardware solution for a load-use hazard is:",opts:["Insert one stall (bubble) into the pipeline and then use forwarding","Insert two NOPs after every load instruction","Reorder all load instructions to the top of the function","Use a write buffer to hold the load result"],ans:0},
+{q:"When the hazard detection unit identifies a load-use hazard, it:",opts:["Stalls the pipeline by one cycle (inserts a bubble) and forces the IF and ID stages to re-execute","Flushes the entire pipeline and restarts from the branch","Disables forwarding for that instruction only","Converts the load to a two-cycle instruction"],ans:0},
+{q:"NOP (no operation) insertion as a software solution to data hazards is done by:",opts:["The compiler, which schedules independent instructions or inserts NOPs between dependent ones","The hardware hazard detection unit automatically","The operating system during context switch","The assembler, which reorders instructions at link time"],ans:0},
+{q:"When both EX and MEM forwarding conditions apply to the same destination register, the correct action is:",opts:["EX hazard takes priority (use the more recent result from EX/MEM)","MEM hazard takes priority (use the older, more stable result)","Both results are OR-ed together","A stall is inserted to resolve the conflict"],ans:0},
+{q:"Which LEGv8 instruction sequence creates a load-use hazard?<br><code>LDUR X1, [X2, #0]<br>ADD X3, X1, X4</code>",opts:["Yes — ADD reads X1 one cycle after LDUR writes it (data not yet available)","No — forwarding handles this in one cycle","No — the hazard only exists if X2 is also used by ADD","Yes — but only if X3 = X1"],ans:0},
+{q:"Forwarding unit inputs are the destination register of instructions in the EX/MEM and MEM/WB pipeline registers. It compares these against:",opts:["The source registers of the instruction currently in the EX stage","The source registers of the instruction in the IF stage","The destination register of the instruction in the WB stage","All registers currently being written by control logic"],ans:0},
+{q:"Which is TRUE about the uniform 32-bit instruction length in LEGv8 and pipelining?",opts:["It simplifies instruction fetch — IF always fetches exactly 32 bits from a 4-byte aligned address","It eliminates all data hazards automatically","It removes the need for a sign extender","It makes branch prediction unnecessary"],ans:0},
+// --- 6.8 Control Hazards (8) ---
+{q:"A control hazard (branch hazard) arises because:",opts:["The pipeline fetches the next sequential instruction before knowing whether a branch is taken","The branch destination is computed before the condition is evaluated","The register file does not support reading and writing simultaneously","Branch instructions require two ALU operations"],ans:0},
+{q:"The predict-not-taken strategy means the pipeline:",opts:["Always fetches the instruction after the branch (sequential) and flushes if the branch is taken","Always fetches the branch target and flushes if not taken","Stalls for 1 cycle after every branch until the condition is known","Predicts based on the sign of the branch offset"],ans:0},
+{q:"A 1-bit branch predictor makes a mistake when:",opts:["The branch behavior changes from the last time it executed","The branch is always taken","The branch is always not taken","The branch target changes between two executions"],ans:0},
+{q:"A 2-bit branch predictor requires two consecutive mispredictions to change its prediction. This makes it better than a 1-bit predictor for:",opts:["Loops — the single exit misprediction does not immediately flip the prediction","Always-taken branches","Indirect branches with multiple targets","Branches that alternate taken/not-taken every iteration"],ans:0},
+{q:"The Branch History Table (BHT) is indexed by:",opts:["The lower bits of the branch instruction&apos;s PC","The branch target address","The register operand of the branch","The opcode of the branch instruction"],ans:0},
+{q:"Dynamic branch prediction differs from static prediction in that it:",opts:["Uses runtime behavior history to make predictions that adapt over time","Always predicts taken for backward branches","Is implemented in the compiler, not the hardware","Uses the branch offset sign to predict direction"],ans:0},
+{q:"The branch delay slot (used in MIPS, NOT in LEGv8) refers to:",opts:["The instruction after a branch that always executes, regardless of branch outcome","A register that holds the return address after a branch","A one-cycle stall inserted by hardware after every branch","A cache line reserved for branch target instructions"],ans:0},
+{q:"If a branch is mispredicted in a 5-stage pipeline (branch resolved at end of MEM stage), how many instructions must be flushed?",opts:["3","1","2","4"],ans:0},
+// --- 6.9 Exceptions (5) ---
+{q:"The EPC (Exception PC / ELR in ARMv8) register stores:",opts:["The address of the instruction that caused the exception","The cause/type of the exception","The address of the exception handler","The value of the faulting memory address"],ans:0},
+{q:"The ESR (Exception Status Register) in LEGv8 stores:",opts:["The cause (reason) of the exception","The address of the faulting instruction","The return address for the exception handler","The stack pointer at the time of the exception"],ans:0},
+{q:"A &apos;precise exception&apos; guarantees that:",opts:["All instructions before the faulting instruction have completed, and none after it have taken effect","The exception is handled within one clock cycle","The pipeline is flushed before the exception handler starts","Register values are saved to memory before handling the exception"],ans:0},
+{q:"When an exception occurs in a pipelined processor, the standard response is to:",opts:["Flush the pipeline, save the PC of the faulting instruction to EPC, and jump to the exception handler","Complete all in-flight instructions before entering the handler","Raise a signal to the OS and continue execution from the next instruction","Save all register values to the stack automatically in hardware"],ans:0},
+{q:"When multiple exceptions occur in the same cycle (different pipeline stages), the hardware handles them by:",opts:["Prioritizing the exception from the earliest (oldest) instruction in the pipeline","Handling all exceptions simultaneously using separate exception registers","Ignoring all but the last exception detected","Deferring all exceptions until the pipeline drains"],ans:0},
+// --- 6.10 ILP & Superscalar (9) ---
+{q:"Instruction-Level Parallelism (ILP) refers to:",opts:["The potential to execute multiple independent instructions simultaneously","Executing a single instruction across multiple processors","Using SIMD to process multiple data items with one instruction","Distributing threads across cores to reduce CPI"],ans:0},
+{q:"A superscalar processor is one that:",opts:["Issues more than one instruction per clock cycle","Has more than one level of cache","Executes instructions in strict program order only","Uses a very long instruction word to encode multiple operations"],ans:0},
+{q:"Out-of-order execution allows a processor to:",opts:["Execute instructions in a different order than the program, as long as data dependencies are respected","Fetch instructions before the previous one has been decoded","Execute the same instruction on multiple ALUs simultaneously","Predict the result of an instruction before computing it"],ans:0},
+{q:"Reservation stations hold instructions that:",opts:["Are waiting for operands; they issue to the functional unit when operands are ready","Have completed execution and are waiting to write results","Have been fetched but not yet decoded","Are predicted to be on the not-taken branch path"],ans:0},
+{q:"The commit unit (reorder buffer, ROB) in an out-of-order processor ensures:",opts:["Instructions update architectural state in program order (precise exceptions)","Instructions execute in program order despite out-of-order issue","All memory operations complete before register operations","Branch mispredictions are detected before execution begins"],ans:0},
+{q:"Tomasulo&apos;s algorithm was originally developed for the IBM 360/91 to achieve:",opts:["Dynamic scheduling with register renaming via reservation stations","Static VLIW scheduling at compile time","In-order superscalar issue with scoreboard interlocking","Branch prediction using a 2-bit saturating counter"],ans:0},
+{q:"Speculation in out-of-order processors means:",opts:["Executing instructions past a branch before knowing the branch outcome","Predicting cache hit/miss before accessing memory","Renaming registers before knowing instruction results","Fetching multiple instruction streams simultaneously"],ans:0},
+{q:"Which processor design executes strictly in-order?",opts:["ARM Cortex-A53","Intel Core i7 (Skylake)","IBM POWER9","AMD Zen 3"],ans:0},
+{q:"VLIW (Very Long Instruction Word) differs from superscalar in that VLIW:",opts:["Relies on the compiler to find parallelism and pack instructions; hardware executes without dynamic scheduling","Uses reservation stations to dynamically find parallelism at runtime","Increases clock speed by reducing the number of pipeline stages","Adds extra functional units and uses out-of-order execution"],ans:0},
+// --- 6.11 Real Stuff: Cortex-A53 & Core i7 (5) ---
+{q:"The ARM Cortex-A53 pipeline is best described as:",opts:["In-order, 8-stage pipeline","Out-of-order, 14-16 stage pipeline","Superscalar, 5-stage pipeline","VLIW, 4-way issue pipeline"],ans:0},
+{q:"The Intel Core i7 (Haswell/Skylake) pipeline is best described as:",opts:["Out-of-order superscalar with 14&ndash;16 stages","In-order 8-stage pipeline","Static VLIW with 6-way issue","In-order 5-stage pipeline matching the textbook model"],ans:0},
+{q:"Compared to the ARM Cortex-A53, the Intel Core i7&apos;s out-of-order execution primarily benefits:",opts:["Irregular workloads with unpredictable memory access and branches","Embedded real-time systems with deterministic timing requirements","Battery-powered mobile devices with strict power budgets","Programs with no data dependencies between instructions"],ans:0},
+{q:"The ARM Cortex-A53 is designed for which primary use case?",opts:["Energy-efficient mobile and embedded computing","High-throughput desktop and server workloads","Graphics processing with SIMD-heavy pipelines","Real-time control systems requiring cycle-exact timing"],ans:0},
+{q:"A key trade-off of a deeper pipeline (more stages) is:",opts:["Higher branch misprediction penalty but potentially higher clock rate","Lower CPI but higher power consumption only","Simpler control logic but reduced throughput","Fewer hazards but increased instruction latency"],ans:0},
+];
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quizStart=function(){order=shuffle(Array.from({length:Q.length},(_,i)=>i));idx=0;score=0;answered=false;document.getElementById('quiz-start').style.display='none';document.getElementById('quiz-done').style.display='none';document.getElementById('quiz-active').style.display='block';render();};
+window.quizNext=function(){idx++;if(idx>=order.length){showDone();return;}render();};
+window.quizRestart=function(){document.getElementById('quiz-done').style.display='none';document.getElementById('quiz-start').style.display='block';};
+function render(){answered=false;var q=Q[order[idx]];document.getElementById('q-counter').textContent='Question '+(idx+1)+' of '+Q.length;document.getElementById('q-score-disp').textContent='Score: '+score+'/'+idx;document.getElementById('q-bar').style.width=((idx/Q.length)*100)+'%';document.getElementById('q-text').innerHTML=q.q;document.getElementById('q-feedback').innerHTML='';document.getElementById('btn-next').style.display='none';var opts=document.getElementById('q-opts');opts.innerHTML='';q.opts.forEach(function(o,i){var b=document.createElement('button');b.className='q-opt';b.innerHTML=['A','B','C','D'][i]+'. '+o;b.dataset.i=i;b.onclick=function(){pick(i,q.ans);};opts.appendChild(b);});}
+function pick(chosen,correct){if(answered)return;answered=true;var allBtns=document.querySelectorAll('#q-opts .q-opt');allBtns.forEach(function(b){b.disabled=true;});if(chosen===correct){score++;allBtns[chosen].classList.add('correct');document.getElementById('q-feedback').innerHTML='<span class="ok">&#x2713; Correct!</span>';}else{allBtns[chosen].classList.add('wrong');allBtns[correct].classList.add('reveal');document.getElementById('q-feedback').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';}document.getElementById('q-score-disp').textContent='Score: '+score+'/'+(idx+1);document.getElementById('btn-next').style.display='inline-block';}
+function showDone(){document.getElementById('quiz-active').style.display='none';document.getElementById('quiz-done').style.display='block';var pct=Math.round(score/Q.length*100);document.getElementById('done-score').textContent=score+' / '+Q.length;var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';document.getElementById('done-pct').textContent=pct+'% — '+msg;}
+document.addEventListener('keydown',function(e){if(document.getElementById('quiz-active').style.display==='none')return;if(!answered&&['1','2','3','4'].includes(e.key)){var i=parseInt(e.key)-1;var btns=document.querySelectorAll('#q-opts .q-opt');if(btns[i])btns[i].click();}if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){e.preventDefault();var nb=document.getElementById('btn-next');if(nb.style.display!=='none')nb.click();}});
+})();</script>
 
 <hr/>
 <p style="color:var(--muted);font-size:12px;">Built from ch6.pdf (zyBook C952, export dated 2026-04-22). If anything here disagrees with the source, trust the source.</p>

@@ -117,6 +117,10 @@
     :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
     :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
   }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
+  .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .chnav a:hover { border-color: var(--accent); }
+  .chnav .spacer { visibility: hidden; }
 </style>
 <script>
   (function() {
@@ -135,6 +139,11 @@
   <span class="icon-moon" aria-hidden="true">&#9790;</span>
 </button>
 <div class="wrap">
+  <nav class="chnav">
+    <a href="ch4.html">&larr; Ch 4</a>
+    <a href="index.html">All chapters</a>
+    <a href="ch6.html">Ch 6 &rarr;</a>
+  </nav>
 
 <header>
   <h1>C952 — Chapter 5: Arithmetic for Computers <span class="badge b-key">LEGv8 / IEEE 754</span></h1>
@@ -153,7 +162,7 @@
   <a href="#s10">5.10 Fallacies &amp; Pitfalls</a>
   <a href="#s11">5.11 Concluding Remarks</a>
   <a href="#cheat">Cheat sheet</a>
-  <a href="#quiz">Self-test (Q&amp;A)</a>
+  <a href="#mc">Multiple-Choice Quiz (90 Qs)</a>
   <a href="#trap">Common exam traps</a>
 </div>
 
@@ -598,122 +607,6 @@ FADD V1.4S,  V2.4S,  V3.4S    // 4 parallel 32-bit FP adds</pre>
   </div>
 </div>
 
-<!-- ===================== SELF-TEST ===================== -->
-<h2 id="quiz">Self-test (likely exam-style Q&amp;A)</h2>
-
-<details open>
-<summary>Integer addition / subtraction / overflow</summary>
-<div class="body">
-  <div class="qa"><div class="q">How does a computer perform subtraction?</div><div class="a">Negate the second operand (two's complement: invert bits and add 1) and add.</div></div>
-  <div class="qa"><div class="q">When can overflow NOT occur in addition?</div><div class="a">When the two operands have different signs. The sum's magnitude can't exceed the larger operand.</div></div>
-  <div class="qa"><div class="q">Two positive numbers added give a negative result. What happened?</div><div class="a">Overflow — the sign bit got set with a value bit because the result needed 65 bits.</div></div>
-  <div class="qa"><div class="q">Does ADD set the overflow condition code on LEGv8?</div><div class="a">Yes. ADD, ADDI, and SUB can set the overflow condition code. C and Java ignore it; Ada and Fortran require notification.</div></div>
-  <div class="qa"><div class="q">Does overflow occur in unsigned addition?</div><div class="a">Mathematically yes, but it's normally ignored — unsigned ints are typically used for memory addresses, where wrap-around is acceptable.</div></div>
-  <div class="qa"><div class="q">What is an ALU?</div><div class="a">Arithmetic Logic Unit — hardware that performs add, subtract, and usually AND/OR.</div></div>
-  <div class="qa"><div class="q">How do you do byte/halfword arithmetic on LEGv8?</div><div class="a">Load with LDURB/LDURH, compute with full-word ADD/SUB/MUL/DIV, mask the result with AND to 8 or 16 bits, store with STURB/STURH.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Multiplication</summary>
-<div class="body">
-  <div class="qa"><div class="q">What's the largest possible product of an n-bit and m-bit value?</div><div class="a">n + m bits long.</div></div>
-  <div class="qa"><div class="q">In the first sequential multiply hardware, how wide is each register?</div><div class="a">Multiplicand 128, ALU 128, Product 128, Multiplier 64.</div></div>
-  <div class="qa"><div class="q">In the refined hardware, what changed?</div><div class="a">Multiplicand and ALU shrink to 64 bits; Multiplier register disappears (placed in right half of Product); Product is shifted right each step.</div></div>
-  <div class="qa"><div class="q">How many iterations does the basic sequential algorithm take?</div><div class="a">64 (one per bit of the multiplier).</div></div>
-  <div class="qa"><div class="q">How many add-times does the parallel-tree multiplier take?</div><div class="a">log₂(64) = 6 add-times (instead of 64).</div></div>
-  <div class="qa"><div class="q">Why can the same hardware do both multiply and divide?</div><div class="a">Both need a 128-bit shift register and a 64-bit ALU that adds or subtracts.</div></div>
-  <div class="qa"><div class="q">Which instruction returns the upper 64 bits of a signed 128-bit product?</div><div class="a">SMULH. UMULH for unsigned. MUL gives the lower 64 bits.</div></div>
-  <div class="qa"><div class="q">Does MUL detect overflow?</div><div class="a">No. Software must check: no overflow iff the high 64 bits are 0 (UMULH) or replicated sign of the low 64 (SMULH).</div></div>
-  <div class="qa"><div class="q">What's "strength reduction" in multiplication?</div><div class="a">Compiler replaces multiply by a power of 2 with a left shift.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Division</summary>
-<div class="body">
-  <div class="qa"><div class="q">Quotient × Divisor + ___ = Dividend</div><div class="a">Remainder. And |remainder| &lt; |divisor|.</div></div>
-  <div class="qa"><div class="q">In restoring division hardware, where is the divisor placed initially?</div><div class="a">In the left half of the 128-bit Divisor register; shifted right 1 bit per iteration.</div></div>
-  <div class="qa"><div class="q">If the remainder goes negative after subtraction, what happens?</div><div class="a">Restore: add the divisor back; shift the quotient left and place a 0 in its LSB.</div></div>
-  <div class="qa"><div class="q">If the remainder is non-negative, what happens?</div><div class="a">Keep the new remainder; shift the quotient left and place a 1 in its LSB.</div></div>
-  <div class="qa"><div class="q">How many iterations does the algorithm need?</div><div class="a">n + 1 = 65 for 64-bit operands.</div></div>
-  <div class="qa"><div class="q">Why can't you parallelize division like multiplication?</div><div class="a">Each step depends on the sign of the previous difference (you can't precompute everything).</div></div>
-  <div class="qa"><div class="q">What is SRT division?</div><div class="a">A faster algorithm that predicts multiple quotient bits per step (typically 4) using a lookup table indexed by upper bits of remainder and divisor; corrects mispredictions later.</div></div>
-  <div class="qa"><div class="q">Which sign does the remainder take?</div><div class="a">The same sign as the dividend, regardless of the divisor's sign.</div></div>
-  <div class="qa"><div class="q">Do SDIV and UDIV detect overflow or division by 0?</div><div class="a">No — software must check the divisor before dividing.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Floating point — representation</summary>
-<div class="body">
-  <div class="qa"><div class="q">Single precision field widths?</div><div class="a">1 sign + 8 exponent + 23 fraction = 32 bits. Bias 127. Significand = 24 bits including implicit leading 1.</div></div>
-  <div class="qa"><div class="q">Double precision field widths?</div><div class="a">1 + 11 + 52 = 64 bits. Bias 1023. Significand = 53 bits.</div></div>
-  <div class="qa"><div class="q">What is "normalized" form?</div><div class="a">Exactly one nonzero bit (a 1) to the left of the binary point. IEEE 754 makes it implicit.</div></div>
-  <div class="qa"><div class="q">Why bias the exponent instead of using two's complement?</div><div class="a">So FP values can be sorted/compared with integer comparison instructions: smallest exponent maps to smallest unsigned bit pattern.</div></div>
-  <div class="qa"><div class="q">What does an exponent of all 0s with a zero fraction represent?</div><div class="a">±0 (zero is special-cased — no implicit leading 1).</div></div>
-  <div class="qa"><div class="q">All 1s exponent + zero fraction?</div><div class="a">±∞.</div></div>
-  <div class="qa"><div class="q">All 1s exponent + nonzero fraction?</div><div class="a">NaN (Not a Number) — used for invalid ops like 0/0 or ∞−∞.</div></div>
-  <div class="qa"><div class="q">What is a denormal/subnormal?</div><div class="a">Exp = 0, fraction ≠ 0. Allows gradual underflow between 0 and the smallest normalized number.</div></div>
-  <div class="qa"><div class="q">FP overflow vs FP underflow?</div><div class="a">Overflow = positive exponent too large for the field. Underflow = negative exponent too large in magnitude (number too small).</div></div>
-  <div class="qa"><div class="q">Encode −0.75 in single precision.</div><div class="a">−0.75 = −1.1₂ × 2⁻¹. S=1, exp=126=01111110, frac=10000…0. Bits: 1 01111110 10000000000000000000000.</div></div>
-  <div class="qa"><div class="q">What decimal value is 1 10000001 01000…0 in single precision?</div><div class="a">−1 × 1.25 × 2² = −5.0.</div></div>
-  <div class="qa"><div class="q">Why is the implicit leading 1 worth doing?</div><div class="a">It buys an extra bit of precision for free (24 significand bits in 32 total).</div></div>
-</div>
-</details>
-
-<details>
-<summary>Floating point — arithmetic and rounding</summary>
-<div class="body">
-  <div class="qa"><div class="q">Steps of FP addition?</div><div class="a">1) Align (shift smaller exponent's significand right to match), 2) add significands, 3) normalize and check overflow/underflow, 4) round (re-normalize if needed).</div></div>
-  <div class="qa"><div class="q">Steps of FP multiplication?</div><div class="a">1) Add exponents (subtract one bias if biased), 2) multiply significands, 3) normalize, 4) round, 5) set sign (XOR of operand signs).</div></div>
-  <div class="qa"><div class="q">When you add biased exponents, why do you subtract the bias?</div><div class="a">Because each operand was already biased, so the sum has the bias added twice; subtracting once gets back to single-biased form.</div></div>
-  <div class="qa"><div class="q">What are guard, round, and sticky bits?</div><div class="a">Three extra bits kept right of the significand. Guard + round (2 bits) let you round to nearest representable. Sticky records whether any nonzero bit shifted off past round, to break exact-half ties correctly.</div></div>
-  <div class="qa"><div class="q">What are IEEE 754's four rounding modes?</div><div class="a">Round up (toward +∞), round down (toward −∞), truncate, round to nearest even (default).</div></div>
-  <div class="qa"><div class="q">In round-to-nearest-even, how do you break a tie?</div><div class="a">Round so that the LSB of the retained significand is 0 (even).</div></div>
-  <div class="qa"><div class="q">What is one ulp?</div><div class="a">"Unit in the last place" — the gap between adjacent representable values; an error of N ulps means N bits off in the LSBs of the significand.</div></div>
-  <div class="qa"><div class="q">What is fused multiply-add?</div><div class="a">a = a + (b×c) computed with one rounding (after the add) instead of two — more precise than separate FMUL + FADD. Added to IEEE 754-2008.</div></div>
-</div>
-</details>
-
-<details>
-<summary>LEGv8 / ARMv8 floating-point instructions</summary>
-<div class="body">
-  <div class="qa"><div class="q">FP add single vs double?</div><div class="a">FADDS for single, FADDD for double.</div></div>
-  <div class="qa"><div class="q">Why does LEGv8 have separate FP registers (S/D) instead of using X-registers?</div><div class="a">Doubles register count without expanding instruction format, doubles register bandwidth, allows internal-format customization, and historically allowed FP unit on a separate coprocessor chip.</div></div>
-  <div class="qa"><div class="q">Are address registers for FP loads/stores integer or FP registers?</div><div class="a">Integer X-registers. Only the data ends up in S/D registers.</div></div>
-  <div class="qa"><div class="q">Relationship between S and D registers?</div><div class="a">Sn is the lower half of Dn.</div></div>
-  <div class="qa"><div class="q">How do you branch on a floating-point comparison?</div><div class="a">Use FCMPS/FCMPD to set condition codes, then B.cond — same branch instruction as integer.</div></div>
-</div>
-</details>
-
-<details>
-<summary>SIMD / subword parallelism / SSE/AVX</summary>
-<div class="body">
-  <div class="qa"><div class="q">What is subword parallelism?</div><div class="a">Partitioning a wide adder so a single instruction performs several smaller arithmetic operations in parallel.</div></div>
-  <div class="qa"><div class="q">How wide are ARMv8 V-registers, and how many are there?</div><div class="a">128 bits, 32 of them (V0..V31).</div></div>
-  <div class="qa"><div class="q">What does ADD V1.16B, V2.16B, V3.16B do?</div><div class="a">16 parallel 8-bit integer adds.</div></div>
-  <div class="qa"><div class="q">What does FADD V1.4S, V2.4S, V3.4S do?</div><div class="a">4 parallel 32-bit floating-point adds.</div></div>
-  <div class="qa"><div class="q">XMM vs YMM vs ZMM widths?</div><div class="a">XMM 128-bit, YMM 256-bit, ZMM 512-bit.</div></div>
-  <div class="qa"><div class="q">What do PS, PD, SS, SD mean in SSE/AVX names?</div><div class="a">PS = packed single (4×32-bit FP in XMM), PD = packed double (2×64-bit), SS = scalar single, SD = scalar double.</div></div>
-  <div class="qa"><div class="q">What's the difference between SSE2 addpd and AVX vaddpd?</div><div class="a">vaddpd uses YMM (256-bit, 4 doubles instead of 2) and accepts 3 address operands instead of 2.</div></div>
-  <div class="qa"><div class="q">What was the AVX speedup on 32×32 DGEMM vs unoptimized?</div><div class="a">3.85×, close to the theoretical 4× from doing 4 doubles in parallel.</div></div>
-  <div class="qa"><div class="q">What does _mm256_broadcast_sd do?</div><div class="a">Replicates one scalar double 4 times across a YMM register — used to multiply each lane of A by the same B element.</div></div>
-</div>
-</details>
-
-<details>
-<summary>Fallacies and pitfalls</summary>
-<div class="body">
-  <div class="qa"><div class="q">Is right-shift always the same as integer division by a power of 2?</div><div class="a">No. True for unsigned. For signed, logical shift right corrupts the sign bit; arithmetic right shift sign-extends but rounds toward −∞ (e.g., −5 ASR 1 = −3, not −2).</div></div>
-  <div class="qa"><div class="q">Is floating-point addition associative?</div><div class="a">No. (a + b) + c can differ from a + (b + c) due to limited precision.</div></div>
-  <div class="qa"><div class="q">Is two's-complement integer addition associative?</div><div class="a">Yes — even when overflow occurs.</div></div>
-  <div class="qa"><div class="q">Why might the same FP code give different answers on 10 vs 1000 processors?</div><div class="a">Because partial sums are added in different orders, and FP add is not associative.</div></div>
-  <div class="qa"><div class="q">What was the 1994 Pentium FDIV bug?</div><div class="a">5 bad lookup-table entries in the SRT divider produced wrong bits 12–52 in some divides. Cost Intel ~$500M to recall.</div></div>
-</div>
-</details>
-
-<!-- ===================== TRAPS ===================== -->
 <h2 id="trap">Common exam traps</h2>
 <div class="panel">
   <ul>
@@ -736,6 +629,228 @@ FADD V1.4S,  V2.4S,  V3.4S    // 4 parallel 32-bit FP adds</pre>
     <li><b>"All bit patterns have a fixed meaning."</b> <span class="no">No.</span> The instruction operating on the bits determines whether they're a signed int, unsigned int, FP, instruction, character, etc.</li>
   </ul>
 </div>
+
+
+<style>
+  .q-btn{border:none;border-radius:6px;padding:9px 20px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:background .12s,transform .1s;}
+  .q-start{background:var(--accent);color:#0f1115;}
+  .q-start:hover{filter:brightness(1.12);transform:translateY(-1px);}
+  .q-next{background:var(--panel-2);color:var(--text);border:1px solid var(--border);margin-top:6px;}
+  .q-next:hover{background:var(--border);}
+  .q-opt{display:block;width:100%;text-align:left;background:var(--panel-2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:13.5px;font-family:inherit;color:var(--text);transition:background .1s,border-color .1s;line-height:1.45;}
+  .q-opt:hover:not(:disabled){background:var(--hl);border-color:var(--accent);}
+  .q-opt.correct{background:rgba(106,210,154,.15)!important;border-color:var(--good)!important;color:var(--good)!important;}
+  .q-opt.wrong{background:rgba(255,138,122,.12)!important;border-color:var(--bad)!important;color:var(--bad)!important;}
+  .q-opt.reveal{background:rgba(106,210,154,.1)!important;border-color:var(--good)!important;}
+  #q-progress-wrap2{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px;}
+  #q-bar2{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
+</style>
+
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">90 questions</span></h2>
+<div class="panel">
+  <div id="quiz-shell2">
+    <div id="quiz-start2">
+      <p>90 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA. Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quizStart2()">Start Quiz</button>
+    </div>
+    <div id="quiz-active2" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q-counter2" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q-score-disp2" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q-progress-wrap2"><div id="q-bar2"></div></div>
+      <div id="q-text2" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q-opts2"></div>
+      <div id="q-feedback2" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn-next2" class="q-btn q-next" style="display:none" onclick="quizNext2()">Next &rarr;</button>
+    </div>
+    <div id="quiz-done2" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done-score2" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done-pct2" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quizRestart2()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>(function(){
+var Q=[
+// --- 5.2 Addition & Subtraction (15) ---
+{q:"How does a computer perform subtraction using two's complement?",opts:["It uses a dedicated subtractor circuit with borrow propagation","It negates the second operand (invert bits and add 1) then adds","It shifts the smaller operand right until magnitudes match","It divides both operands by 2, subtracts, then scales back"],ans:1},
+{q:"Overflow in signed addition occurs when:",opts:["The carry-out of the MSB is 1","The operands have different signs","The operands have the same sign but the result has the opposite sign","The result requires one more bit than the operand width"],ans:2},
+{q:"Which scenario cannot produce signed integer overflow in addition?",opts:["Positive + Positive","Negative + Negative","Positive + Negative","Negative + Positive = Positive"],ans:2},
+{q:"Two 8-bit signed values: X1 = 0b11000110 (= -58), X2 = 0b11110111 (= -9). <code>ADD X3, X2, X1</code> produces 0b10111101 = -67. Does overflow occur?",opts:["Yes, because the carry out of bit 7 is 1","Yes, because both inputs are negative but the result has sign bit 1 (which is still negative) — actually this is correct, so No","No, because both inputs are negative and the result is also negative","Yes, because the result needs 9 bits to represent"],ans:2},
+{q:"What is the two's complement negation of a number?",opts:["Flip all bits","Add 1 to all bits","Flip all bits and then add 1","Subtract the number from 2^n"],ans:2},
+{q:"Which LEGv8 instruction sets the overflow condition code after addition?",opts:["ADD","ADDI","ADDS","ADDI with immediate 0"],ans:2},
+{q:"A ripple-carry adder propagates carries:",opts:["In parallel using a lookup table","From the least significant to the most significant bit, one stage at a time","From the most significant to the least significant bit","Via a tree of carry-save adders simultaneously"],ans:1},
+{q:"Why does carry-lookahead addition have better worst-case performance than ripple-carry?",opts:["It skips bits whose values are 0","It predicts carries in advance using generate and propagate logic, making carry computation logarithmic in time","It uses multiplication to replace repeated addition","It limits operand size to 32 bits"],ans:1},
+{q:"The maximum number of bits needed to represent the sum of two n-bit numbers is:",opts:["n bits","n + 1 bits","2n bits","n - 1 bits"],ans:1},
+{q:"In a 64-bit LEGv8 machine, word size is 64 bits. Overflow in signed 64-bit addition means:",opts:["The carry-out of bit 63 equals 1","The true sum cannot be represented in 64 bits","The result is greater than 2^32","The result is not a multiple of 8"],ans:1},
+{q:"Which languages require the programmer to be notified on integer overflow?",opts:["C and Java","Ada and Fortran","Python and Ruby","C++ and Rust"],ans:1},
+{q:"Saturating arithmetic differs from normal overflow in that it:",opts:["Wraps the result around to the opposite extreme","Clamps the result at the maximum (or minimum) representable value","Raises a hardware interrupt on overflow","Rounds to the nearest power of 2"],ans:1},
+{q:"To perform byte (8-bit) arithmetic on LEGv8, the correct sequence is:",opts:["Use ADDB directly on two byte registers","Load with LDURB, compute with ADD/SUB, mask with AND, store with STURB","Load with LDUR, shift right by 56, then add, shift back","Use the SIMD V-register byte lanes only"],ans:1},
+{q:"Which statement about unsigned overflow is correct for LEGv8?",opts:["LEGv8 hardware traps on unsigned overflow","Unsigned overflow is normally ignored — unsigned values serve as memory addresses where wrap-around is acceptable","Unsigned overflow is detected by the same flags as signed overflow","Unsigned overflow only occurs when both operands have their MSB set"],ans:1},
+{q:"Subtraction A - B where A is positive and B is negative can produce overflow only if:",opts:["A is much larger than B","The result is negative (Pos - Neg = Neg)","The result overflows the word size (Pos - Neg producing a negative result)","B is zero"],ans:2},
+// --- 5.3 Multiplication (10) ---
+{q:"How many bits are needed to represent the product of two 64-bit integers without loss?",opts:["64 bits","96 bits","128 bits","256 bits"],ans:2},
+{q:"In the first sequential multiply hardware algorithm, how many iterations are performed?",opts:["32","63","64","128"],ans:2},
+{q:"In the refined (improved) sequential multiply hardware, the Multiplier register is:",opts:["Replaced by a 128-bit register","Placed in the right half of the Product register","Eliminated and its bits read from a ROM","Moved to the left half of the Multiplicand register"],ans:1},
+{q:"Which LEGv8 instruction returns the lower 64 bits of a 64x64-bit signed multiply?",opts:["SMULH","UMULH","MUL","MULL"],ans:2},
+{q:"Which LEGv8 instruction returns the upper 64 bits of a 64x64-bit signed multiply?",opts:["MUL","SMULH","UMULH","MULH"],ans:1},
+{q:"How does software check for overflow after an unsigned LEGv8 MUL?",opts:["Check the overflow condition flag","Execute UMULH and check whether the upper 64 bits are all zero","Execute SMULH and check whether the upper 64 bits equal the sign bit of the lower 64","Execute UDIV with the same operands and compare"],ans:1},
+{q:"The parallel-tree multiplier reduces multiply time from ~64 add-times to approximately:",opts:["32 add-times","16 add-times","6 add-times (log₂ 64)","1 add-time"],ans:2},
+{q:"'Strength reduction' as applied to multiplication means:",opts:["Replacing MUL with repeated ADD when one operand is small","Replacing a multiply-by-power-of-2 with a left shift","Using SIMD to do four multiplies simultaneously","Splitting 64-bit multiply into two 32-bit multiplies"],ans:1},
+{q:"Why can the same hardware unit perform both multiplication and division?",opts:["Both require a 32-bit ALU and a 64-bit product register","Both need a 128-bit shift register and a 64-bit ALU that adds or subtracts","Both can be implemented as a sequence of AND operations","Both require exactly 64 iterations"],ans:1},
+{q:"In the first sequential multiply hardware, how wide is the Multiplicand register?",opts:["64-bit","96-bit","128-bit","256-bit"],ans:2},
+// --- 5.4 Division (8) ---
+{q:"The fundamental identity relating dividend, divisor, quotient, and remainder is:",opts:["Dividend = Quotient + Divisor * Remainder","Quotient * Divisor + Remainder = Dividend (|Remainder| < |Divisor|)","Dividend / Divisor = Quotient + Remainder","Quotient = Dividend - Divisor * Remainder"],ans:1},
+{q:"In the restoring division algorithm, where is the Divisor initially placed?",opts:["In the right half of a 128-bit Remainder register","In the right half of a 64-bit Quotient register","In the left half of a 128-bit Divisor register, then shifted right each step","In the Product register alongside the Dividend"],ans:2},
+{q:"If, after subtracting the Divisor from the Remainder, the Remainder is negative, the algorithm:",opts:["Places a 1 in the LSB of the Quotient and keeps the new Remainder","Places a 0 in the LSB of the Quotient and restores by adding the Divisor back","Shifts the Quotient right and tries again","Terminates with an overflow signal"],ans:1},
+{q:"How many iterations does the restoring division algorithm need for 64-bit operands?",opts:["64","65 (n + 1)","128","32"],ans:1},
+{q:"Why can't division be parallelized the same way multiplication can?",opts:["Division results are always negative","Each division step depends on the sign of the previous step's result — the dependency is sequential","Division uses subtraction which is harder to parallelize than addition","The quotient register is only 32 bits wide"],ans:1},
+{q:"What does SRT division do that makes it faster than restoring division?",opts:["It parallelizes all 64 steps simultaneously","It uses a lookup table to predict ~4 quotient bits per step, then corrects mispredictions","It eliminates the Remainder register entirely","It converts division into repeated multiplication"],ans:1},
+{q:"Which LEGv8 instruction performs signed integer division?",opts:["DIV","UDIV","SDIV","DIVS"],ans:2},
+{q:"Which sign does the remainder take in signed division?",opts:["Always positive","The same as the divisor","The same as the dividend","The opposite of the dividend"],ans:2},
+// --- 5.5 Floating Point (25) ---
+{q:"How many bits make up a single-precision (IEEE 754) floating-point number?",opts:["16","32","64","128"],ans:1},
+{q:"The field widths of a single-precision IEEE 754 number are:",opts:["1 sign + 7 exponent + 24 fraction","1 sign + 8 exponent + 23 fraction","1 sign + 11 exponent + 20 fraction","1 sign + 8 exponent + 24 fraction"],ans:1},
+{q:"The field widths of a double-precision IEEE 754 number are:",opts:["1 sign + 8 exponent + 55 fraction","1 sign + 11 exponent + 52 fraction","1 sign + 10 exponent + 53 fraction","1 sign + 11 exponent + 53 fraction"],ans:1},
+{q:"The bias for a single-precision exponent is:",opts:["63","127","128","255"],ans:1},
+{q:"The bias for a double-precision exponent is:",opts:["511","1023","1024","2047"],ans:1},
+{q:"The IEEE 754 formula for the value of a normalized floating-point number is:",opts:["(-1)^S * Fraction * 2^(Exponent)","(-1)^S * (1 + Fraction) * 2^(Exponent - Bias)","(-1)^S * (Fraction) * 2^(Exponent + Bias)","(-1)^S * (1 + Fraction) * 2^(Bias - Exponent)"],ans:1},
+{q:"A single-precision number with exponent field = 0 and fraction field = 0 represents:",opts:["NaN","Denormalized (subnormal)","Plus or minus zero","Plus or minus infinity"],ans:2},
+{q:"A single-precision number with all exponent bits = 1 and fraction = 0 represents:",opts:["NaN","Plus or minus infinity","The largest normalized number","Zero"],ans:1},
+{q:"A single-precision number with all exponent bits = 1 and a nonzero fraction represents:",opts:["Denormalized number","Plus or minus infinity","NaN (Not a Number)","The value 1.0"],ans:2},
+{q:"A single-precision number with exponent field = 0 and a nonzero fraction represents:",opts:["Plus or minus zero","NaN","Plus or minus infinity","A denormalized (subnormal) number"],ans:3},
+{q:"Why does IEEE 754 use biased notation for the exponent instead of two's complement?",opts:["Biased notation uses fewer bits","So that floating-point values can be sorted using integer comparison instructions","Two's complement can't represent negative exponents","To make the exponent field always positive"],ans:1},
+{q:"The implicit leading 1 in IEEE 754 normalized numbers means the significand has how many bits (single precision)?",opts:["23","24","25","32"],ans:1},
+{q:"Encode -0.75 in single-precision IEEE 754. The sign, biased exponent, and fraction are:",opts:["S=0, exp=127, frac=1100...0","S=1, exp=126, frac=1000...0","S=1, exp=127, frac=0110...0","S=0, exp=126, frac=1100...0"],ans:1},
+{q:"A single-precision bit pattern <code>1 10000001 01000...0</code> decodes to:",opts:["−5.0","5.0","−2.5","−10.0"],ans:0},
+{q:"The four steps of IEEE 754 floating-point addition in order are:",opts:["Add, Align, Normalize, Round","Align, Add, Normalize, Round","Normalize, Add, Align, Round","Align, Normalize, Add, Round"],ans:1},
+{q:"In floating-point multiplication, how are the exponents of the two operands combined?",opts:["Exponents are multiplied together","Exponents are added and one bias is subtracted","Exponents are added and two biases are subtracted","The larger exponent is kept and the smaller is discarded"],ans:1},
+{q:"In IEEE 754 floating-point multiplication, the sign of the result is determined by:",opts:["The sign of the larger operand","XOR of the two operand sign bits","AND of the two operand sign bits","The sign of the first operand"],ans:1},
+{q:"What is a 'guard bit' in floating-point rounding?",opts:["A parity bit that detects single-bit errors","The first extra bit kept to the right of the significand during intermediate computation","A bit in the exponent field that prevents overflow","A flag bit set when the result is denormalized"],ans:1},
+{q:"What is the 'sticky bit' in floating-point rounding?",opts:["A bit set if any nonzero bit has been shifted off beyond the round bit","A bit that indicates whether rounding occurred","The most significant bit of the fraction field","A bit that marks the result as a denormal"],ans:0},
+{q:"IEEE 754 round-to-nearest-even breaks a tie (exact halfway) by:",opts:["Always rounding up","Always rounding down (truncating)","Rounding to whichever neighbor has an even (0) LSB","Rounding to the neighbor with the larger magnitude"],ans:2},
+{q:"What are the four IEEE 754 rounding modes?",opts:["Round up, Round down, Truncate, Round to nearest even","Round up, Round down, Round to zero, Round to infinity","Round to nearest, Round away from zero, Truncate, Round to nearest even","Round up, Round down, Round to nearest, Round to nearest odd"],ans:0},
+{q:"IEEE 754 guarantees results are within how many ulps of the true value (no special cases)?",opts:["1 ulp","0.5 ulp","2 ulps","0.1 ulp"],ans:1},
+{q:"What is floating-point overflow (as opposed to integer overflow)?",opts:["The result is too small to represent","The exponent is too large (positive) to fit in the exponent field","The fraction field underflows to zero","The significand requires more than 53 bits"],ans:1},
+{q:"What is floating-point underflow?",opts:["The result is larger than the maximum representable value","The exponent is too large in magnitude (too negative) — the number is too close to zero to represent","The fraction field is all zeros","The sign bit changes unexpectedly"],ans:1},
+{q:"Fused multiply-add (FMA) is more accurate than a separate FMUL followed by FADD because:",opts:["FMA uses 128-bit intermediate registers","FMA applies only one rounding after the add, not two separate roundings","FMA converts operands to double precision automatically","FMA skips the normalization step"],ans:1},
+// --- 5.6 Subword Parallelism (12) ---
+{q:"Subword parallelism (SIMD) means:",opts:["Running multiple threads simultaneously on different cores","A single instruction operates on multiple smaller data values packed into a wide register","Using multiple ALUs for separate memory addresses","Pipelining addition so multiple adds overlap"],ans:1},
+{q:"How wide are ARMv8 SIMD V-registers, and how many exist?",opts:["64-bit, 32 registers","128-bit, 16 registers","128-bit, 32 registers","256-bit, 32 registers"],ans:2},
+{q:"The ARMv8 SIMD suffix 'B' means the lane width is:",opts:["1 bit","4 bits","8 bits (byte)","16 bits"],ans:2},
+{q:"The ARMv8 SIMD suffix 'H' means the lane width is:",opts:["8 bits","16 bits (halfword)","32 bits","64 bits"],ans:1},
+{q:"The ARMv8 SIMD suffix 'D' means the lane width is:",opts:["16 bits","32 bits","64 bits (doubleword)","128 bits"],ans:2},
+{q:"How many 8-bit (byte) lanes fit in a 128-bit ARMv8 V-register?",opts:["8","16","32","64"],ans:1},
+{q:"<code>ADD V1.16B, V2.16B, V3.16B</code> performs:",opts:["One 128-bit integer add","16 parallel 8-bit integer adds","4 parallel 32-bit integer adds","2 parallel 64-bit integer adds"],ans:1},
+{q:"<code>FADD V1.4S, V2.4S, V3.4S</code> performs:",opts:["One 128-bit FP add","2 parallel 64-bit FP adds","4 parallel 32-bit FP adds","8 parallel 16-bit FP adds"],ans:2},
+{q:"What does the prefix 'U' on an ARMv8 SIMD instruction indicate?",opts:["Unordered comparison","Unsigned operation","Unified register pair","Upper half of register"],ans:1},
+{q:"How many SIMD assembly mnemonics does ARMv8 define (per the textbook)?",opts:["32","128","245","500"],ans:2},
+{q:"Which ARMv8 SIMD lane suffix processes 4 lanes per 128-bit register?",opts:["B (8-bit, 16 lanes)","H (16-bit, 8 lanes)","S (32-bit, 4 lanes)","D (64-bit, 2 lanes)"],ans:2},
+{q:"Subword parallelism is cheap to implement in hardware primarily because:",opts:["It requires adding entirely new execution units","It only requires partitioning the carry chains in an existing wide adder","It uses the floating-point unit for integer operations","It replaces the multiplier with a series of shifts"],ans:1},
+// --- 5.7 SSE/AVX (8) ---
+{q:"SSE2 XMM registers are how wide?",opts:["64-bit","128-bit","256-bit","512-bit"],ans:1},
+{q:"AVX YMM registers are how wide?",opts:["128-bit","192-bit","256-bit","512-bit"],ans:2},
+{q:"In Intel SSE/AVX naming, 'PS' stands for:",opts:["Packed Signed","Packed Single (4 x 32-bit FP)","Parallel Sum","Packed Scalar"],ans:1},
+{q:"In Intel SSE/AVX naming, 'PD' stands for:",opts:["Parallel Double","Packed Decimal","Packed Double (2 x 64-bit FP in XMM / 4 x 64-bit in YMM)","Packed Data"],ans:2},
+{q:"How does AVX's <code>vaddpd</code> differ from SSE2's <code>addpd</code>?",opts:["vaddpd operates on 32-bit floats instead of 64-bit doubles","vaddpd uses YMM registers (256-bit, 4 doubles) and supports a 3-address form","vaddpd is scalar (1 lane) while addpd is packed (2 lanes)","vaddpd is only available on ARM processors"],ans:1},
+{q:"How many 64-bit double-precision floats can a 128-bit XMM register hold?",opts:["1","2","4","8"],ans:1},
+{q:"How many 32-bit single-precision floats can a 256-bit YMM register hold?",opts:["4","6","8","16"],ans:2},
+{q:"AVX-512 uses which register name and width?",opts:["XMM, 512-bit","YMM, 512-bit","ZMM, 512-bit","WMM, 512-bit"],ans:2},
+// --- 5.8 ARMv8 FP instructions (7) ---
+{q:"Which LEGv8 instruction adds two single-precision floating-point values?",opts:["FADD","FADDS","FADDD","FMULS"],ans:1},
+{q:"Which LEGv8 instruction adds two double-precision floating-point values?",opts:["FADDS","FADD","FADDD","FMULD"],ans:2},
+{q:"Which LEGv8 instruction compares two single-precision FP values and sets condition codes?",opts:["FCMPS","FCMPD","FCVT","FCCMPS"],ans:0},
+{q:"In LEGv8, what register type holds the base address for floating-point loads and stores?",opts:["S-registers (e.g. S0)","D-registers (e.g. D0)","Integer X-registers (e.g. X0)","V-registers (e.g. V0)"],ans:2},
+{q:"What is the relationship between LEGv8 single-precision S-registers and double-precision D-registers?",opts:["S-registers are the upper half of D-registers","S-registers are completely separate from D-registers","S-registers are the lower half of D-registers","S-registers hold the exponent; D-registers hold the fraction"],ans:2},
+{q:"How do you branch on the result of a floating-point comparison in LEGv8?",opts:["Use FBNE, FBEQ etc. — dedicated FP branch instructions","Use FCMPS or FCMPD to set condition codes, then use B.cond as normal","Use CBZ on an FP register","FP comparisons can only return a value to a register, not branch"],ans:1},
+{q:"Which ARMv8 instruction multiplies two FP values and negates the result?",opts:["FNEG","FMULN","FNMUL","FCCMP"],ans:2},
+// --- 5.9 & 5.10 Going Faster & Fallacies (5) ---
+{q:"The AVX DGEMM benchmark on a 32x32 matrix achieved approximately what speedup over unoptimized scalar code?",opts:["1.5x","2x","3.85x","4.0x exactly"],ans:2},
+{q:"What does the AVX intrinsic <code>_mm256_broadcast_sd()</code> do?",opts:["Stores 4 doubles to memory from a YMM register","Loads 4 doubles from memory in parallel","Replicates one scalar double into all 4 lanes of a YMM register","Performs a 4-way parallel double-precision multiply"],ans:2},
+{q:"Is floating-point addition associative? Which example demonstrates the answer?",opts:["Yes, because IEEE 754 guarantees exact results","No; e.g. (-1.5e38 + 1.5e38) + 1.0 = 1.0 but -1.5e38 + (1.5e38 + 1.0) = 0","Yes, because rounding errors are symmetric","No, but only for single precision; double precision is associative"],ans:1},
+{q:"Is two's-complement integer addition associative (even when overflow occurs)?",opts:["No, overflow breaks associativity","Yes, two's-complement addition wraps around but remains associative","Only when both operands are positive","Only for unsigned integers"],ans:1},
+{q:"For a signed integer, logical right shift (zero-fill) differs from arithmetic right shift (sign-extend) in that:",opts:["Logical shift is faster on all hardware","Logical right shift destroys the sign bit (replacing it with 0), giving wrong results for negative numbers","Arithmetic right shift rounds toward +∞ while logical rounds toward -∞","There is no difference for positive numbers or negative numbers"],ans:1},
+];
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quizStart2=function(){
+  order=shuffle(Array.from({length:Q.length},(_,i)=>i));
+  idx=0;score=0;answered=false;
+  document.getElementById('quiz-start2').style.display='none';
+  document.getElementById('quiz-done2').style.display='none';
+  document.getElementById('quiz-active2').style.display='block';
+  render();
+};
+window.quizNext2=function(){
+  idx++;
+  if(idx>=order.length){showDone();return;}
+  render();
+};
+window.quizRestart2=function(){
+  document.getElementById('quiz-done2').style.display='none';
+  document.getElementById('quiz-start2').style.display='block';
+};
+function render(){
+  answered=false;
+  var q=Q[order[idx]];
+  document.getElementById('q-counter2').textContent='Question '+(idx+1)+' of '+Q.length;
+  document.getElementById('q-score-disp2').textContent='Score: '+score+'/'+idx;
+  document.getElementById('q-bar2').style.width=((idx/Q.length)*100)+'%';
+  document.getElementById('q-text2').innerHTML=q.q;
+  document.getElementById('q-feedback2').innerHTML='';
+  document.getElementById('btn-next2').style.display='none';
+  var opts=document.getElementById('q-opts2');
+  opts.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    b.className='q-opt';
+    b.innerHTML=['A','B','C','D'][i]+'. '+o;
+    b.dataset.i=i;
+    b.onclick=function(){pick(i,q.ans);};
+    opts.appendChild(b);
+  });
+}
+function pick(chosen,correct){
+  if(answered)return;
+  answered=true;
+  var allBtns=document.querySelectorAll('#q-opts2 .q-opt');
+  allBtns.forEach(function(b){b.disabled=true;});
+  if(chosen===correct){
+    score++;
+    allBtns[chosen].classList.add('correct');
+    document.getElementById('q-feedback2').innerHTML='<span class="ok">&#x2713; Correct!</span>';
+  } else {
+    allBtns[chosen].classList.add('wrong');
+    allBtns[correct].classList.add('reveal');
+    document.getElementById('q-feedback2').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';
+  }
+  document.getElementById('q-score-disp2').textContent='Score: '+score+'/'+(idx+1);
+  document.getElementById('btn-next2').style.display='inline-block';
+}
+function showDone(){
+  document.getElementById('quiz-active2').style.display='none';
+  document.getElementById('quiz-done2').style.display='block';
+  var pct=Math.round(score/Q.length*100);
+  document.getElementById('done-score2').textContent=score+' / '+Q.length;
+  var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';
+  document.getElementById('done-pct2').textContent=pct+'% — '+msg;
+}
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('quiz-active2').style.display==='none')return;
+  if(!answered&&['1','2','3','4'].includes(e.key)){
+    var i=parseInt(e.key)-1;
+    var btns=document.querySelectorAll('#q-opts2 .q-opt');
+    if(btns[i])btns[i].click();
+  }
+  if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){
+    e.preventDefault();
+    var nb=document.getElementById('btn-next2');
+    if(nb.style.display!=='none')nb.click();
+  }
+});
+})();</script>
 
 <hr/>
 <p style="color:var(--muted);font-size:12px;">Built from ch5.pdf (zyBooks/Patterson &amp; Hennessy, LEGv8 edition). If anything here disagrees with the source, trust the source.</p>

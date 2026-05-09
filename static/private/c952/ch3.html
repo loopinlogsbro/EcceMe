@@ -136,6 +136,10 @@
     :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
     :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
   }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
+  .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .chnav a:hover { border-color: var(--accent); }
+  .chnav .spacer { visibility: hidden; }
 </style>
 <script>
   // Apply saved theme before render to avoid flash
@@ -155,6 +159,11 @@
   <span class="icon-moon" aria-hidden="true">&#9790;</span>
 </button>
 <div class="wrap">
+  <nav class="chnav">
+    <a href="ch2.html">&larr; Ch 2</a>
+    <a href="index.html">All chapters</a>
+    <a href="ch4.html">Ch 4 &rarr;</a>
+  </nav>
 
 <header>
   <h1>C952 — Chapter 3 Study Guide <span class="badge b-key">LEGv8 / ARMv8</span></h1>
@@ -175,7 +184,7 @@
   <a href="#s11">3.11 Synchronization</a>
   <a href="#s12">3.12 Translate/start a program</a>
   <a href="#cheat">Cheat sheet</a>
-  <a href="#quiz">Self-test (Q&amp;A)</a>
+  <a href="#mc">Multiple-Choice Quiz</a>
   <a href="#trap">Common exam traps</a>
 </div>
 
@@ -651,97 +660,265 @@ Running process in memory</pre>
   </div>
 </div>
 
-<!-- ===================== Quiz ===================== -->
-<h2 id="quiz">Self-test (likely exam-style Q&amp;A)</h2>
+<!-- ===================== MULTIPLE CHOICE QUIZ ===================== -->
+<style>
+  .q-btn{border:none;border-radius:6px;padding:9px 20px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:background .12s,transform .1s;}
+  .q-start{background:var(--accent);color:#0f1115;}
+  .q-start:hover{filter:brightness(1.12);transform:translateY(-1px);}
+  .q-next{background:var(--panel-2);color:var(--text);border:1px solid var(--border);margin-top:6px;}
+  .q-next:hover{background:var(--border);}
+  .q-opt{display:block;width:100%;text-align:left;background:var(--panel-2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:13.5px;font-family:inherit;color:var(--text);transition:background .1s,border-color .1s;line-height:1.45;}
+  .q-opt:hover:not(:disabled){background:var(--hl);border-color:var(--accent);}
+  .q-opt.correct{background:rgba(106,210,154,.15)!important;border-color:var(--good)!important;color:var(--good)!important;}
+  .q-opt.wrong{background:rgba(255,138,122,.12)!important;border-color:var(--bad)!important;color:var(--bad)!important;}
+  .q-opt.reveal{background:rgba(106,210,154,.1)!important;border-color:var(--good)!important;}
+  #q-progress-wrap{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px;}
+  #q-bar{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
+</style>
 
-<details open>
-<summary>Number representation</summary>
-<div class="body">
-  <div class="qa"><div class="q">What is the largest unsigned value representable in N bits?</div><div class="a">2^N − 1.</div></div>
-  <div class="qa"><div class="q">Two's complement range for 32 bits?</div><div class="a">−2,147,483,648 to 2,147,483,647 (i.e. −2³¹ to 2³¹ − 1).</div></div>
-  <div class="qa"><div class="q">How do you negate a value in two's complement?</div><div class="a">Flip every bit, then add 1.</div></div>
-  <div class="qa"><div class="q">How is sign extension done?</div><div class="a">Replicate the MSB (sign bit) into every new high-order bit.</div></div>
-  <div class="qa"><div class="q">A two's-complement add overflows when…?</div><div class="a">The two operands have the same sign but the result has the opposite sign (carry-in to MSB ≠ carry-out).</div></div>
-  <div class="qa"><div class="q">In two's complement, how is 0 represented?</div><div class="a">All zeros — there is only one zero.</div></div>
-  <div class="qa"><div class="q">Convert binary 1011 to decimal.</div><div class="a">1·8 + 0·4 + 1·2 + 1·1 = 11.</div></div>
-  <div class="qa"><div class="q">Hex 0xD6 to binary?</div><div class="a">1101 0110.</div></div>
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">110 questions</span></h2>
+<div class="panel">
+  <div id="quiz-shell">
+    <div id="quiz-start">
+      <p>110 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA (instruction formats, two's complement, branches, procedures, code tracing). Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quizStart()">Start Quiz</button>
+    </div>
+    <div id="quiz-active" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q-counter" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q-score-disp" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q-progress-wrap"><div id="q-bar"></div></div>
+      <div id="q-text" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q-opts"></div>
+      <div id="q-feedback" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn-next" class="q-btn q-next" style="display:none" onclick="quizNext()">Next &rarr;</button>
+    </div>
+    <div id="quiz-done" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done-score" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done-pct" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quizRestart()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
 </div>
-</details>
 
-<details>
-<summary>Instructions &amp; operands</summary>
-<div class="body">
-  <div class="qa"><div class="q">How many operands does every LEGv8 arithmetic instruction take?</div><div class="a">Exactly three (one destination, two sources).</div></div>
-  <div class="qa"><div class="q">How many registers does LEGv8 have, and how wide is each?</div><div class="a">32 registers, each 64 bits.</div></div>
-  <div class="qa"><div class="q">Why limit to 32 registers?</div><div class="a">"Smaller is faster" (signal travel time) plus more registers cost more bits in every instruction's register fields.</div></div>
-  <div class="qa"><div class="q">Difference between word and doubleword?</div><div class="a">Word = 32 bits; doubleword = 64 bits (size of a LEGv8 register).</div></div>
-  <div class="qa"><div class="q">What does LDUR X9, [X22, #8] do?</div><div class="a">Loads the doubleword at memory address (X22 + 8) into X9.</div></div>
-  <div class="qa"><div class="q">For element A[i] of a doubleword array, what byte offset goes in the LDUR?</div><div class="a">i × 8.</div></div>
-  <div class="qa"><div class="q">Which register always reads as zero?</div><div class="a">XZR (X31).</div></div>
-</div>
-</details>
+<script>(function(){
+var Q=[
+// --- 3.1 Introduction (4) ---
+{q:"What is an instruction set?",opts:["A specific program written for a particular computer","The vocabulary of commands understood by a given computer architecture","The collection of registers inside a CPU","A list of every machine that runs a particular program"],ans:1},
+{q:"Which statement best describes the stored-program concept?",opts:["Programs are kept on external disks until needed","Instructions and data are both stored in memory as numbers, so programs can be loaded, copied, and modified like any other data","A computer must support a special STORE instruction","Programs are stored only in ROM and cannot be changed"],ans:1},
+{q:"What is the relationship between ARMv8 and LEGv8?",opts:["LEGv8 is a different architecture entirely from ARMv8","LEGv8 is a teaching subset of ARMv8 used for pedagogy","ARMv8 is the older 32-bit version, LEGv8 is the newer 64-bit version","LEGv8 is a competitor to ARMv8 from a different vendor"],ans:1},
+{q:"Why are the instruction sets of different computers more like regional dialects than independent languages?",opts:["Government regulations standardize them","All computers are built from similar hardware technologies and share a small set of basic operations they must provide","Compilers automatically translate between them","Manufacturers copy each other for legal reasons"],ans:1},
 
-<details>
-<summary>Instruction formats</summary>
-<div class="body">
-  <div class="qa"><div class="q">Length of every LEGv8 instruction?</div><div class="a">32 bits.</div></div>
-  <div class="qa"><div class="q">Format of ADD?</div><div class="a">R-format. Fields: opcode | Rm | shamt | Rn | Rd.</div></div>
-  <div class="qa"><div class="q">Format of ADDI?</div><div class="a">I-format (immediate). 12-bit immediate field.</div></div>
-  <div class="qa"><div class="q">Format of LDUR / STUR?</div><div class="a">D-format (data transfer). 9-bit address field.</div></div>
-  <div class="qa"><div class="q">In LDUR, which field names the destination register?</div><div class="a">Rt (data transfers use Rt, not Rd, because in STUR the field is the source).</div></div>
-  <div class="qa"><div class="q">Why are there multiple instruction formats?</div><div class="a">Compromise: keep all instructions 32 bits, but make room for immediates/addresses by using different field layouts.</div></div>
-</div>
-</details>
+// --- 3.2 Operations (4) ---
+{q:"How many operands does every LEGv8 arithmetic instruction take?",opts:["One operand","Two operands","Exactly three (one destination, two sources)","A variable number, depending on the operation"],ans:2},
+{q:"After executing ADD X9, X20, X21, where does the sum reside?",opts:["X20","X21","X9","Memory at address X9"],ans:2},
+{q:"To compute a = b + c + d + e using LEGv8, the minimum number of ADD instructions required is:",opts:["1","2","3","4"],ans:2},
+{q:"Which design principle motivates the rigid three-operand rule of LEGv8 arithmetic?",opts:["Smaller is faster","Simplicity favors regularity","Good design demands good compromises","Make the common case fast"],ans:1},
 
-<details>
-<summary>Branches &amp; decisions</summary>
-<div class="body">
-  <div class="qa"><div class="q">CBZ vs CBNZ?</div><div class="a">CBZ branches if the register == 0; CBNZ branches if != 0.</div></div>
-  <div class="qa"><div class="q">Which addressing mode do conditional branches use?</div><div class="a">PC-relative.</div></div>
-  <div class="qa"><div class="q">What sets the NZCV flags?</div><div class="a">Only the "S" variants of arithmetic/logical instructions: ADDS, ADDIS, ANDS, ANDIS, SUBS, SUBIS.</div></div>
-  <div class="qa"><div class="q">How do MIPS conditional branches differ from LEGv8?</div><div class="a">MIPS compares two registers directly in the branch instruction; LEGv8 uses condition-code flags set by a prior S instruction.</div></div>
-  <div class="qa"><div class="q">What's a basic block?</div><div class="a">A straight-line sequence with no branch in the middle (label only at start, branch only at end).</div></div>
-  <div class="qa"><div class="q">Branch range of B / BL? Of CBZ / CBNZ?</div><div class="a">B/BL: ±128 MB. CB-format: ±1 MB.</div></div>
-</div>
-</details>
+// --- 3.3 Operands (10) ---
+{q:"How many general-purpose registers does the LEGv8 architecture have?",opts:["16","32","64","31"],ans:1},
+{q:"How wide is each LEGv8 register?",opts:["32 bits","64 bits","16 bits","128 bits"],ans:1},
+{q:"In LEGv8, a 'word' is how many bits?",opts:["8 bits","16 bits","32 bits","64 bits"],ans:2},
+{q:"In LEGv8, a 'doubleword' is how many bits?",opts:["16 bits","32 bits","48 bits","64 bits"],ans:3},
+{q:"Which register always reads as zero and cannot be modified?",opts:["X0","X30 (LR)","X31 (XZR)","X28 (SP)"],ans:2},
+{q:"Memory in LEGv8 is byte-addressed. The addresses of two sequential doublewords differ by:",opts:["1","4","8","16"],ans:2},
+{q:"Given an array A of doublewords with base address in X22, the byte offset to access A[8] is:",opts:["8","16","32","64"],ans:3},
+{q:"What does the instruction LDUR X9, [X22, #16] do?",opts:["Stores the value of X9 into memory at address X22 + 16","Loads the doubleword at memory address (X22 + 16) into X9","Adds 16 to register X22 and stores the result in X9","Loads the address X22 + 16 into X9 without dereferencing"],ans:1},
+{q:"What does the instruction STUR X9, [X10, #0] do?",opts:["Loads memory at address X10 into X9","Stores the doubleword in X9 to memory at address X10","Sets X10 to 0 and writes X9","Compares X9 with the value at memory[X10]"],ans:1},
+{q:"Why does LEGv8 limit the number of registers to 32?",opts:["64-bit architectures cannot support more","More registers would slow the clock (smaller is faster) and require more bits in every register field","ARM patents prevent more than 32","32 was an arbitrary choice with no engineering reason"],ans:1},
 
-<details>
-<summary>Procedures &amp; stack</summary>
-<div class="body">
-  <div class="qa"><div class="q">Which register holds the return address after BL?</div><div class="a">LR (X30) — BL stores PC + 4 there.</div></div>
-  <div class="qa"><div class="q">How do you return from a procedure?</div><div class="a"><code>BR LR</code>.</div></div>
-  <div class="qa"><div class="q">Which registers must a callee save if it modifies them?</div><div class="a">X19–X27 (saved), X28 SP, X29 FP, X30 LR.</div></div>
-  <div class="qa"><div class="q">Argument registers?</div><div class="a">X0–X7. Same regs return values.</div></div>
-  <div class="qa"><div class="q">Direction the stack grows?</div><div class="a">Downward (toward lower addresses).</div></div>
-  <div class="qa"><div class="q">What's an activation record?</div><div class="a">The frame on the stack for one call — saved regs + locals + params.</div></div>
-  <div class="qa"><div class="q">Leaf vs non-leaf procedure?</div><div class="a">Leaf calls no other procedure (often need not save LR). Non-leaf must save LR before its inner BL.</div></div>
-  <div class="qa"><div class="q">What lives on the heap vs stack?</div><div class="a">Heap = dynamic (malloc / new). Stack = automatic locals, frames, saved regs.</div></div>
-</div>
-</details>
+// --- 3.4 Signed and unsigned numbers (14) ---
+{q:"What is the approximate range of a 64-bit unsigned integer?",opts:["−9,223,372,036,854,775,808 to 9,223,372,036,854,775,807","−2,147,483,648 to 2,147,483,647","0 to 4,294,967,295","0 to 18,446,744,073,709,551,615"],ans:3},
+{q:"What is the range of a 32-bit signed (two's complement) integer?",opts:["0 to 4,294,967,295","−2,147,483,648 to 2,147,483,647","−4,294,967,295 to 4,294,967,295","−2,147,483,647 to 2,147,483,648"],ans:1},
+{q:"What is the range of an 8-bit signed (two's complement) integer?",opts:["0 to 255","−127 to 128","−128 to 127","−255 to 255"],ans:2},
+{q:"To negate a value in two's complement, you:",opts:["Set the leftmost bit to 1","Flip every bit, then add 1","Subtract the value from 2^N","Invert only the most significant bit"],ans:1},
+{q:"To extend a two's-complement value to more bits (sign extension), you:",opts:["Pad the new high-order bits with zeros","Pad the new high-order bits with ones","Copy the most significant (sign) bit into every new high-order bit","Copy the least significant bit into the new high-order bits"],ans:2},
+{q:"What is −5 represented in 8-bit two's complement?",opts:["10000101","11111010","11111011","00000101"],ans:2},
+{q:"Given −5 in 8-bit two's complement (11111011), what does sign extension to 16 bits yield?",opts:["11111100 11111011","11111111 11111011","01111111 11111011","00111111 11111011"],ans:1},
+{q:"In a two's-complement number, what does the most significant bit indicate?",opts:["The parity of the value","The sign: 0 means positive, 1 means negative","Whether overflow has occurred","Whether the number is even or odd"],ans:1},
+{q:"Why did computer designers settle on two's complement for signed integers?",opts:["It was easier for humans to read","It produces simpler hardware: only one zero, the same adder works for signed and unsigned addition","It allows wider numerical ranges than alternatives","It was the first scheme invented historically"],ans:1},
+{q:"Signed (two's-complement) addition overflows when:",opts:["Any carry leaves the most significant bit","The two operands have the same sign but the result has the opposite sign","The result is negative","The two operands have different signs"],ans:1},
+{q:"Which of these signed additions overflows?",opts:["A positive plus a negative number","A negative plus a positive number","Two positives that produce a negative result","A small positive plus a large positive whose sum still fits"],ans:2},
+{q:"Given X1 = 11000110 and X2 = 11110111 (8-bit unsigned), what is the result of ADD X3, X2, X1 (interpreted as raw 8-bit binary)?",opts:["100111101 (overflow — result needs 9 bits)","10111101","11000110","11110111"],ans:0},
+{q:"What is the difference between LDURB and LDURSB?",opts:["LDURB loads a byte and zero-extends it; LDURSB loads a byte and sign-extends it","Both are identical","LDURB is for stores, LDURSB is for loads","LDURB is unsigned only and LDURSB is for halfwords"],ans:0},
+{q:"Why are memory addresses always treated as unsigned values?",opts:["Negative addresses make no sense — addresses run from 0 upward","The hardware cannot represent negative numbers","Signed addressing was deprecated in ARMv8","To save one bit per pointer"],ans:0},
 
-<details>
-<summary>Logical / shifts / ASCII</summary>
-<div class="body">
-  <div class="qa"><div class="q">How do you implement NOT in LEGv8?</div><div class="a">EOR with a register of all 1s (no NOT instruction).</div></div>
-  <div class="qa"><div class="q">LSL by n is equivalent to multiplying by what?</div><div class="a">2^n.</div></div>
-  <div class="qa"><div class="q">Which logical op forces specific bits to 0?</div><div class="a">AND with a mask.</div></div>
-  <div class="qa"><div class="q">Which logical op forces specific bits to 1?</div><div class="a">OR with a mask.</div></div>
-  <div class="qa"><div class="q">ASCII codes for 'A', 'a', '0'?</div><div class="a">65, 97, 48 (uppercase &amp; lowercase differ by 32).</div></div>
-  <div class="qa"><div class="q">How does C terminate a string?</div><div class="a">A null byte (value 0). Java stores an explicit length instead.</div></div>
-</div>
-</details>
+// --- 3.5 Representing instructions (12) ---
+{q:"How long is every LEGv8 machine instruction?",opts:["16 bits","32 bits","64 bits","Variable, depending on the instruction"],ans:1},
+{q:"Which fields make up an R-format LEGv8 instruction?",opts:["opcode | immediate | Rn | Rd","opcode | Rm | shamt | Rn | Rd","opcode | address | op2 | Rn | Rt","opcode | address (only)"],ans:1},
+{q:"Which fields make up an I-format LEGv8 instruction?",opts:["opcode | Rm | shamt | Rn | Rd","opcode | immediate | Rn | Rd","opcode | address | op2 | Rn | Rt","opcode | Rt | shamt | Rd | Rn"],ans:1},
+{q:"Which fields make up a D-format (data transfer) LEGv8 instruction?",opts:["opcode | immediate | Rn | Rd","opcode | Rm | shamt | Rn | Rd","opcode | address | op2 | Rn | Rt","opcode | Rt | Rd | Rn | shamt"],ans:2},
+{q:"What format does the instruction ADD X1, X2, X3 use?",opts:["R-format","I-format","D-format","B-format"],ans:0},
+{q:"What format does the instruction ADDI X1, X2, #100 use?",opts:["R-format","I-format","D-format","CB-format"],ans:1},
+{q:"What format does the instruction LDUR X1, [X2, #100] use?",opts:["R-format","I-format","D-format","B-format"],ans:2},
+{q:"Why does LEGv8 use multiple instruction formats (R, I, D, B, CB, IM) rather than a single one?",opts:["For backward compatibility with older 32-bit ARM","It is a compromise: keep all instructions 32 bits long while leaving room for immediates and addresses — good design demands good compromises","Each format runs at a different clock rate","Different compilers require different formats"],ans:1},
+{q:"Why is hexadecimal commonly used to display binary instructions?",opts:["It uses fewer transistors to display","Each hex digit corresponds to exactly 4 binary bits, making conversion trivial and the display compact","Hexadecimal numbers run faster on hardware","It is required by the ARMv8 standard"],ans:1},
+{q:"What is the binary representation of instructions called?",opts:["Assembly language","Machine language","Operating system","Systems software"],ans:1},
+{q:"The stored-program concept implies that:",opts:["Programs and data are stored in memory together as numbers, so the same memory technology serves both, and a computer can switch tasks just by loading new memory contents","A computer must include a STORE instruction in its ISA","Programs are saved to disk before execution","All programs must be written in machine language"],ans:0},
+{q:"What single feature of LEGv8 (all instructions being the same 32-bit length) most directly improves which downstream design?",opts:["Caching","Pipelining","Disk I/O","Power consumption"],ans:1},
 
-<details>
-<summary>Translation &amp; loading</summary>
-<div class="body">
-  <div class="qa"><div class="q">Order of the four translation tools?</div><div class="a">Compiler → Assembler → Linker → Loader.</div></div>
-  <div class="qa"><div class="q">What does the linker do?</div><div class="a">Combines object files + libraries, resolves all symbol references, relocates absolute addresses, produces the executable.</div></div>
-  <div class="qa"><div class="q">What is a pseudoinstruction?</div><div class="a">An assembler convenience that maps to one or more real machine instructions (e.g. MOV → ORR with XZR).</div></div>
-  <div class="qa"><div class="q">Why use DLLs?</div><div class="a">Smaller executables, library updates without relinking, on-demand loading. Cost: small first-call overhead via lazy linkage.</div></div>
-  <div class="qa"><div class="q">How is Java executed?</div><div class="a">Compiled to bytecode → run on the JVM (interpreter) → hot methods JIT-compiled to native at runtime.</div></div>
-  <div class="qa"><div class="q">Standard UNIX suffixes for source / asm / object / shared lib?</div><div class="a">.c / .s / .o / .so.</div></div>
-</div>
-</details>
+// --- 3.6 Logical operations (8) ---
+{q:"Which logical operation is best used to clear (force to 0) a specific set of bits in a register?",opts:["OR with a mask","AND with a mask containing 0s where bits should be cleared","EOR with all 1s","LSL by the number of bits to clear"],ans:1},
+{q:"Which logical operation is best used to set specific bits to 1 in a register?",opts:["AND with a mask","OR with a mask containing 1s where bits should be set","EOR with the original value","LSR by the number of bits to set"],ans:1},
+{q:"How do you implement bitwise NOT in LEGv8 (since there is no NOT instruction)?",opts:["Use SUB X9, XZR, X9","Use EOR with a register or immediate of all 1s","Use ORR with all 1s","Use AND with all 0s"],ans:1},
+{q:"LSL X10, X10, #3 is equivalent to which arithmetic operation?",opts:["Divide X10 by 3","Multiply X10 by 3","Multiply X10 by 8","Divide X10 by 8"],ans:2},
+{q:"After LSR X9, X10, #4, the four high-order bits of X9 are filled with:",opts:["The sign bit of X10","All ones","All zeros","The four low-order bits of X10"],ans:2},
+{q:"To multiply X10 by 16, the most efficient instruction is:",opts:["MUL X10, X10, #16","LSL X10, X10, #4","LSR X10, X10, #4","ADD X10, X10, X10 four times"],ans:1},
+{q:"Given r1 holds b, r2 holds c, r0 holds a — which ARM instruction accomplishes a = b & c?",opts:["AND r0, r1, r2","OR r0, r1, r2","EOR r0, r1, r2","ORR r0, r1, r2"],ans:0},
+{q:"Which LEGv8 instruction computes the bitwise inclusive OR of two registers?",opts:["AND","ORR","EOR","ANDI"],ans:1},
+
+// --- 3.7 Decisions and branches (12) ---
+{q:"What does CBZ X9, Label do?",opts:["Branches to Label if X9 is non-zero","Branches to Label if X9 equals zero","Sets X9 to zero and branches","Compares X9 to Label"],ans:1},
+{q:"What does CBNZ X9, Label do?",opts:["Branches to Label if X9 is zero","Branches to Label if X9 is non-zero","Sets X9 to non-zero","Calls procedure at Label if X9 is zero"],ans:1},
+{q:"Which instruction performs an unconditional branch in LEGv8?",opts:["B","BL","BR","B.cond"],ans:0},
+{q:"For a B.cond instruction (like B.LT, B.EQ) to work correctly, what must precede it?",opts:["An ADD instruction","A 'set flags' instruction (S-suffix variant: ADDS, SUBS, ANDS, etc.)","A LDUR instruction","A BL instruction"],ans:1},
+{q:"What are the four condition-code (NZCV) flags in LEGv8?",opts:["Negative, Zero, Carry, oVerflow","Not, Zero, Compare, Value","Negative, Null, Carry, Vacuum","Negate, Zero, Compute, Verify"],ans:0},
+{q:"Which of these instructions sets the NZCV flags?",opts:["ADD","SUB","SUBS","STUR"],ans:2},
+{q:"After SUBS XZR, X1, X2, which conditional branch tests for X1 < X2 in signed comparison?",opts:["B.LT","B.LO","B.LE","B.MI"],ans:0},
+{q:"After SUBS XZR, X1, X2, which conditional branch tests for X1 < X2 in unsigned comparison?",opts:["B.LT","B.LO","B.NE","B.HS"],ans:1},
+{q:"Given the LEGv8 loop below where f is X3 and g is X4, what C statement does it implement?<br>Loop: SUBS XZR, X3, X4<br>B.GE Exit<br>LSL X3, X3, 1<br>B Loop<br>Exit:",opts:["while (f < g) { f = f << 1; }","while (f > g) { f = f << 1; }","while (f <= g) { f = f << 1; }","while (f == g) { f = f << 1; }"],ans:0},
+{q:"Given X6=20, X7=10, X8=20, what is the final value in X10 after running this code?<br>SUB X9, X7, X6<br>CBZ X6, AAA<br>ADD X9, XZR, #1<br>B ZZZ<br>AAA<br>SUB X9, X8, X6<br>CBNZ X6, ZZZ<br>ADD X9, XZR, #2<br>ZZZ<br>ADD X10, XZR, X9",opts:["0","1","2","3"],ans:1},
+{q:"To check whether 0 ≤ X20 < X11 with a single comparison, the bounds-check shortcut uses:",opts:["Two separate signed comparisons","An unsigned comparison (B.HS) — negatives become large unsigned values, so one test catches both X20 < 0 and X20 ≥ X11","A multiply followed by a divide","A shift followed by a CBZ"],ans:1},
+{q:"What is a 'basic block' in compiler/architecture terms?",opts:["The smallest physical block of cache","A sequence of instructions with no branches in the middle (label only at start, branch only possibly at end)","A reusable code library","Any instruction that takes one clock cycle"],ans:1},
+
+// --- 3.8 Procedures (12) ---
+{q:"What does the LEGv8 instruction BL ProcAddr do?",opts:["Branches to ProcAddr without saving anything","Branches to ProcAddr and saves the return address (PC + 4) in LR (X30)","Saves all registers to the stack and branches","Performs a load from address ProcAddr"],ans:1},
+{q:"How does a LEGv8 procedure return to its caller?",opts:["B Return","BR LR","RET LR","CBZ XZR, return"],ans:1},
+{q:"Which registers are reserved for passing arguments and returning values?",opts:["X0 through X7","X8 through X15","X19 through X27","X28 through X30"],ans:0},
+{q:"Which registers must be preserved across a procedure call (callee-saved)?",opts:["X0–X7 (arguments)","X9–X15 (temporaries)","X19–X27 (saved)","All of them"],ans:2},
+{q:"Which group of LEGv8 registers may be freely modified by a callee without saving?",opts:["X19–X27 saved registers","X0–X7 arguments and X9–X15 temporaries","X28 (SP) and X29 (FP)","X30 (LR)"],ans:1},
+{q:"Which register is used as the LEGv8 stack pointer?",opts:["X28 (SP)","X29 (FP)","X30 (LR)","X31 (XZR)"],ans:0},
+{q:"Which register holds the return address set by BL?",opts:["X28 (SP)","X29 (FP)","X30 (LR)","X0"],ans:2},
+{q:"In LEGv8 (and most modern architectures), the stack grows toward:",opts:["Higher memory addresses","Lower memory addresses","Whichever direction is convenient — it's not specified","The middle of memory from both ends"],ans:1},
+{q:"A 'leaf procedure' is one that:",opts:["Calls one other procedure","Calls itself recursively","Does not call any other procedure (and therefore often does not need to save LR)","Has no return value"],ans:2},
+{q:"What is an 'activation record' (procedure frame)?",opts:["A log entry made each time a procedure is called","The portion of the stack containing one call's saved registers, parameters, and local variables","A copy of the procedure stored in cache","A list of every procedure currently running"],ans:1},
+{q:"What stack alignment does ARMv8 software require for performance?",opts:["1 byte","8 bytes","16 bytes (quadword)","32 bytes"],ans:2},
+{q:"Which is the correct LEGv8 memory layout from low addresses to high?",opts:["Stack, heap, static data, text","Text, static data, heap, stack","Heap, stack, text, static data","Static data, text, stack, heap"],ans:1},
+
+// --- 3.9 ASCII / Unicode (6) ---
+{q:"What is the ASCII decimal value for the character 'A'?",opts:["48","65","90","97"],ans:1},
+{q:"What is the ASCII decimal value for the character 'a'?",opts:["65","90","97","122"],ans:2},
+{q:"By how much do ASCII codes for upper- and lowercase letters of the same letter differ?",opts:["16","32","64","128"],ans:1},
+{q:"How does the C language indicate the end of a string?",opts:["A length value stored in the first byte","An accompanying length variable","A null byte (decimal value 0) at the end of the string","A newline character"],ans:2},
+{q:"Which LEGv8 instruction loads a single byte from memory and zero-extends it into a 64-bit register?",opts:["LDUR","LDURB","LDURSB","STURB"],ans:1},
+{q:"What character width does Java use for its native string type?",opts:["8 bits (ASCII)","16 bits (Unicode)","32 bits","64 bits"],ans:1},
+
+// --- 3.10 Wide immediates and addressing (7) ---
+{q:"What does MOVZ X9, 255, LSL 16 do?",opts:["Loads 255 into X9 and shifts left by 16, leaving the rest of X9 unchanged","Places the 16-bit immediate 255 into bits [31:16] of X9 and zeros the rest","Stores 255 to memory at offset 16","Adds 255 to X9 << 16"],ans:1},
+{q:"What is the difference between MOVZ and MOVK?",opts:["MOVZ zeros the rest of the register; MOVK keeps the other bits unchanged","MOVZ is for kernel mode; MOVK is for user mode","MOVZ stores to memory; MOVK loads from memory","They are aliases of the same instruction"],ans:0},
+{q:"Which is NOT one of the four LEGv8 addressing modes?",opts:["Immediate addressing","Register addressing","Base / displacement (memory) addressing","Stack-relative addressing"],ans:3},
+{q:"What is PC-relative addressing?",opts:["The branch target is at PC + a constant in the instruction (commonly scaled by 4)","The branch target is at PC × a constant","The branch target is read from the program counter register only","The branch target is computed at compile time"],ans:0},
+{q:"What is the approximate branch range of B and BL (B-format) in LEGv8?",opts:["±1 KB from the PC","±1 MB from the PC","±128 MB from the PC","Anywhere in the entire 64-bit address space"],ans:2},
+{q:"What is the approximate branch range of CB-format instructions (CBZ, CBNZ, B.cond)?",opts:["±1 KB from the PC","±1 MB from the PC","±128 MB from the PC","Anywhere in memory"],ans:1},
+{q:"In a load like LDUR X9, [X22, #16], which addressing mode is used?",opts:["Immediate","Register","Base / displacement","PC-relative"],ans:2},
+
+// --- 3.11 Synchronization (3) ---
+{q:"What is a 'data race'?",opts:["A bus contention between two memory devices","Two memory accesses from different threads to the same location occurring back-to-back, where at least one is a write","A program that runs faster than expected","An optimization that overlaps independent instructions"],ans:1},
+{q:"Which two LEGv8 instructions form an atomic load-store pair for building locks?",opts:["LDUR / STUR","LDXR / STXR","LDURB / STURB","LDARB / STLRB"],ans:1},
+{q:"After LDXR X1, [X0]; followed by STXR Xs, X2, [X0], how do you tell whether the store succeeded atomically?",opts:["You can't — you have to retry every time","The status register Xs is set to 0 on success and 1 on failure","Check the Z flag","STXR raises an exception on failure"],ans:1},
+
+// --- 3.12 Translating and starting a program (8) ---
+{q:"What does a compiler do?",opts:["Translates assembly into binary machine language","Translates a high-level language program (like C) into an assembly language program","Resolves external references between object files","Loads the program into memory at startup"],ans:1},
+{q:"What does an assembler do?",opts:["Translates a high-level language into assembly","Translates an assembly language program into a machine-language object module","Combines object files with libraries into an executable","Reads the executable from disk into memory"],ans:1},
+{q:"What does a linker (link editor) do?",opts:["Translates source code into assembly","Combines independently assembled object modules and library routines, resolves external references, relocates absolute addresses, and produces an executable","Loads the executable into memory at runtime","Compiles each function independently into its own program"],ans:1},
+{q:"What does a loader do?",opts:["Resolves external references between object files","Optimizes the assembly output","Reads the executable file, allocates memory, copies code and data into it, initializes registers, and starts the program","Tracks library updates"],ans:2},
+{q:"In what order do these tools operate on a C program?",opts:["Compiler → Linker → Assembler → Loader","Compiler → Assembler → Linker → Loader","Assembler → Compiler → Loader → Linker","Loader → Linker → Assembler → Compiler"],ans:1},
+{q:"What is a pseudoinstruction?",opts:["An instruction that the CPU does not actually execute","A common assembly-language convenience that the assembler expands into one or more real machine instructions (e.g., MOV → ORR with XZR)","A debugging instruction","An obsolete instruction kept for backward compatibility"],ans:1},
+{q:"Which is an advantage of using dynamically linked libraries (DLLs)?",opts:["Faster first-call performance than static linking","Smaller executables, automatic library updates, and only needed routines loaded — at the cost of a small first-call indirection","DLLs make every call faster forever","DLLs eliminate the need for a linker"],ans:1},
+{q:"How is a Java program typically executed?",opts:["Compiled directly to native machine code","Compiled to bytecode, then interpreted by the JVM, with hot methods JIT-compiled to native code at runtime","Run line-by-line directly from source","Translated to LEGv8 by a hardware compiler"],ans:1},
+
+// --- Synthesis / cross-section traps (10) ---
+{q:"Which two architectural elements together implement R-format ALU operations?",opts:["ALU and register file","ALU and GPU","GPU and register file","Datapath and the textbook"],ans:0},
+{q:"Which register holds the result of SUB X1, X2, X3?",opts:["X1","X2","X3","X0"],ans:0},
+{q:"Given LDUR X1, [X0,#0]; LDUR X2, [X0,#8]; ADD X3, X1, X2; STUR X3, [X0,#24] — where b is at offset 0, e at offset 8, and a at offset 24 — what C statement does this implement?",opts:["a = b + e;","a = a + e;","a = b + a;","a = e + a;"],ans:0},
+{q:"Given X1 holds A, X2 holds B, X3 holds C — which LEGv8 instruction computes A = B + C?",opts:["ADD X3, X2, X1","ADD X1, X2 #X3","ADD X3 #X2, X1","ADD X1, X2, X3"],ans:3},
+{q:"Which component of a computer moderates the action of all other components?",opts:["Control","Datapath","Memory","Output"],ans:0},
+{q:"What kind of memory access does a register file rely on to function?",opts:["Read-only access","Write-only access","Read and write access","No direct access — it is read indirectly through cache"],ans:2},
+{q:"\"ADD always sets the NZCV flags.\" This statement is:",opts:["True — every arithmetic instruction updates flags","False — only the S-suffix variants (ADDS, SUBS, ANDS, etc.) update NZCV","True only for 32-bit instructions","True only when the result is non-zero"],ans:1},
+{q:"\"There is a NOT instruction in LEGv8.\" This statement is:",opts:["True — it's called NEG","False — bitwise NOT is achieved with EOR against an all-ones operand","True — but only in I-format","True — but it shares an opcode with EOR"],ans:1},
+{q:"\"Two's complement has both +0 and −0.\" This statement is:",opts:["True — that's why two's complement was chosen","False — two's complement has exactly one zero (all bits 0); only sign-and-magnitude and ones' complement have two zeros","True only for unsigned numbers","True only for 32-bit numbers"],ans:1},
+{q:"\"X0 is preserved across a procedure call.\" This statement is:",opts:["True — X0 is always saved","False — X0–X7 are argument/return registers and are NOT preserved by the callee. Only X19–X27 (and SP, FP, LR) are preserved","True only for leaf procedures","True only when X0 holds a return value"],ans:1}
+];
+
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quizStart=function(){
+  order=shuffle(Array.from({length:Q.length},(_,i)=>i));
+  idx=0;score=0;answered=false;
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-done').style.display='none';
+  document.getElementById('quiz-active').style.display='block';
+  render();
+};
+window.quizNext=function(){
+  idx++;
+  if(idx>=order.length){showDone();return;}
+  render();
+};
+window.quizRestart=function(){
+  document.getElementById('quiz-done').style.display='none';
+  document.getElementById('quiz-start').style.display='block';
+};
+function render(){
+  answered=false;
+  var q=Q[order[idx]];
+  document.getElementById('q-counter').textContent='Question '+(idx+1)+' of '+Q.length;
+  document.getElementById('q-score-disp').textContent='Score: '+score+'/'+idx;
+  document.getElementById('q-bar').style.width=((idx/Q.length)*100)+'%';
+  document.getElementById('q-text').innerHTML=q.q;
+  document.getElementById('q-feedback').innerHTML='';
+  document.getElementById('btn-next').style.display='none';
+  var opts=document.getElementById('q-opts');
+  opts.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    b.className='q-opt';
+    b.innerHTML=['A','B','C','D'][i]+'. '+o;
+    b.dataset.i=i;
+    b.onclick=function(){pick(i,q.ans);};
+    opts.appendChild(b);
+  });
+}
+function pick(chosen,correct){
+  if(answered)return;
+  answered=true;
+  var allBtns=document.querySelectorAll('#q-opts .q-opt');
+  allBtns.forEach(function(b){b.disabled=true;});
+  if(chosen===correct){
+    score++;
+    allBtns[chosen].classList.add('correct');
+    document.getElementById('q-feedback').innerHTML='<span class="ok">&#x2713; Correct!</span>';
+  } else {
+    allBtns[chosen].classList.add('wrong');
+    allBtns[correct].classList.add('reveal');
+    document.getElementById('q-feedback').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';
+  }
+  document.getElementById('q-score-disp').textContent='Score: '+score+'/'+(idx+1);
+  document.getElementById('btn-next').style.display='inline-block';
+}
+function showDone(){
+  document.getElementById('quiz-active').style.display='none';
+  document.getElementById('quiz-done').style.display='block';
+  var pct=Math.round(score/Q.length*100);
+  document.getElementById('done-score').textContent=score+' / '+Q.length;
+  var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';
+  document.getElementById('done-pct').textContent=pct+'% — '+msg;
+}
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('quiz-active').style.display==='none')return;
+  if(!answered&&['1','2','3','4'].includes(e.key)){
+    var i=parseInt(e.key)-1;
+    var btns=document.querySelectorAll('#q-opts .q-opt');
+    if(btns[i])btns[i].click();
+  }
+  if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){
+    e.preventDefault();
+    var nb=document.getElementById('btn-next');
+    if(nb.style.display!=='none')nb.click();
+  }
+});
+})();</script>
 
 <!-- ===================== Traps ===================== -->
 <h2 id="trap">Common exam traps</h2>
