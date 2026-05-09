@@ -32,8 +32,11 @@ button#theme-toggle svg {
     font-size: 1.75rem !important;
     border: 1.5px solid currentColor !important;
     border-radius: 4px !important;
-    padding: 0.1em 0.45em !important;
+    padding: 0.25em 0.5em !important;
     line-height: 1;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
