@@ -117,6 +117,10 @@
     :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
     :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
   }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
+  .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
+  .chnav a:hover { border-color: var(--accent); }
+  .chnav .spacer { visibility: hidden; }
 </style>
 <script>
   (function() {
@@ -135,6 +139,11 @@
   <span class="icon-moon" aria-hidden="true">&#9790;</span>
 </button>
 <div class="wrap">
+  <nav class="chnav">
+    <a href="ch4.html">&larr; Ch 4</a>
+    <a href="index.html">All chapters</a>
+    <a href="ch6.html">Ch 6 &rarr;</a>
+  </nav>
 
 <header>
   <h1>C952 — Chapter 5: Arithmetic for Computers <span class="badge b-key">LEGv8 / IEEE 754</span></h1>

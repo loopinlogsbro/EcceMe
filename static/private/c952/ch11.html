@@ -3,40 +3,481 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<title>C952 — Chapter 11 Study Guide</title>
+<title>C952 — Chapter 11 Study Guide: Mapping Control to Hardware</title>
 <style>
-  :root { --bg:#0f1115; --panel:#161a22; --panel-2:#1d222c; --border:#2a3140; --text:#e6e8ec; --muted:#9aa3b2; --accent:#7cc4ff; }
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
   * { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--text); }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
   header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
   header .sub { color: var(--muted); font-size: 13px; }
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 10px 0; color: var(--muted); }
-  .chnav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
   .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
   .chnav a:hover { border-color: var(--accent); }
   .chnav .spacer { visibility: hidden; }
-  .chstrip { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; font-size: 13px; }
-  .chstrip a, .chstrip span { color: var(--accent); text-decoration: none; padding: 3px 9px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
-  .chstrip a:hover { border-color: var(--accent); }
-  .chstrip .current { color: var(--text); border-color: var(--accent); background: var(--panel-2); }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
 <div class="wrap">
   <nav class="chnav">
-    <a href="ch10.html">← Ch 10</a>
+    <a href="ch10.html">&larr; Ch 10</a>
     <a href="index.html">All chapters</a>
-    <a href="ch12.html">Ch 12 →</a>
+    <a href="ch12.html">Ch 12 &rarr;</a>
   </nav>
-  <header>
-    <h1>C952 — Chapter 11 Study Guide</h1>
-    <div class="sub">Placeholder — fill in from zyBooks ch11.</div>
-  </header>
-  <div class="panel">TODO: chapter 11 content.</div>
+
+<header>
+  <h1>C952 — Chapter 11 Study Guide <span class="badge b-key">Mapping Control to Hardware</span></h1>
+  <div class="sub">Combinational control, FSM control, explicit sequencers, microprogramming — WGU C952 zyBook Ch11 (COD Appendix C)</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">11.1 Introduction</a>
+  <a href="#s2">11.2 Combinational Control Units</a>
+  <a href="#s3">11.3 Finite-State Machine Control</a>
+  <a href="#s4">11.4 Next-State w/ Sequencer</a>
+  <a href="#s5">11.5 Microprogram to Hardware</a>
+  <a href="#s6">11.6 Concluding Remarks</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
 </div>
+
+<p class="hint">Note: zyBook flags this whole chapter as <i>Optional</i>. It expands COD Appendix C and uses MIPS terminology rather than LEGv8. Concepts (combinational vs. sequential control, FSM, microprogramming) carry over directly.</p>
+
+<!-- 11.1 -->
+<h2 id="s1">11.1 Introduction <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Control has two parts: a <b>combinational</b> piece (no state — pure logic from inputs to outputs) and a <b>sequential</b> piece (state machine that walks through cycles). Single-cycle designs use only combinational control; multicycle designs need a sequential controller.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Combinational control</b><span class="d">Stateless. Inputs (e.g., opcode) → outputs (control signals) in one pass through gates. Used for single-cycle datapath and the ALU control block.</span></div>
+    <div class="term"><b>Sequential control unit</b><span class="d">Stateful. Walks through multiple states per instruction (multicycle). Implemented as an FSM or microprogram.</span></div>
+    <div class="term"><b>FSM-based control</b><span class="d">Next-state logic computed from current state + opcode. Initial form: state diagram.</span></div>
+    <div class="term"><b>Microprogram</b><span class="d">Each microinstruction = one state. Initial form: a "program" of microinstructions in a control store (ROM/PLA).</span></div>
+    <div class="term"><b>Two next-state strategies</b><span class="d">(1) Encode the next-state function in logic. (2) Use a counter that increments by default + branch logic for non-sequential transitions.</span></div>
+  </div>
+  <p class="hint">Reference: COD Appendix C sections C.2–C.5. zyBook uses MIPS instead of LEGv8 here.</p>
+</div>
+
+<!-- 11.2 -->
+<h2 id="s2">11.2 Implementing Combinational Control Units <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Map a truth table directly to gates (AND/OR network) or to a structured two-level array (PLA). Modern CAD tools do this automatically and exploit don't-care terms to minimize logic.</p>
+
+  <h3>ALU Control Block</h3>
+  <ul>
+    <li>4 outputs: <code>Operation3</code>, <code>Operation2</code>, <code>Operation1</code>, <code>Operation0</code>.</li>
+    <li>Inputs: 2-bit <code>ALUOp</code> + 6-bit function code (only 4 of the 6 function bits actually matter — upper 2 are don't cares).</li>
+    <li><code>Operation3</code> has no truth-table row because it is only set for the NOR operation, which is always 0 in this subset.</li>
+  </ul>
+
+  <h3>ALU Operation Encoding</h3>
+  <table>
+    <tr><th>ALU Control (Op3..Op0)</th><th>Function</th></tr>
+    <tr><td><code>0000</code></td><td>AND</td></tr>
+    <tr><td><code>0001</code></td><td>OR</td></tr>
+    <tr><td><code>0010</code></td><td>Add</td></tr>
+    <tr><td><code>0110</code></td><td>Subtract</td></tr>
+    <tr><td><code>0111</code></td><td>Set on less than (slt)</td></tr>
+    <tr><td><code>1100</code></td><td>NOR</td></tr>
+  </table>
+
+  <h3>Programmable Logic Array (PLA) <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Structure</b><span class="d">Two-level: an AND plane (computes minterms = product terms from inputs and inverses) followed by an OR plane (sums minterms into outputs).</span></div>
+    <div class="term"><b>Why PLA over gates</b><span class="d">Regular structure, easy to size, only encodes the minterms that are actually used (sparse) — much smaller than a full ROM if only a handful of input combos are active.</span></div>
+    <div class="term"><b>Don't cares</b><span class="d">Inputs that may be 0 or 1 without affecting output. Used by minimization tools (e.g., Espresso) to merge truth-table rows and reduce gate count.</span></div>
+    <div class="term"><b>When the main control fits</b><span class="d">Unstructured gate logic is fine for small control functions. Once you have many opcodes and many control lines, use a PLA or ROM instead.</span></div>
+  </div>
+</div>
+
+<!-- 11.3 -->
+<h2 id="s3">11.3 Implementing Finite-State Machine Control <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Multicycle MIPS control has 10 states. Encode each state as a 4-bit number (S3..S0) stored in a <b>state register</b> that's written on the active clock edge. The control logic is combinational and produces (a) datapath control signals (depend only on current state) and (b) next-state outputs <code>NS3..NS0</code> (depend on current state + opcode).</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>State register</b><span class="d">Holds current-state bits. Written on clock edge, stable for the rest of the cycle.</span></div>
+    <div class="term"><b>NS outputs</b><span class="d">Next-state bits the control logic emits; clocked into the state register and become the new current state next cycle.</span></div>
+    <div class="term"><b>Datapath control signals</b><span class="d">Depend only on current state (not opcode). Same combination of asserts in every cycle that visits a given state.</span></div>
+    <div class="term"><b>Next-state function</b><span class="d">Depends on current state + 6-bit opcode. Most logic complexity lives here.</span></div>
+  </div>
+
+  <h3>Two Implementation Choices for the Truth Table</h3>
+  <table>
+    <tr><th>Implementation</th><th>Notes</th><th>Size for this MIPS subset</th></tr>
+    <tr><td><b>ROM (single)</b></td><td>10 inputs (6 opcode + 4 state) → 1024 entries × 20 bits/word</td><td>~20 Kbits — wasteful (lots of duplicates and don't-cares)</td></tr>
+    <tr><td><b>ROM (split into two)</b></td><td>One ROM for datapath signals (16 bits, only 4 inputs = state), one ROM for next-state (4 bits, 10 inputs). Datapath part doesn't depend on opcode.</td><td>~4.3 Kbits — about ⅕ of single ROM</td></tr>
+    <tr><td><b>PLA (single)</b></td><td>17 unique minterms × (10 inputs + 20 outputs)</td><td>~510 PLA cells — much smaller than ROM</td></tr>
+    <tr><td><b>PLA (split into two)</b></td><td>Datapath PLA + next-state PLA</td><td>~298 cells (≈55% of single PLA)</td></tr>
+  </table>
+  <p class="hint">For multicycle MIPS, ~94% of the ROM bits are devoted to the next-state function — this is the wasteful part PLAs (or sequencers, §11.4) compress.</p>
+
+  <h3>Building Logic Equations from the State Diagram</h3>
+  <ul>
+    <li>For each output, OR together every term that asserts it.</li>
+    <li>"<code>+</code>" means OR, juxtaposition means AND.</li>
+    <li><code>stateN</code> is the AND of state-bit conditions encoding state N.</li>
+    <li><code>(Op = 'lw')</code> is the AND of opcode bits encoding lw.</li>
+    <li><code>NextStateN</code> drives <code>NS[3:0]</code> to the binary value N.</li>
+  </ul>
+
+  <h3>Example: Equation for NS0</h3>
+  <div class="formula">NS0 = NextState1 + NextState3 + NextState5 + NextState7 + NextState9
+(NS0 must be 1 in any state whose binary number ends in 1.)</div>
+</div>
+
+<!-- 11.4 -->
+<h2 id="s4">11.4 Implementing the Next-State Function with a Sequencer <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Most states fall through to <code>state+1</code>. So replace the explicit next-state logic with: <b>counter (increment current state)</b> + <b>small dispatch table(s)</b> for branches. Saves enormous ROM/PLA area when state count is large.</p>
+
+  <h3>AddrCtl Encoding (2-bit field per microinstruction)</h3>
+  <table>
+    <tr><th>AddrCtl</th><th>Action</th></tr>
+    <tr><td><code>0</code></td><td>Set state to 0 (Fetch — next instruction)</td></tr>
+    <tr><td><code>1</code></td><td>Dispatch with ROM 1 (state 1 → branch by opcode class)</td></tr>
+    <tr><td><code>2</code></td><td>Dispatch with ROM 2 (state 2 → branch lw vs sw)</td></tr>
+    <tr><td><code>3</code></td><td>Use the incremented (sequential) state — Seq</td></tr>
+  </table>
+
+  <h3>Storage Comparison</h3>
+  <table>
+    <tr><th>Item</th><th>Size</th></tr>
+    <tr><td>10 control words × 18 bits</td><td>180 bits</td></tr>
+    <tr><td>2 dispatch ROMs × 64 entries × 4 bits</td><td>512 bits</td></tr>
+    <tr><td><b>Total sequencer-based control</b></td><td><b>692 bits</b></td></tr>
+    <tr><td>(vs. two-ROM next-state-encoded approach)</td><td>4.3 Kbits</td></tr>
+  </table>
+
+  <h3>Microprogram / Microcode Vocabulary <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Microinstruction</b><span class="d">One control word — i.e., one state's worth of control signals + sequencing field.</span></div>
+    <div class="term"><b>Microprogram</b><span class="d">The full set of microinstructions implementing the ISA's control.</span></div>
+    <div class="term"><b>Microprogram counter (μPC)</b><span class="d">The state register, viewed as a counter pointing at the current microinstruction in control store.</span></div>
+    <div class="term"><b>Control store</b><span class="d">The ROM/PLA holding microinstructions.</span></div>
+    <div class="term"><b>Dispatch ROM</b><span class="d">Small lookup table that maps an opcode to the next microinstruction address. Used for branching from a "decode" state.</span></div>
+  </div>
+
+  <h3>Logic-Reduction Techniques</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Logic minimization</b><span class="d">Use don't-cares + algebraic manipulation to reduce gate/term count. Best left to a CAD tool.</span></div>
+    <div class="term"><b>State assignment</b><span class="d">Choose state numbers so logic equations contain redundancy. E.g., renumbering states 4 and 7 to 8 and 9 lets <code>RegWrite = S3</code> — one bit test instead of two row equations. Limited when an explicit counter forces state ordering.</span></div>
+  </div>
+</div>
+
+<!-- 11.5 -->
+<h2 id="s5">11.5 Translating a Microprogram to Hardware <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>To turn a symbolic microprogram into a binary control store: (1) define how each microinstruction field encodes into control signals, (2) assign addresses to microinstructions, (3) fill in the dispatch ROMs.</p>
+
+  <h3>Sequencing Field Values</h3>
+  <table>
+    <tr><th>Symbol</th><th>AddrCtl</th><th>Meaning</th></tr>
+    <tr><td>Fetch</td><td><code>0</code></td><td>Go to Fetch state (state 0)</td></tr>
+    <tr><td>Dispatch 1</td><td><code>1</code></td><td>Branch via dispatch ROM 1 (opcode-driven)</td></tr>
+    <tr><td>Dispatch 2</td><td><code>2</code></td><td>Branch via dispatch ROM 2 (opcode-driven)</td></tr>
+    <tr><td>Seq</td><td><code>3</code></td><td>Increment μPC (sequential next state)</td></tr>
+  </table>
+
+  <h3>Default-Value Rule</h3>
+  <p>If a microinstruction field controls a stateful unit (Memory, ALU dest, PCWriteControl, etc.) and is left blank, no control signal is asserted. If a field controls a mux or ALUOp and is blank, the output is don't-care (associated signals don't matter).</p>
+
+  <h3>Reducing Microinstruction Width <span class="badge b-key">key</span></h3>
+  <ul>
+    <li><b>Encoding:</b> If only one of N control lines is ever asserted at a time, encode them into a ⌈log₂N⌉-bit field with a decoder. Trades width for a small decoder + signal delay. (e.g., 8 → 3 bits saves 5 bits per microinstruction.)</li>
+    <li><b>Format fields (opcode-style):</b> Multiple microinstruction formats (e.g., one for memory ops, one for ALU). Default values fill in unspecified lines. Cuts width but may need extra microinstructions.</li>
+  </ul>
+
+  <h3>Horizontal vs Vertical Microcode <span class="badge b-exam">core</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Horizontal microcode</b><span class="d">Wide microinstructions, few fields encoded. One μinst can drive many parallel datapath actions. Fewer cycles per ISA instruction; larger control store.</span></div>
+    <div class="term"><b>Vertical microcode</b><span class="d">Narrow, heavily encoded microinstructions. More μinsts per ISA instruction; smaller control store.</span></div>
+    <div class="term"><b>Better terminology</b><span class="d">"Maximally encoded" (vertical) vs "minimally encoded" (horizontal). The horizontal/vertical labels are not universally defined — Intel called the 8086's 21-bit μinst "horizontal" relative to peers.</span></div>
+  </div>
+</div>
+
+<!-- 11.6 -->
+<h2 id="s6">11.6 Concluding Remarks</h2>
+<div class="panel">
+  <p>Whether you express control as a state diagram or a microprogram, the hardware translation is the same: each state asserts control outputs and chooses the next state.</p>
+
+  <h3>Big Picture Tradeoffs</h3>
+  <ul>
+    <li><b>Encoded next-state vs explicit sequencer:</b> sequencer wins when the FSM has many states with long sequential runs and few branches.</li>
+    <li><b>ROM vs PLA:</b> PLA wins unless the control function is very dense (most input combinations meaningful). ROM may win if control sits on a separate chip.</li>
+    <li><b>Translation flexibility:</b> A microcode assembler has freedom in microinstruction address assignment (only constraint is that sequential μinsts must be sequential in memory).</li>
+  </ul>
+</div>
+
+<!-- Cheat Sheet -->
+<h2 id="cheat">Quick-Reference Cheat Sheet</h2>
+<div class="panel">
+  <h3>Control Implementation Decision Tree</h3>
+  <table>
+    <tr><th>Situation</th><th>Best implementation</th></tr>
+    <tr><td>Single-cycle, small opcode set</td><td>Unstructured combinational gates</td></tr>
+    <tr><td>Single-cycle, many opcodes</td><td>PLA</td></tr>
+    <tr><td>Multicycle, few states, dense control</td><td>FSM in ROM (sometimes split into 2)</td></tr>
+    <tr><td>Multicycle, many states with long sequential runs</td><td>Explicit sequencer (counter + dispatch ROMs)</td></tr>
+    <tr><td>CISC-style instructions, very wide control</td><td>Vertical microcode (encoded fields)</td></tr>
+  </table>
+
+  <h3>MIPS Multicycle Control Sizes</h3>
+  <table>
+    <tr><th>Approach</th><th>Bits</th></tr>
+    <tr><td>Single ROM (10 in × 20 out)</td><td>~20 Kbits</td></tr>
+    <tr><td>Two ROMs (split datapath / next-state)</td><td>~4.3 Kbits</td></tr>
+    <tr><td>Single PLA (17 minterms)</td><td>~510 cells</td></tr>
+    <tr><td>Two PLAs</td><td>~298 cells</td></tr>
+    <tr><td>Sequencer (10 μinsts × 18b + 2 × 64 × 4b)</td><td>692 bits</td></tr>
+  </table>
+
+  <h3>ALU Control Codes</h3>
+  <pre>0000 AND   0010 ADD   0111 SLT
+0001 OR    0110 SUB   1100 NOR</pre>
+
+  <h3>AddrCtl Quick Map</h3>
+  <pre>0 = Fetch (state 0)        2 = Dispatch ROM 2
+1 = Dispatch ROM 1         3 = Seq (state + 1)</pre>
+
+  <h3>Vocabulary You Must Recognize</h3>
+  <pre>combinational vs sequential control
+state register, NS outputs
+PLA = AND plane + OR plane
+minterm = product term (AND of inputs)
+dispatch ROM, μPC, control store
+microinstruction, microprogram, microcode
+horizontal (wide, parallel) vs vertical (narrow, encoded)
+state assignment, logic minimization, don't care</pre>
+</div>
+
+<!-- Self-test -->
+<h2 id="quiz">Self-Test Q&amp;A</h2>
+<div class="panel">
+
+  <details>
+    <summary>Combinational vs sequential control (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What distinguishes a combinational control unit from a sequential one?</div><div class="a">Combinational has no state — outputs are pure functions of current inputs. Sequential has a state register and walks through multiple cycles per instruction.</div></div>
+      <div class="qa"><div class="q">Why can a single-cycle datapath use only combinational control?</div><div class="a">Each instruction completes in one clock cycle, so there is no need to remember "where we are" — the opcode alone determines all control signals.</div></div>
+      <div class="qa"><div class="q">Which part of multicycle control logic dominates the storage cost?</div><div class="a">The next-state function. For the MIPS subset, ~94% of the two-ROM bits are next-state.</div></div>
+      <div class="qa"><div class="q">Why are the upper 2 bits of the function code don't-cares for the ALU control?</div><div class="a">In the MIPS subset, those bits never vary across the opcodes that reach ALU control, so they cannot affect the output. CAD tools exploit this to shrink the gate network.</div></div>
+      <div class="qa"><div class="q">Why is there no logic equation for Operation3 in the ALU control?</div><div class="a">Operation3 is only 1 for NOR, and NOR is not in the MIPS subset under discussion — so it is always 0.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>PLAs and ROMs (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What are the two planes of a PLA?</div><div class="a">An AND plane that computes minterms from inputs and their inverses, and an OR plane that sums minterms into the function outputs.</div></div>
+      <div class="qa"><div class="q">Define a minterm.</div><div class="a">A logical AND of one or more inputs (each either asserted or negated). Corresponds to one row of a truth table.</div></div>
+      <div class="qa"><div class="q">When does a PLA beat a ROM?</div><div class="a">Almost always for control logic, because PLAs encode only the minterms actually used. ROMs index every input combination, even ones that never occur.</div></div>
+      <div class="qa"><div class="q">What's the size of a single ROM holding the MIPS multicycle control function?</div><div class="a">2^10 entries × 20 bits = ~20 Kbits.</div></div>
+      <div class="qa"><div class="q">Why does splitting that ROM in two save space?</div><div class="a">Datapath signals depend only on the 4 state bits (16 entries × 16 bits). Only the smaller next-state function depends on all 10 inputs (1024 × 4 bits). Total ≈ 4.3 Kbits — about ⅕ of the single ROM.</div></div>
+      <div class="qa"><div class="q">What is a don't-care term?</div><div class="a">An input the output does not depend on. A row marked "X" represents two truth-table entries collapsed.</div></div>
+      <div class="qa"><div class="q">Total PLA cell estimate for the single-PLA MIPS multicycle control?</div><div class="a">~510 cells — proportional to (inputs + outputs) × minterms = (10 + 20) × 17.</div></div>
+      <div class="qa"><div class="q">When might a ROM still win over a PLA?</div><div class="a">When the control function is very dense (most input combinations are meaningful) or when the control store is a separate, replaceable chip.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>FSM control (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">How many state bits are needed for the 10-state MIPS multicycle control?</div><div class="a">⌈log₂10⌉ = 4 bits (S3..S0). State 6 = 0110, etc.</div></div>
+      <div class="qa"><div class="q">Which signals does the control logic produce besides datapath signals?</div><div class="a">The next-state outputs NS3..NS0, which are clocked into the state register on the next active edge.</div></div>
+      <div class="qa"><div class="q">Why does the datapath portion of the control output NOT depend on the opcode?</div><div class="a">Each state encodes a fixed datapath action; once you're in that state, you do the same thing regardless of the instruction that put you there.</div></div>
+      <div class="qa"><div class="q">Write the equation for NS0.</div><div class="a">NS0 = NextState1 + NextState3 + NextState5 + NextState7 + NextState9 (every state whose binary number ends in 1).</div></div>
+      <div class="qa"><div class="q">What does <code>(Op = 'lw')</code> mean inside a logic equation?</div><div class="a">The AND of opcode bits set to the binary encoding of lw — a single product term.</div></div>
+      <div class="qa"><div class="q">If you renumber states so that all states asserting RegWrite have S3 = 1, what does that buy you?</div><div class="a">RegWrite reduces to a single equation <code>RegWrite = S3</code>, eliminating the OR of multiple state terms in the output logic.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Sequencer + dispatch ROMs (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What problem does an explicit sequencer solve?</div><div class="a">Most state transitions are "go to state+1," so encoding the next-state function fully wastes most of the control store. A counter handles the common case for free.</div></div>
+      <div class="qa"><div class="q">What does the AddrCtl field do?</div><div class="a">Selects the source of the next state: 0 = Fetch (state 0), 1 = Dispatch ROM 1, 2 = Dispatch ROM 2, 3 = Sequential (state + 1).</div></div>
+      <div class="qa"><div class="q">What is a dispatch ROM?</div><div class="a">A small lookup table indexed by opcode that returns the address of the microinstruction to jump to. Used to branch from a "decode" state.</div></div>
+      <div class="qa"><div class="q">For the MIPS subset, how many bits total are needed for the sequencer-based control?</div><div class="a">10 control words × 18 bits = 180 bits, plus 2 dispatch ROMs × 64 × 4 bits = 512 bits, total = 692 bits.</div></div>
+      <div class="qa"><div class="q">Compare 692 bits with the two-ROM next-state-encoded approach.</div><div class="a">Sequencer is ~6× smaller (692 bits vs ~4.3 Kbits).</div></div>
+      <div class="qa"><div class="q">What is a μPC?</div><div class="a">Microprogram counter — the state register seen as a counter that points at the current microinstruction in control store.</div></div>
+      <div class="qa"><div class="q">What's "control store"?</div><div class="a">The ROM/PLA that holds the microprogram (microinstructions).</div></div>
+      <div class="qa"><div class="q">Why might state assignment be more constrained with an explicit sequencer than with a pure FSM?</div><div class="a">Because the sequencer increments the state to compute the next one, you cannot reorder states whose successors are sequential — you can only renumber blocks.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Microprogram → hardware (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What three tasks does a microcode assembler do?</div><div class="a">(1) Encode each microinstruction field into control-signal bits, (2) assign addresses to microinstructions, (3) fill in dispatch ROM contents from the symbolic labels.</div></div>
+      <div class="qa"><div class="q">What's the default value of an unspecified mux-control field?</div><div class="a">Don't care — the mux output isn't used in that microinstruction.</div></div>
+      <div class="qa"><div class="q">What about an unspecified field that drives a stateful unit (e.g., Memory, RegWrite)?</div><div class="a">Treated as 0 (no control signal asserted).</div></div>
+      <div class="qa"><div class="q">What is "encoding" in the context of microinstruction width reduction?</div><div class="a">If only one of N mutually exclusive control lines is ever active in a given microinstruction, replace those N bits with a ⌈log₂N⌉-bit field and a small decoder. Saves storage at the cost of a tiny delay.</div></div>
+      <div class="qa"><div class="q">What does "format field" do?</div><div class="a">Acts like an opcode for the microinstruction. Different formats define different default values for the unspecified fields, allowing each format to be narrower.</div></div>
+      <div class="qa"><div class="q">Tradeoff of format fields?</div><div class="a">Some operations may now need multiple microinstructions to express what one wider format could do — more cycles per ISA instruction.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Horizontal vs vertical microcode (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Horizontal microcode — define and contrast.</div><div class="a">Wide microinstructions with little encoding. Each μinst can drive many parallel datapath actions, giving low cycles-per-instruction. Larger control store.</div></div>
+      <div class="qa"><div class="q">Vertical microcode — define and contrast.</div><div class="a">Narrow, heavily encoded microinstructions. Smaller control store but more μinsts per ISA instruction (more cycles).</div></div>
+      <div class="qa"><div class="q">Why does the textbook prefer the terms "maximally encoded" and "minimally encoded"?</div><div class="a">Because horizontal/vertical have no universal definition — what's called "horizontal" in one design might be called "vertical" in another (e.g., the 8086's 21-bit μinst was called horizontal at the time).</div></div>
+      <div class="qa"><div class="q">When is horizontal microcode wasted?</div><div class="a">When most microinstructions don't use the parallel capability — much of the control store sits idle, and the chip is bigger and slower than necessary.</div></div>
+    </div>
+  </details>
+
+</div>
+
+<!-- Common Traps -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"All control logic is combinational."</b> <span class="no">No.</span> Single-cycle controllers are; multicycle controllers must be sequential (have a state register).</li>
+    <li><b>"A PLA and a ROM are the same thing in different packaging."</b> <span class="no">No.</span> A ROM has one entry per input combination (full truth table); a PLA encodes only the minterms actually used. PLAs are usually much smaller for sparse control functions.</li>
+    <li><b>"Splitting a ROM cannot save space — it's the same data."</b> <span class="no">No.</span> If part of the function depends only on a subset of the inputs (datapath signals depend only on state, not opcode), you can store that part with far fewer entries.</li>
+    <li><b>"An FSM and a microprogram are different mechanisms."</b> <span class="no">No.</span> They are alternative <i>representations</i> of the same control function. A microprogram can be implemented with an FSM, ROM, PLA, or sequencer.</li>
+    <li><b>"With an explicit sequencer, you no longer need a state register."</b> <span class="no">No.</span> The sequencer's counter <i>is</i> the state register — it is now called a microprogram counter (μPC).</li>
+    <li><b>"Encoding control lines into a smaller field always speeds the machine up."</b> <span class="no">No.</span> Encoding adds a decoder in the signal path (a small delay) and may require an extra microinstruction when two encoded lines must both be active.</li>
+    <li><b>"Horizontal microcode has more bits, so it's always more powerful."</b> <span class="no">Misleading.</span> Wider μinsts allow more parallel datapath ops per cycle (lower CPI), but if the parallelism isn't used, the wider control store is wasted area.</li>
+    <li><b>"Don't-cares are bugs."</b> <span class="no">No.</span> They are a feature: they tell the minimization tool that a row may be merged with adjacent rows, shrinking the gate count.</li>
+    <li><b>"NextState1 means the next clock cycle the state will be 1, regardless of opcode."</b> <span class="no">No.</span> NextState1 is asserted only in the rows of the next-state truth table where state 1 should follow — it's conditional on the inputs of that row.</li>
+    <li><b>"The dispatch ROM holds control signals."</b> <span class="no">No.</span> It holds <i>microinstruction addresses</i> (state numbers) — the next-state target for an opcode-driven branch.</li>
+  </ul>
+</div>
+
+<hr/>
+<p class="hint">Source: WGU C952 zyBook Chapter 11 — "Mapping Control to Hardware" (COD Appendix C content). Chapter is marked <i>Optional</i> in zyBook. Uses MIPS terminology (zyBook keeps original) rather than LEGv8.</p>
+
+</div>
+<script>
+  (function() {
+    var btn = document.getElementById('themeBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var next;
+      if (!current) {
+        next = prefersLight ? 'dark' : 'light';
+      } else {
+        next = current === 'dark' ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>
