@@ -155,8 +155,8 @@
   <a href="#s15">7.15 Cache Blocking</a>
   <a href="#s16">7.16 Fallacies &amp; Pitfalls</a>
   <a href="#cheat">Cheat Sheet</a>
-  <a href="#quiz">Self-Test Q&amp;A</a>
   <a href="#trap">Common Exam Traps</a>
+  <a href="#mc">Multiple-Choice Quiz</a>
 </div>
 
 <!-- 7.1 -->
@@ -689,145 +689,6 @@ Nonblocking cache  lets CPU keep referencing the cache during a miss</pre>
 </div>
 
 <!-- Self-test -->
-<h2 id="quiz">Self-Test Q&amp;A</h2>
-<div class="panel">
-
-  <details>
-    <summary>Locality &amp; hierarchy basics (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Define temporal locality and give an example from program structure.</div><div class="a">If a location is referenced, it tends to be referenced again soon. Loops re-execute the same instructions and re-touch the same loop counters / data.</div></div>
-      <div class="qa"><div class="q">Define spatial locality and its source.</div><div class="a">If a location is referenced, nearby addresses tend to be referenced soon. Sequential instruction fetch and array traversal naturally exhibit it.</div></div>
-      <div class="qa"><div class="q">What is a "block" in cache terminology?</div><div class="a">The minimum unit of information that can be either present or absent in a cache. Data are copied between hierarchy levels in blocks, not in bytes.</div></div>
-      <div class="qa"><div class="q">Why is hit time much smaller than miss penalty?</div><div class="a">The upper level uses faster (more expensive) memory; the lower level needs an additional access plus the time to transfer the block.</div></div>
-      <div class="qa"><div class="q">If hit rate is 95% and miss rate is 5%, miss penalty is 100 cycles, hit time is 1 cycle, what's AMAT?</div><div class="a">AMAT = 1 + 0.05 × 100 = 6 cycles.</div></div>
-      <div class="qa"><div class="q">Data movement happens between which levels of the hierarchy at a time?</div><div class="a">Two adjacent levels — never directly between non-adjacent levels.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Memory technologies (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Why is SRAM faster than DRAM?</div><div class="a">SRAM stores bits in cross-coupled inverters (no precharge, no sense amp, no refresh). DRAM stores bits as charge on a capacitor accessed via one transistor — slower, but ~6× denser.</div></div>
-      <div class="qa"><div class="q">Why does DRAM need refresh?</div><div class="a">Capacitor charge leaks; without periodic read+write of each row (every few ms), data would be lost.</div></div>
-      <div class="qa"><div class="q">What do RAS and CAS stand for?</div><div class="a">Row Access Strobe and Column Access Strobe. DRAM uses two-stage decode (row first, then column) to share address pins.</div></div>
-      <div class="qa"><div class="q">Why is a disk seek slow vs DRAM access?</div><div class="a">Seek requires physical movement of the read/write head over the right track — milliseconds vs nanoseconds.</div></div>
-      <div class="qa"><div class="q">List the three components of disk access time.</div><div class="a">Seek time + rotational latency + transfer time (plus controller overhead).</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Direct-mapped caches (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">In a direct-mapped cache, where can a memory block go?</div><div class="a">Exactly one location: cache_block_index = block_address mod num_blocks_in_cache.</div></div>
-      <div class="qa"><div class="q">What's the role of the tag?</div><div class="a">Identifies which of the many memory blocks that map to a given cache slot is currently stored there. Tag bits = address bits not used for index/offset.</div></div>
-      <div class="qa"><div class="q">What's the valid bit?</div><div class="a">Indicates whether the cache entry contains a valid block. Set to 0 at power-on; set to 1 when a block is loaded.</div></div>
-      <div class="qa"><div class="q">For a 64 KiB direct-mapped cache with 16-byte blocks (32-bit addresses), how many index bits and how many tag bits?</div><div class="a">Block offset = log₂16 = 4 bits. Number of blocks = 64 KiB / 16 B = 4096 → index = 12 bits. Tag = 32 − 12 − 4 = 16 bits.</div></div>
-      <div class="qa"><div class="q">Why does increasing block size reduce miss rate up to a point?</div><div class="a">Spatial locality — more nearby data brought in per miss. Beyond a certain size the cache holds fewer distinct blocks → competing blocks evict each other → miss rate increases again.</div></div>
-      <div class="qa"><div class="q">What two techniques reduce the miss penalty for large blocks?</div><div class="a">Early restart (deliver word as soon as it arrives, before the whole block lands) and critical-word-first (fetch the requested word first).</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Write policies (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Write-through vs write-back — which writes to memory on every store?</div><div class="a">Write-through writes to cache AND memory on every store. Write-back writes only to cache; writes the dirty block to memory on eviction.</div></div>
-      <div class="qa"><div class="q">What's a write buffer and why does write-through need it?</div><div class="a">A small queue that holds writes destined for memory while the CPU keeps executing. Without it, every store would stall the CPU for memory access time.</div></div>
-      <div class="qa"><div class="q">What is write-allocate vs no-write-allocate?</div><div class="a">Write-allocate: on a write miss, fetch the block into the cache before writing. No-write-allocate: write directly to memory and skip the cache load.</div></div>
-      <div class="qa"><div class="q">What's the typical pairing of write and miss-allocate policies?</div><div class="a">Write-back + write-allocate; write-through + no-write-allocate.</div></div>
-      <div class="qa"><div class="q">Why does write-back need a dirty bit?</div><div class="a">To know whether a block must be written back to memory on eviction. Clean blocks can simply be discarded.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Associativity &amp; replacement (6)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Define direct-mapped, set-associative, and fully-associative caches in one phrase each.</div><div class="a">Direct-mapped: one location. Set-associative: any of n locations within a set. Fully associative: any location anywhere.</div></div>
-      <div class="qa"><div class="q">What does increasing associativity do to the index field?</div><div class="a">Shrinks it by 1 bit per associativity-doubling. The freed bit moves into the tag.</div></div>
-      <div class="qa"><div class="q">A fully associative cache has how many index bits?</div><div class="a">Zero — there is no index. Only tag and block offset.</div></div>
-      <div class="qa"><div class="q">What's LRU and where is it expensive?</div><div class="a">Least Recently Used — replace the block unused for the longest time. Tracking exact LRU is expensive at high associativity (e.g., 16-way) — implementations approximate with pseudo-LRU.</div></div>
-      <div class="qa"><div class="q">Why does Random replacement work surprisingly well?</div><div class="a">At high associativity, most "interesting" blocks are present; the random victim usually wasn't going to be reused soon anyway.</div></div>
-      <div class="qa"><div class="q">Compared to direct-mapped at the same size, what does set associativity buy?</div><div class="a">Lower miss rate (fewer conflicts), at the cost of more comparators (parallel tag checks) and slightly slower hit time.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Multilevel caches (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Why have multiple levels of cache?</div><div class="a">L1 must be fast (low hit time) but is small; L2/L3 are slower but bigger to catch what L1 misses. Reduces effective miss penalty for L1 by avoiding many trips to DRAM.</div></div>
-      <div class="qa"><div class="q">Local vs global miss rate?</div><div class="a">Local: misses at this level / accesses to this level. Global: misses at this level / total memory references. Local rate is higher because the level only sees the misses from above.</div></div>
-      <div class="qa"><div class="q">Why is L1 typically split (I-cache + D-cache) but L2/L3 unified?</div><div class="a">L1 must serve both an instruction fetch and a data access in the same cycle (structural hazard). L2/L3 see less frequent references → unified is fine and avoids partition imbalance.</div></div>
-      <div class="qa"><div class="q">Should L2 be designed to optimize hit time or miss rate?</div><div class="a">Miss rate. L2's hit time is already much greater than L1's, so making it bigger / more associative to catch more misses is a win.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Dependability (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">Define MTTF, MTTR, and availability.</div><div class="a">MTTF = mean time to failure. MTTR = mean time to repair. Availability = MTTF / (MTTF + MTTR).</div></div>
-      <div class="qa"><div class="q">Three strategies to improve MTTF?</div><div class="a">Fault avoidance (build it right), fault tolerance (use redundancy), fault forecasting (predict and proactively replace).</div></div>
-      <div class="qa"><div class="q">What can a 1-bit parity code do, and what can it not do?</div><div class="a">Detect a single-bit error. Cannot correct any error. Cannot reliably detect 2-bit errors (parity matches again).</div></div>
-      <div class="qa"><div class="q">What's SEC-DED and what does Hamming code give you?</div><div class="a">Single Error Correct + Double Error Detect (distance-4). Hamming SEC is a distance-3 code: correct 1 bit. Typical cost: 7 bits per 64-bit word.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Virtual memory &amp; TLB (8)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What is virtual memory in one sentence?</div><div class="a">Use main memory as a "cache" for secondary storage; OS+hardware maintain a translation between program-visible (virtual) addresses and main-memory (physical) addresses.</div></div>
-      <div class="qa"><div class="q">What is a page fault?</div><div class="a">An accessed page is not present in main memory. The OS handles it: choose a victim page, possibly write it back to disk, fetch the new page from disk, update the page table.</div></div>
-      <div class="qa"><div class="q">Why is the miss penalty for a page fault enormous?</div><div class="a">Disk access is millions of CPU cycles. So virtual memory designs aggressively reduce miss rate (large pages, fully associative placement, write-back only).</div></div>
-      <div class="qa"><div class="q">What does the page table hold?</div><div class="a">For each virtual page number, the physical page number plus permission bits, valid bit, dirty bit, reference bit.</div></div>
-      <div class="qa"><div class="q">Where is the page table stored?</div><div class="a">In main memory. The Page Table Register holds the base address.</div></div>
-      <div class="qa"><div class="q">What's a TLB and why is it essential?</div><div class="a">Translation Lookaside Buffer — a small, fast cache of recent page table entries. Without it, every memory access would need an extra memory access (or several) just to translate the address.</div></div>
-      <div class="qa"><div class="q">A TLB miss can mean what two things?</div><div class="a">(1) Page is in memory but its translation isn't in the TLB → just load the entry. (2) Page is not in memory → page fault.</div></div>
-      <div class="qa"><div class="q">What is a virtually-addressed cache, and what's its main hazard?</div><div class="a">A cache indexed by virtual address (no translation before lookup). Faster, but suffers from <b>aliasing</b> — two virtual addresses can map to the same physical address, possibly leaving stale copies in the cache.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Protection (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What is supervisor / kernel mode?</div><div class="a">A processor mode in which a running process is the operating system and may execute privileged instructions.</div></div>
-      <div class="qa"><div class="q">What does a system call do?</div><div class="a">A special instruction that transfers control from user mode to a defined location in supervisor mode (the OS).</div></div>
-      <div class="qa"><div class="q">What is a context switch?</div><div class="a">Save current process's state (registers, PC, page-table base) and load another process's state so it may use the processor.</div></div>
-      <div class="qa"><div class="q">Why must instructions be restartable to support virtual memory?</div><div class="a">A page fault may interrupt an instruction in mid-execution. After the OS resolves the fault, the instruction must be able to resume from the beginning without ill effects.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>The four questions &amp; the 3 Cs (5)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">List the four hierarchy-design questions.</div><div class="a">(1) Where can a block be placed? (2) How is a block found? (3) Which block to replace on a miss? (4) What happens on a write?</div></div>
-      <div class="qa"><div class="q">Define compulsory misses.</div><div class="a">Cold-start misses — the first access to a block that has never been in the cache. Reduce with bigger blocks (more spatial locality per fetch) or prefetching.</div></div>
-      <div class="qa"><div class="q">Define capacity misses.</div><div class="a">Misses that occur because the cache is too small to hold all the blocks needed during execution, even with full associativity. Reduce with a bigger cache.</div></div>
-      <div class="qa"><div class="q">Define conflict misses.</div><div class="a">In set-associative or direct-mapped caches, multiple blocks contend for the same set. Reduce with higher associativity.</div></div>
-      <div class="qa"><div class="q">A fully associative cache has which kind of miss reduced to zero?</div><div class="a">Conflict misses — by definition, no block is forced out by another mapping conflict.</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>Cache coherence &amp; false sharing (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What is the cache coherence problem?</div><div class="a">In a multicore system, multiple caches may hold copies of the same memory location. Without coordination, one core's write to a shared location wouldn't be seen by other cores.</div></div>
-      <div class="qa"><div class="q">Snooping bus + write-invalidate — how does it work?</div><div class="a">Each cache listens to the shared bus. On a write, the writing cache broadcasts an invalidate; all other caches drop their copy of that block. The writer then has exclusive ownership.</div></div>
-      <div class="qa"><div class="q">What is false sharing?</div><div class="a">Two unrelated shared variables happen to lie in the same cache block. Each write to one invalidates the entire block in other caches, causing coherence traffic with no semantic conflict.</div></div>
-      <div class="qa"><div class="q">Three states in MSI?</div><div class="a">Modified (dirty, exclusive owner), Shared (clean, possibly multiple readers), Invalid (no valid copy).</div></div>
-    </div>
-  </details>
-
-  <details>
-    <summary>RAID (4)</summary>
-    <div class="body">
-      <div class="qa"><div class="q">What does RAID stand for and what does it provide?</div><div class="a">Redundant Array of Inexpensive Disks. Provides higher bandwidth (striping), higher availability (mirroring or parity), and density.</div></div>
-      <div class="qa"><div class="q">Difference between striping and mirroring?</div><div class="a">Striping: sequential blocks spread across multiple disks for parallel access (RAID 0). Mirroring: same data on multiple disks for high availability and read parallelism (RAID 1).</div></div>
-      <div class="qa"><div class="q">Why is RAID 5 preferred over RAID 4?</div><div class="a">RAID 4 has all parity on a single dedicated disk → bottleneck on writes. RAID 5 distributes parity across all disks → no single hot spot.</div></div>
-      <div class="qa"><div class="q">What is hot swapping and why does it matter?</div><div class="a">Replacing hardware while the system runs. Combined with RAID's redundancy, lets failed disks be replaced without downtime.</div></div>
-    </div>
-  </details>
-
-</div>
-
-<!-- Common Traps -->
 <h2 id="trap">Common Exam Traps</h2>
 <div class="panel">
   <ul>
@@ -854,6 +715,156 @@ Nonblocking cache  lets CPU keep referencing the cache during a miss</pre>
   </ul>
 </div>
 
+
+<h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">100 questions</span></h2>
+<div class="panel">
+  <div id="quiz7-shell">
+    <div id="quiz7-start">
+      <p>100 randomized multiple-choice questions covering every section, weighted toward the topics that show up most on the WGU OA. Questions and order shuffle each session. Press <code>1</code>&ndash;<code>4</code> to select, <code>Enter</code> or <code>&rarr;</code> to advance.</p>
+      <button class="q-btn q-start" onclick="quiz7Start()">Start Quiz</button>
+    </div>
+    <div id="quiz7-active" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span id="q7-counter" style="color:var(--muted);font-size:13px;"></span>
+        <span id="q7-score-disp" style="color:var(--muted);font-size:13px;"></span>
+      </div>
+      <div id="q7-progress-wrap"><div id="q7-bar"></div></div>
+      <div id="q7-text" style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.55;"></div>
+      <div id="q7-opts"></div>
+      <div id="q7-feedback" style="margin:10px 0 4px;font-size:13.5px;min-height:22px;"></div>
+      <button id="btn7-next" class="q-btn q-next" style="display:none" onclick="quiz7Next()">Next &rarr;</button>
+    </div>
+    <div id="quiz7-done" style="display:none;text-align:center;padding:24px 0;">
+      <div id="done7-score" style="font-size:36px;font-weight:700;color:var(--accent);"></div>
+      <div id="done7-pct" style="color:var(--muted);margin:8px 0 20px;font-size:14px;"></div>
+      <button class="q-btn q-start" onclick="quiz7Restart()">Shuffle &amp; Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>(function(){
+var Q=[
+// --- 7.1 Locality & Memory Hierarchy (10) ---
+{q:"Temporal locality in memory access means:",opts:["A recently accessed item is likely to be accessed again soon","Items stored at nearby addresses are likely to be accessed soon","The most frequently used data is kept in the largest cache","Instruction fetch always precedes data fetch"],ans:0},
+{q:"Spatial locality in memory access means:",opts:["Items near a recently accessed address are likely to be accessed soon","A recently accessed item is likely to be accessed again soon","The same cache set holds all data used by one function","Memory accesses cluster near the end of a program"],ans:0},
+{q:"The memory hierarchy from fastest to slowest is:",opts:["Registers &rarr; Cache &rarr; Main Memory &rarr; Disk","Cache &rarr; Registers &rarr; Main Memory &rarr; Disk","Main Memory &rarr; Cache &rarr; Registers &rarr; Disk","Disk &rarr; Main Memory &rarr; Cache &rarr; Registers"],ans:0},
+{q:"Which design principle motivates the memory hierarchy?",opts:["Make the common case fast","Simplicity favors regularity","Smaller is faster","Amdahl&apos;s Law"],ans:0},
+{q:"The principle that motivates caching is:",opts:["Programs reuse data and code recently accessed (temporal) and nearby (spatial)","Random access patterns are equally likely across all addresses","The OS can predict which data the CPU will need next","Larger caches always outperform smaller ones for all workloads"],ans:0},
+{q:"Which statement correctly characterizes the trade-off as you move down the memory hierarchy?",opts:["Larger capacity, lower cost per bit, slower access time","Smaller capacity, higher cost per bit, faster access time","Larger capacity, higher cost per bit, faster access time","Smaller capacity, lower cost per bit, slower access time"],ans:0},
+{q:"A sequential array traversal (e.g., <code>for i in range(n): sum += a[i]</code>) exploits which type of locality?",opts:["Spatial locality — accessing consecutive addresses","Temporal locality — accessing the same element repeatedly","Both temporal and spatial equally","Neither — array access is random by definition"],ans:0},
+{q:"A loop that repeatedly reads the same variable (e.g., a loop counter) exploits:",opts:["Temporal locality","Spatial locality","Cache associativity","Write-back policy"],ans:0},
+{q:"If a memory hierarchy level has a 95% hit rate and the next level has 10 ns access time, what does a miss mean?",opts:["The processor must access the slower next-level memory, paying the miss penalty","The data is permanently lost and must be recomputed","The cache block is evicted and must be re-fetched from disk always","The processor stalls for exactly one clock cycle"],ans:0},
+{q:"Which term describes data stored at the same level of the memory hierarchy as the processor registers?",opts:["On-chip registers (register file)","L1 cache","L2 cache","DRAM"],ans:0},
+// --- 7.2 Memory Technologies (10) ---
+{q:"SRAM (Static RAM) is used for cache because:",opts:["It is the fastest and does not need refresh, though it is more expensive per bit","It is the cheapest and densest memory technology available","It is non-volatile and retains data without power","It has the highest capacity of all RAM technologies"],ans:0},
+{q:"DRAM (Dynamic RAM) requires periodic refresh because:",opts:["It stores each bit as a charge on a capacitor that leaks over time","Its flip-flop cells lose state when not clocked","It uses a destructive read that must be followed by a write-back","Its address decoder resets to zero approximately every 8 ms"],ans:0},
+{q:"Typical DRAM access time is approximately:",opts:["50&ndash;70 ns","0.5&ndash;5 ns","5&ndash;10 &micro;s","1&ndash;10 ms"],ans:0},
+{q:"SRAM access time is approximately:",opts:["0.5&ndash;5 ns","50&ndash;70 ns","100&ndash;200 ns","1&ndash;10 ms"],ans:0},
+{q:"Flash memory is classified as:",opts:["Non-volatile solid-state memory with limited write endurance","Volatile DRAM-based memory with fast random access","A magnetic storage medium with mechanical seek time","SRAM that retains state without power"],ans:0},
+{q:"Magnetic disk access time includes three components. Which set is correct?",opts:["Seek time + rotational latency + transfer time","Seek time + refresh time + write-back time","Access time + bus time + controller overhead","Rotational latency + DRAM refresh + seek time"],ans:0},
+{q:"Modern DRAM is organized into banks consisting of:",opts:["Rows of memory cells","Columns only — rows are a cache concept","Pages that map directly to cache blocks","Randomly accessed cells with no internal organization"],ans:0},
+{q:"Which memory technology is BOTH the fastest AND the least dense (fewest bits per area)?",opts:["SRAM","DRAM","Flash","Magnetic disk"],ans:0},
+{q:"Which statement about Flash vs DRAM is TRUE?",opts:["Flash is non-volatile; DRAM is volatile","DRAM is non-volatile; Flash is volatile","Flash has shorter write latency than DRAM","Flash requires more frequent refresh than DRAM"],ans:0},
+{q:"The primary reason disk storage is much slower than DRAM is:",opts:["Mechanical seek and rotation delays (milliseconds vs nanoseconds)","Disk uses DRAM cells with an extra encryption layer","Disk buses operate at 10 MHz compared to 3 GHz memory buses","Disk requires a full OS system call for every byte read"],ans:0},
+// --- 7.3 Cache Basics & Direct-Mapped (15) ---
+{q:"In a direct-mapped cache, a memory block maps to:",opts:["Exactly one cache location, determined by (block address) mod (number of cache blocks)","Any cache location chosen by the replacement policy","A set of n locations selected by the index bits","The cache location with the longest time since last use"],ans:0},
+{q:"The valid bit in a cache entry is used to:",opts:["Indicate whether the cache block contains meaningful (valid) data","Track whether the block has been modified since being loaded","Count how many times the block has been accessed","Indicate which way in a set-associative cache holds the block"],ans:0},
+{q:"A cache miss is called a &apos;cold miss&apos; (compulsory miss) when:",opts:["The block is accessed for the very first time — it was never in cache","The cache is full and the replacement policy evicts a block","Two blocks map to the same set in a direct-mapped cache","The data exists in a lower cache level but not the L1"],ans:0},
+{q:"The address fields in a direct-mapped cache (from MSB to LSB) are:",opts:["Tag | Index | Block offset","Index | Tag | Block offset","Block offset | Index | Tag","Tag | Block offset | Index"],ans:0},
+{q:"If a cache has 1024 blocks, how many index bits are needed?",opts:["10","8","12","16"],ans:0},
+{q:"The tag stored in a cache entry is compared to:",opts:["The upper bits of the memory address to verify the correct block is cached","The lower bits of the address to find the byte within the block","The set index to determine which way holds the data","The dirty bit to decide whether a write-back is needed"],ans:0},
+{q:"A cache block (cache line) is the unit of transfer between cache and main memory. Larger block sizes:",opts:["Reduce compulsory misses by exploiting spatial locality, but increase miss penalty","Eliminate conflict misses by increasing associativity","Reduce miss penalty because less data must be transferred","Increase the number of conflict misses by reducing the number of sets"],ans:0},
+{q:"Which condition must be true for a cache hit?",opts:["Valid bit = 1 AND stored tag = address tag","Valid bit = 0 AND stored tag = address tag","Dirty bit = 1 AND stored tag = address tag","Valid bit = 1 AND dirty bit = 1"],ans:0},
+{q:"In a direct-mapped cache with 8 blocks, which cache block does memory block 35 map to?",opts:["3 (35 mod 8 = 3)","4 (35 mod 9 = 4)","7 (35 mod 8 = 7)","0 (35 mod 8 = 0 in power-of-2 addressing)"],ans:0},
+{q:"A cache read miss causes the processor to:",opts:["Stall, fetch the missing block from the next memory level, load it into cache, then retry","Write the missing address to the store buffer and continue","Immediately access DRAM and return the data without caching it","Flush the entire cache and restart the memory access"],ans:0},
+{q:"The block offset bits in a cache address select:",opts:["The specific byte (or word) within the fetched cache block","Which cache set holds the data","Which tag to compare against the stored tag","The DRAM row to access during a miss"],ans:0},
+{q:"For a 64-byte cache block, how many offset bits are needed?",opts:["6","4","8","5"],ans:0},
+{q:"Direct-mapped caches suffer most from which type of miss?",opts:["Conflict misses — two frequently used blocks map to the same cache location","Compulsory misses — every block must be loaded the first time","Capacity misses — the working set does not fit in cache","Coherence misses — multiple processors share the same cache"],ans:0},
+{q:"The instruction cache and data cache are often kept separate (Harvard-style) in modern processors because:",opts:["Instructions and data are accessed simultaneously in pipelined CPUs","Instruction cache entries are always larger than data cache entries","A unified cache would need two address ports but only one is available","The OS manages instruction cache and user programs manage data cache"],ans:0},
+{q:"When a cache miss occurs, the processor fetches an entire block (not just the requested word). This is justified by:",opts:["Spatial locality — nearby words are likely to be needed soon","Temporal locality — the same word will be needed again","Write-through policy — all writes also update main memory","Associativity — the block fills an entire set"],ans:0},
+// --- 7.4 Cache Performance & Associativity (15) ---
+{q:"Average Memory Access Time (AMAT) is calculated as:",opts:["Hit time + Miss rate &times; Miss penalty","Miss rate &times; Miss penalty","Hit time &times; (1 &minus; Miss rate)","(Hit time + Miss penalty) &divide; 2"],ans:0},
+{q:"If hit time = 1 cycle, miss rate = 5%, miss penalty = 100 cycles, what is AMAT?",opts:["6 cycles","5 cycles","101 cycles","100 cycles"],ans:0},
+{q:"An n-way set-associative cache with S sets has how many blocks total?",opts:["S &times; n","S + n","S &divide; n","n &divide; S"],ans:0},
+{q:"In a fully associative cache:",opts:["Any block can be placed in any cache location — index bits are zero","Blocks map to a fixed set determined by the index bits","Each set holds exactly two blocks","The replacement policy is always FIFO"],ans:0},
+{q:"LRU (Least Recently Used) replacement policy evicts:",opts:["The block that was accessed least recently within a set","The block with the lowest address","The block with the highest tag value","The block most recently written"],ans:0},
+{q:"Write-through policy means:",opts:["Every write updates both the cache AND main memory immediately","Writes update only the cache; main memory is updated on eviction","Writes bypass the cache and go directly to main memory","Writes are buffered and applied in batches"],ans:0},
+{q:"Write-back policy means:",opts:["Writes update the cache only; main memory is updated when the dirty block is evicted","Every write updates both cache and main memory immediately","Writes are held in a buffer and applied to cache after a delay","Writes skip the cache entirely"],ans:0},
+{q:"A dirty bit in a cache entry indicates:",opts:["The block has been written in cache but not yet written back to main memory","The block contains invalid data that must be re-fetched","The block was recently brought in from disk","The block is locked and cannot be evicted"],ans:0},
+{q:"A write buffer is used with write-through caches to:",opts:["Allow the CPU to continue executing while the write propagates to main memory","Accumulate writes until enough data is available for a burst transfer","Replace the dirty bit in write-back caches","Store write addresses for the branch predictor"],ans:0},
+{q:"Increasing cache associativity (e.g., from direct-mapped to 4-way) generally:",opts:["Reduces conflict misses but increases hit time slightly","Increases compulsory misses by evicting valid blocks","Reduces both hit time and miss rate simultaneously","Increases capacity misses by reducing the effective cache size"],ans:0},
+{q:"For a fully associative cache with 16 blocks, memory block 15 can be placed in:",opts:["Any of the 16 cache positions","Only position 15 (block 15 mod 16)","Only the first 8 positions (lower half)","Only even-numbered positions"],ans:0},
+{q:"Loop unrolling can reduce cache miss rates by:",opts:["Increasing spatial locality — accessing more of a cache line before it is evicted","Eliminating branch instructions that cause control hazards","Reducing the number of load instructions in the loop body","Increasing temporal locality by repeating the same memory access"],ans:0},
+{q:"Which cache configuration typically gives the best performance for most workloads?",opts:["Moderate associativity (4-way or 8-way set-associative)","Direct-mapped (1-way) for minimum hit time","Fully associative for minimum miss rate regardless of cost","Extremely high associativity (64-way or more)"],ans:0},
+{q:"Two-way set-associative outperforms direct-mapped mainly by eliminating:",opts:["Conflict misses between two frequently used blocks that map to the same set","Compulsory misses on the first access to any block","Capacity misses when the working set exceeds cache size","Coherence misses in multi-core workloads"],ans:0},
+{q:"Miss penalty is the number of cycles (or time) required to:",opts:["Fetch the missing block from the next level of the memory hierarchy","Access a cache hit","Compute the tag comparison in hardware","Write a dirty block back to main memory"],ans:0},
+// --- 7.5 RAID (10) ---
+{q:"RAID 0 provides:",opts:["Striping with no redundancy — maximum capacity and I/O throughput, but no fault tolerance","Mirroring — every block is duplicated on two disks","Block-level striping with distributed parity","Two-dimensional parity that survives two simultaneous disk failures"],ans:0},
+{q:"RAID 1 provides:",opts:["Mirroring — every block is duplicated on a second disk, doubling cost","Striping across multiple disks for maximum throughput","Byte-level parity stored on a dedicated parity disk","Distributed parity blocks stored across all disks"],ans:0},
+{q:"Which RAID level is best for a video editing workstation that needs maximum storage space and I/O speed, and can tolerate data loss?",opts:["RAID 0","RAID 1","RAID 5","RAID 6"],ans:0},
+{q:"RAID 5 differs from RAID 4 by:",opts:["Distributing parity blocks across all disks instead of a dedicated parity disk","Adding a second parity block to tolerate two simultaneous failures","Mirroring data instead of using parity","Stripping at the bit level rather than the block level"],ans:0},
+{q:"RAID 6 can survive how many simultaneous disk failures?",opts:["2","1","3","0"],ans:0},
+{q:"MTTF (Mean Time To Failure) is used in storage reliability to measure:",opts:["The expected time before a disk or system experiences a failure","The time required to repair or replace a failed disk","The probability that a disk fails in any given hour","The ratio of uptime to downtime for a storage array"],ans:0},
+{q:"System Availability is calculated as:",opts:["MTTF &divide; (MTTF + MTTR)","MTTR &divide; (MTTF + MTTR)","MTTF &times; MTTR","1 &minus; MTTF"],ans:0},
+{q:"Which RAID level uses bit-level striping with a dedicated Hamming-code parity drive?",opts:["RAID 2","RAID 3","RAID 4","RAID 5"],ans:0},
+{q:"A key finding from large-scale disk studies is that real-world disk failure rates are:",opts:["2&ndash;4&times; higher than manufacturer specifications suggest","Exactly as predicted by manufacturer MTTF specs","Lower than predicted due to improved manufacturing","Unpredictable and cannot be modeled with MTTF"],ans:0},
+{q:"RAID 3 stores parity at:",opts:["Byte level on a dedicated parity disk","Block level distributed across all drives","Bit level using Hamming code","Two independent parity blocks across all drives"],ans:0},
+// --- 7.6 Virtual Machines (8) ---
+{q:"A hypervisor (VMM — Virtual Machine Monitor) is responsible for:",opts:["Managing and isolating multiple virtual machines on shared physical hardware","Running the guest OS kernel as a privileged process","Translating virtual addresses to physical addresses for each process","Managing RAID arrays across multiple physical disks"],ans:0},
+{q:"The benefits of virtual machines include:",opts:["Software abstraction from hardware AND the ability to run multiple OS instances simultaneously","Lower latency due to direct hardware access from guest programs","Elimination of the need for page tables in the guest OS","Complete portability of machine code across different ISAs"],ans:0},
+{q:"The state of a virtual machine that must be saved and restored during a context switch includes:",opts:["Page table, program counter, and all registers","Only the registers and program counter","Only the page table base register","The TLB, page table, and cache contents"],ans:0},
+{q:"Before hardware virtualization support (Intel VT-x / AMD-V), x86 had how many instructions that were problematic for virtualization?",opts:["18","8","4","36"],ans:0},
+{q:"A guest OS running inside a VM believes it has direct hardware access. The hypervisor maintains this illusion by:",opts:["Intercepting privileged instructions and emulating their effect on virtual hardware","Giving the guest OS a dedicated physical CPU core","Allowing the guest OS to write directly to physical memory with bounds checking","Disabling all memory protection during VM execution"],ans:0},
+{q:"Which scenario is best solved by using a hypervisor?",opts:["A company needs to run Windows and Linux simultaneously on one physical server","A single-threaded program needs faster memory access","A processor needs to handle two simultaneous exceptions","A disk array needs higher read throughput"],ans:0},
+{q:"Virtual machines allow a program to exceed primary (physical) memory size because:",opts:["Virtual memory managed by the hypervisor can page to disk like any OS","The hypervisor allocates extra SRAM cache when DRAM is full","Guest OS registers are larger than physical register files","The VM compresses data automatically to fit in available RAM"],ans:0},
+{q:"Which best describes the relationship between a guest OS and a host OS in a Type 2 hypervisor?",opts:["The host OS runs on bare metal; the guest OS runs inside a VM managed by the hypervisor application","The guest OS runs on bare metal; the host OS is a privileged process inside the VM","Both OS instances run with equal privileges directly on hardware","The hypervisor replaces both OS instances with a single kernel"],ans:0},
+// --- 7.7 Virtual Memory & TLBs (15) ---
+{q:"Virtual memory allows a process to have an address space that is:",opts:["Larger than physical memory — pages not in use are stored on disk","Exactly the same size as physical memory","Smaller than physical memory to improve performance","Shared with all other processes for maximum efficiency"],ans:0},
+{q:"A page fault occurs when:",opts:["The processor accesses a virtual page that is not currently in physical memory","The TLB cannot find the physical address for a virtual address","The page table itself is not cached in L1","Two virtual addresses map to the same physical frame"],ans:0},
+{q:"Demand paging means:",opts:["Pages are loaded into physical memory only when first accessed","All pages of a process are loaded into memory before it starts","Pages are pre-fetched based on spatial locality prediction","The OS loads the most-recently-used pages on each context switch"],ans:0},
+{q:"A TLB (Translation-Lookaside Buffer) is:",opts:["A fully associative cache that stores recent virtual-to-physical address translations","A write buffer for store instructions in the memory pipeline","A dedicated register file used by the OS to manage page tables","A hardware queue that holds page fault addresses"],ans:0},
+{q:"A TLB hit means:",opts:["The virtual-to-physical translation is found in the TLB, completed in ~1 cycle","The page is found in L1 cache without consulting the page table","The physical frame is already loaded into a register","The page table lookup completed faster than usual"],ans:0},
+{q:"Typical TLB size is:",opts:["16&ndash;512 entries","1&ndash;4 entries","4096&ndash;16384 entries","Varies dynamically based on process size"],ans:0},
+{q:"The page table maps:",opts:["Virtual page numbers to physical frame numbers","Physical addresses to cache block addresses","Virtual addresses to disk sector numbers","TLB entries to L2 cache lines"],ans:0},
+{q:"For a 4 KB page size, how many offset bits does a virtual address contain?",opts:["12","10","4","16"],ans:0},
+{q:"In ARMv8, virtual addresses are how many bits wide?",opts:["48","64","32","40"],ans:0},
+{q:"The OS loads the page table base register (TTBR in ARM) to:",opts:["Point to the current process&apos;s page table so the hardware can translate its virtual addresses","Configure the TLB replacement policy for the new process","Set the starting physical address for the new process","Define the cache way count for the new process&apos;s data"],ans:0},
+{q:"On a context switch, the TLB is typically:",opts:["Flushed (invalidated) or tagged with an ASID to distinguish processes","Left intact because all processes share the same virtual address space","Written back to main memory and then reloaded","Frozen until the new process accesses a page"],ans:0},
+{q:"The hypervisor manages each VM&apos;s virtual memory by:",opts:["Maintaining a second level of address translation (guest virtual &rarr; guest physical &rarr; host physical)","Sharing one page table among all VMs on the host","Disabling the guest OS&apos;s page table and using physical addresses directly","Mapping all VM virtual addresses to the same physical frame for efficiency"],ans:0},
+{q:"Which best explains why virtual memory improves system utilization?",opts:["Multiple processes can share physical memory with only their active pages loaded","It eliminates DRAM entirely by using faster cache as main memory","Physical memory is reserved exclusively for the currently running process","It allows the CPU to access disk directly without OS involvement"],ans:0},
+{q:"A page table entry contains (at minimum):",opts:["Physical frame number + valid bit + protection bits","Virtual page number + dirty bit + LRU counter","Tag + index + offset (same as cache address)","ASID + TLB index + write-through flag"],ans:0},
+{q:"The ESR (Exception Status Register) in LEGv8/ARMv8 holds:",opts:["The reason (cause code) for the most recent exception","The return address to resume after the exception","The physical address that caused a page fault","The current privilege level of the executing process"],ans:0},
+// --- 7.8 Three Cs (5) ---
+{q:"The &apos;Three Cs&apos; classification of cache misses are:",opts:["Compulsory, Capacity, Conflict","Cold, Collision, Contention","Compulsory, Coherence, Conflict","Cold, Capacity, Coherence"],ans:0},
+{q:"A capacity miss occurs when:",opts:["The cache is too small to hold the entire working set, causing evictions of blocks that will be reused","Two blocks map to the same cache line in a direct-mapped cache","A cache block is accessed for the very first time","A shared block is invalidated by another processor&apos;s write"],ans:0},
+{q:"A conflict miss occurs when:",opts:["Multiple blocks that map to the same cache set displace each other, even though total capacity would suffice","The cache is completely full and a new block cannot be admitted","A block is accessed for the first time ever","A write to a shared block triggers an invalidation in another core&apos;s cache"],ans:0},
+{q:"Compulsory misses can be reduced by:",opts:["Prefetching — loading blocks before they are explicitly requested","Increasing associativity from direct-mapped to set-associative","Increasing cache capacity","Using a write-back instead of write-through policy"],ans:0},
+{q:"Which type of miss is impossible to eliminate even with an infinitely large, fully associative cache?",opts:["Compulsory misses — the first access to any block always misses","Capacity misses — an infinite cache has no capacity limit","Conflict misses — a fully associative cache has no fixed mapping","Coherence misses — a single processor has no coherence traffic"],ans:0},
+// --- 7.9-7.10 FSM & Cache Coherence (5) ---
+{q:"A finite state machine (FSM) cache controller handles a miss by moving through states that:",opts:["Stall the processor, fetch the block from memory, update cache, then resume","Pre-emptively evict dirty blocks before any miss occurs","Bypass the cache and serve the miss directly from disk","Write the miss address to the TLB and retry immediately"],ans:0},
+{q:"The MESI cache coherence protocol has four states. &apos;M&apos; (Modified) means:",opts:["The block is dirty in this cache only; main memory is stale","The block is shared read-only among multiple caches","The block exists only in this cache and matches main memory","The block is invalid and must be fetched before use"],ans:0},
+{q:"In MESI, &apos;S&apos; (Shared) means:",opts:["The block is clean and present in one or more caches","The block is modified and no other cache has a copy","The block exists exclusively in one cache and is clean","The block is invalid"],ans:0},
+{q:"A snooping bus allows cache coherence by:",opts:["Having each cache monitor all bus transactions and update its state accordingly","Sending explicit invalidation messages to every cache on each write","Using a centralized directory to track which caches hold each block","Flushing all caches whenever any processor performs a store"],ans:0},
+{q:"Write-invalidate coherence means:",opts:["When one cache writes a block, all other copies are invalidated","When one cache writes a block, all other copies are immediately updated","Only the modified copy is valid; other caches see an older version until a bus transaction","The writing cache broadcasts the new value to all caches simultaneously"],ans:0},
+// --- 7.13-7.16 Real Stuff, Blocking, Fallacies (7) ---
+{q:"The ARM Cortex-A53 L1 instruction cache is:",opts:["8-way set-associative","Direct-mapped","Fully associative","4-way set-associative"],ans:0},
+{q:"The Intel Core i7&apos;s last-level cache (L3) is:",opts:["20-way set-associative, 8 MB, shared among all cores","8-way set-associative, 256 KB, private per core","4-way set-associative, 32 KB L1 unified","Direct-mapped, 8 MB, shared"],ans:0},
+{q:"Cache blocking (tiling) in matrix multiply restructures the loop to:",opts:["Access sub-matrices that fit in cache, improving hit rate by reusing loaded blocks","Prefetch entire rows into L3 before they are needed","Use SIMD instructions to process multiple elements per cycle","Eliminate false sharing in multi-threaded matrix operations"],ans:0},
+{q:"A fallacy about disk reliability: manufacturer MTTF specifications suggest much higher reliability than field studies show because:",opts:["Field failure rates are 2&ndash;4&times; higher than specs due to environmental and usage factors","Field failure rates exactly match MTTF predictions for modern SSDs","Manufacturers test disks at full load for their entire rated lifespan","Flash-based SSDs have identical failure rates to magnetic disks"],ans:0},
+{q:"Write-through caches do NOT require write allocate on a write miss because:",opts:["Since every write already goes to main memory, a write miss can update main memory directly without loading the block into cache","Write-through requires the block to be fetched first to merge data","All write misses automatically trigger a cache flush","Write-through uses a write buffer that defers all misses"],ans:0},
+{q:"The ARM Cortex-A53 L1 data cache is:",opts:["4-way set-associative","8-way set-associative","Direct-mapped","Fully associative"],ans:0},
+{q:"Which cache size vs performance observation is a pitfall (misleading assumption)?",opts:["Simulated miss rates on small traces underestimate real miss rates because they miss cold and capacity misses from a full program run","Larger caches always have lower miss rates than smaller caches","AMAT increases when miss penalty increases, even if miss rate stays constant","Write-back reduces bus traffic compared to write-through for write-heavy workloads"],ans:0},
+];
+var order,idx,score,answered;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+window.quiz7Start=function(){order=shuffle(Array.from({length:Q.length},(_,i)=>i));idx=0;score=0;answered=false;document.getElementById('quiz7-start').style.display='none';document.getElementById('quiz7-done').style.display='none';document.getElementById('quiz7-active').style.display='block';render();};
+window.quiz7Next=function(){idx++;if(idx>=order.length){showDone();return;}render();};
+window.quiz7Restart=function(){document.getElementById('quiz7-done').style.display='none';document.getElementById('quiz7-start').style.display='block';};
+function render(){answered=false;var q=Q[order[idx]];document.getElementById('q7-counter').textContent='Question '+(idx+1)+' of '+Q.length;document.getElementById('q7-score-disp').textContent='Score: '+score+'/'+idx;document.getElementById('q7-bar').style.width=((idx/Q.length)*100)+'%';document.getElementById('q7-text').innerHTML=q.q;document.getElementById('q7-feedback').innerHTML='';document.getElementById('btn7-next').style.display='none';var opts=document.getElementById('q7-opts');opts.innerHTML='';q.opts.forEach(function(o,i){var b=document.createElement('button');b.className='q-opt';b.innerHTML=['A','B','C','D'][i]+'. '+o;b.dataset.i=i;b.onclick=function(){pick(i,q.ans);};opts.appendChild(b);});}
+function pick(chosen,correct){if(answered)return;answered=true;var allBtns=document.querySelectorAll('#q7-opts .q-opt');allBtns.forEach(function(b){b.disabled=true;});if(chosen===correct){score++;allBtns[chosen].classList.add('correct');document.getElementById('q7-feedback').innerHTML='<span class="ok">&#x2713; Correct!</span>';}else{allBtns[chosen].classList.add('wrong');allBtns[correct].classList.add('reveal');document.getElementById('q7-feedback').innerHTML='<span class="no">&#x2717; Incorrect.</span> The highlighted option is correct.';}document.getElementById('q7-score-disp').textContent='Score: '+score+'/'+(idx+1);document.getElementById('btn7-next').style.display='inline-block';}
+function showDone(){document.getElementById('quiz7-active').style.display='none';document.getElementById('quiz7-done').style.display='block';var pct=Math.round(score/Q.length*100);document.getElementById('done7-score').textContent=score+' / '+Q.length;var msg=pct>=90?'Excellent — exam-ready.':pct>=75?'Good — review the topics you missed.':pct>=60?'Decent — more practice recommended.':'Keep studying — focus on the sections where you struggled.';document.getElementById('done7-pct').textContent=pct+'% — '+msg;}
+document.addEventListener('keydown',function(e){if(document.getElementById('quiz7-active').style.display==='none')return;if(!answered&&['1','2','3','4'].includes(e.key)){var i=parseInt(e.key)-1;var btns=document.querySelectorAll('#q7-opts .q-opt');if(btns[i])btns[i].click();}if(answered&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){e.preventDefault();var nb=document.getElementById('btn7-next');if(nb.style.display!=='none')nb.click();}});
+})();</script>
 <hr/>
 <p class="hint">Source: WGU C952 zyBook Chapter 7 — "Large and Fast: Exploiting Memory Hierarchy" (COD Chapter 5).</p>
 

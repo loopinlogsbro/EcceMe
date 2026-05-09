@@ -151,8 +151,8 @@
   <a href="#s9">2.9 Benchmarking the Intel Core i7</a>
   <a href="#s10">2.10 Fallacies &amp; Pitfalls</a>
   <a href="#cheat">Cheat Sheet</a>
-  <a href="#mc">Multiple-Choice Quiz</a>
   <a href="#trap">Common Exam Traps</a>
+  <a href="#mc">Multiple-Choice Quiz</a>
 </div>
 
 <!-- ===================== 2.1 ===================== -->
@@ -184,13 +184,13 @@
   <h3>Size prefixes &mdash; decimal vs. binary</h3>
   <table>
     <tr><th>Decimal term</th><th>Value</th><th>Binary term</th><th>Value</th><th>Binary % larger</th></tr>
-    <tr><td>kilobyte (KB)</td><td>10&sup3;</td><td>kibibyte (KiB)</td><td>2&sup1;&sup0;</td><td>2%</td></tr>
-    <tr><td>megabyte (MB)</td><td>10&sup6;</td><td>mebibyte (MiB)</td><td>2&sup2;&sup0;</td><td>5%</td></tr>
-    <tr><td>gigabyte (GB)</td><td>10&sup9;</td><td>gibibyte (GiB)</td><td>2&sup3;&sup0;</td><td>7%</td></tr>
-    <tr><td>terabyte (TB)</td><td>10&sup1;&sup2;</td><td>tebibyte (TiB)</td><td>2&sup4;&sup0;</td><td>10%</td></tr>
-    <tr><td>petabyte (PB)</td><td>10&sup1;&sup5;</td><td>pebibyte (PiB)</td><td>2&sup5;&sup0;</td><td>13%</td></tr>
+    <tr><td>kilobyte (KB)</td><td>10<sup>3</sup></td><td>kibibyte (KiB)</td><td>2<sup>10</sup></td><td>2%</td></tr>
+    <tr><td>megabyte (MB)</td><td>10<sup>6</sup></td><td>mebibyte (MiB)</td><td>2<sup>20</sup></td><td>5%</td></tr>
+    <tr><td>gigabyte (GB)</td><td>10<sup>9</sup></td><td>gibibyte (GiB)</td><td>2<sup>30</sup></td><td>7%</td></tr>
+    <tr><td>terabyte (TB)</td><td>10<sup>12</sup></td><td>tebibyte (TiB)</td><td>2<sup>40</sup></td><td>10%</td></tr>
+    <tr><td>petabyte (PB)</td><td>10<sup>15</sup></td><td>pebibyte (PiB)</td><td>2<sup>50</sup></td><td>13%</td></tr>
   </table>
-  <p class="hint">Exam tip: TiB is ~10% larger than TB. The binary prefixes were introduced to resolve ambiguity ("terabyte" used to mean both 10&sup1;&sup2; and 2&sup4;&sup0; in different industries).</p>
+  <p class="hint">Exam tip: TiB is ~10% larger than TB. The binary prefixes were introduced to resolve ambiguity ("terabyte" used to mean both 10<sup>12</sup> and 2<sup>40</sup> in different industries).</p>
 </div>
 
 <!-- ===================== 2.2 ===================== -->
@@ -402,11 +402,11 @@ A is faster. Ratio = 600/500 = 1.2x faster.</pre>
   <pre>Program: 10 s on A (2 GHz clock). Target: 6 s on B.
 B requires 1.2x cycles of A.
 
-Cycles_A = 10 s &times; 2&times;10&sup9; = 20&times;10&sup9; cycles
-Cycles_B = 1.2 &times; 20&times;10&sup9; = 24&times;10&sup9; cycles
+Cycles_A = 10 s &times; 2&times;10<sup>9</sup> = 20&times;10<sup>9</sup> cycles
+Cycles_B = 1.2 &times; 20&times;10<sup>9</sup> = 24&times;10<sup>9</sup> cycles
 
 CPU_time_B = Cycles_B / Rate_B
-6 = 24&times;10&sup9; / Rate_B
+6 = 24&times;10<sup>9</sup> / Rate_B
 Rate_B = 4 GHz</pre>
 
   <h3>Example 4: Comparing code sequences (different instruction mix)</h3>
@@ -435,15 +435,15 @@ Code 2 CPI = 9/6 = 1.5. Code 1 CPI = 10/5 = 2.0.</pre>
   <p>Why clock rates stopped rising around 2004 and why energy efficiency is now the critical design constraint.</p>
 
   <div class="grid grid-2">
-    <div class="term"><b>Dynamic Energy (CMOS)</b><span class="d">Energy consumed when transistors switch states (0&harr;1). Primary energy source in CMOS chips. Depends on capacitive load &times; V&sup2;.</span></div>
+    <div class="term"><b>Dynamic Energy (CMOS)</b><span class="d">Energy consumed when transistors switch states (0&harr;1). Primary energy source in CMOS chips. Depends on capacitive load &times; V<sup>2</sup>.</span></div>
     <div class="term"><b>Leakage (Static) Energy</b><span class="d">Current that flows even when transistors are "off." Responsible for ~40% of server chip power today. Cannot be eliminated by turning transistors off.</span></div>
   </div>
 
   <h3>Power formulas</h3>
-  <div class="formula">Energy_per_transition = Capacitive_load &times; Voltage&sup2;
-Power = Capacitive_load &times; Voltage&sup2; &times; Frequency_switched
+  <div class="formula">Energy_per_transition = Capacitive_load &times; Voltage<sup>2</sup>
+Power = Capacitive_load &times; Voltage<sup>2</sup> &times; Frequency_switched
 
-Power &prop; V&sup2; &mdash; reducing voltage 15% cuts power ~28%.
+Power &prop; V<sup>2</sup> &mdash; reducing voltage 15% cuts power ~28%.
 Over 20 years: voltage went from 5 V &rarr; 1 V &rarr; power increase only ~30x
 despite clock rate increasing ~1000x.</div>
 
@@ -460,7 +460,7 @@ despite clock rate increasing ~1000x.</div>
   Capacitive load: 85% of old
   Voltage: 85% of old (also reduces frequency by 15%)
 
-Power_ratio = (0.85) &times; (0.85)&sup2; &times; (0.85)
+Power_ratio = (0.85) &times; (0.85)<sup>2</sup> &times; (0.85)
            = 0.85 &times; 0.7225 &times; 0.85 &approx; 0.52
 
 New processor uses about half the power.</pre>
@@ -510,7 +510,7 @@ New processor uses about half the power.</pre>
 
   <h3>Selected SPEC CPU2006 results on 2.66 GHz Intel Core i7 920</h3>
   <table>
-    <tr><th>Benchmark</th><th>Description</th><th>IC (&times;10&sup9;)</th><th>CPI</th><th>Exec time (s)</th><th>SPECratio</th></tr>
+    <tr><th>Benchmark</th><th>Description</th><th>IC (&times;10<sup>9</sup>)</th><th>CPI</th><th>Exec time (s)</th><th>SPECratio</th></tr>
     <tr><td>perl</td><td>String processing</td><td>2252</td><td>0.60</td><td>508</td><td>19.2</td></tr>
     <tr><td>mcf</td><td>Combinatorial opt.</td><td>221</td><td>2.66</td><td>221</td><td>41.2</td></tr>
     <tr><td>libquantum</td><td>Quantum simulation</td><td>659</td><td>0.44</td><td>109</td><td>190.0</td></tr>
@@ -552,8 +552,8 @@ n&rarr;&infin;. In practice the floor is 20 s = 5x maximum, unreachable.</pre>
   <p>A faster program uses less total energy if it finishes sooner &mdash; the entire system draws power during execution. Hardware/software optimizations that reduce time can save energy even if instantaneous power is slightly higher.</p>
 
   <h3>Pitfall: Using MIPS as a performance metric</h3>
-  <div class="formula">MIPS = Instruction_count / (Execution_time &times; 10&sup6;)
-     = Clock_rate / (CPI &times; 10&sup6;)</div>
+  <div class="formula">MIPS = Instruction_count / (Execution_time &times; 10<sup>6</sup>)
+     = Clock_rate / (CPI &times; 10<sup>6</sup>)</div>
   <p>Three fundamental problems:</p>
   <ul>
     <li><b>Cannot compare different ISAs</b> &mdash; instruction capability differs, so raw counts are meaningless across architectures</li>
@@ -579,11 +579,11 @@ Clock_Cycles = IC &times; CPI
 
 "X is n times faster": Time_Y / Time_X = n
 
-Power &prop; C_load &times; V&sup2; &times; Freq
+Power &prop; C_load &times; V<sup>2</sup> &times; Freq
 
 Amdahl: Time_after = Time_affected/n + Time_unaffected
 
-MIPS = IC / (Time &times; 10&sup6;) = Clock_rate / (CPI &times; 10&sup6;)</div>
+MIPS = IC / (Time &times; 10<sup>6</sup>) = Clock_rate / (CPI &times; 10<sup>6</sup>)</div>
     </div>
     <div>
       <h3>Eight Great Ideas</h3>
@@ -613,7 +613,7 @@ MIPS = IC / (Time &times; 10&sup6;) = Clock_rate / (CPI &times; 10&sup6;)</div>
       <ul>
         <li>Response time vs. throughput: faster CPU improves both; more CPUs mainly improve throughput</li>
         <li>Elapsed time vs. CPU time: elapsed includes I/O wait; CPU time does not</li>
-        <li>TB (10&sup1;&sup2;) vs. TiB (2&sup4;&sup0;): TiB ~10% larger</li>
+        <li>TB (10<sup>12</sup>) vs. TiB (2<sup>40</sup>): TiB ~10% larger</li>
         <li>DRAM (volatile) vs. flash/disk (nonvolatile)</li>
         <li>ISA (interface) vs. Implementation (hardware)</li>
         <li>MIPS is flawed &mdash; execution time is the only valid measure</li>
@@ -634,7 +634,7 @@ MIPS = IC / (Time &times; 10&sup6;) = Clock_rate / (CPI &times; 10&sup6;)</div>
     <div>
       <h3>Power wall facts</h3>
       <ul>
-        <li>Power &prop; V&sup2; &rarr; 15% voltage cut &asymp; 28% power cut</li>
+        <li>Power &prop; V<sup>2</sup> &rarr; 15% voltage cut &asymp; 28% power cut</li>
         <li>Voltage dropped 5 V &rarr; 1 V over 20 years</li>
         <li>Leakage = ~40% of server chip power</li>
         <li>Clock rates peaked ~2004 (thermal limits)</li>
@@ -660,6 +660,26 @@ MIPS = IC / (Time &times; 10&sup6;) = Clock_rate / (CPI &times; 10&sup6;)</div>
   #q-progress-wrap{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px;}
   #q-bar{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
 </style>
+
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"An LCD display generates its own light."</b> <span class="no">No.</span> An LCD <em>controls</em> the transmission of light from a separate backlight &mdash; it does not emit light.</li>
+    <li><b>"A terabyte equals a tebibyte."</b> <span class="no">No.</span> TB = 10<sup>12</sup> bytes (decimal). TiB = 2<sup>40</sup> bytes (binary). TiB is about 10% larger than TB.</li>
+    <li><b>"Cache memory uses DRAM because it needs to be fast."</b> <span class="no">No.</span> Cache uses SRAM. DRAM is slower &mdash; it's used for main memory. SRAM is faster but more expensive and less dense.</li>
+    <li><b>"Flash memory is nonvolatile and never degrades."</b> <span class="no">No.</span> Flash is nonvolatile, but bits wear out after 100,000&ndash;1,000,000 write cycles. File systems must use wear leveling to manage this.</li>
+    <li><b>"Pipelining requires programmers to rewrite code."</b> <span class="no">No.</span> Pipelining (instruction-level parallelism) is transparent to programmers &mdash; the hardware/compiler handles it. Multicore parallelism, however, does require explicit programmer effort.</li>
+    <li><b>"The computer with fewer instructions executed always runs faster."</b> <span class="no">Not necessarily.</span> Fewer instructions with higher CPI can run slower. Execution time = IC &times; CPI &times; Clock_period. All three factors matter.</li>
+    <li><b>"MIPS is a reliable way to compare computer performance."</b> <span class="no">No.</span> MIPS varies by program on the same CPU, can't compare across ISAs, and can be inversely correlated with actual performance. Execution time is the only valid measure.</li>
+    <li><b>"Improving multiply by 5x will make a program 5x faster if multiply uses 80% of runtime."</b> <span class="no">No.</span> By Amdahl's Law: new time = 80/5 + 20 = 36 s (was 100 s) &rarr; only 100/36 &asymp; 2.78x speedup.</li>
+    <li><b>"A server at 10% utilization uses about 10% of peak power."</b> <span class="no">No.</span> Real servers use ~33% of peak power even at 10% load. Power is not proportional to utilization.</li>
+    <li><b>"Better performance always means worse energy efficiency."</b> <span class="no">No.</span> Faster execution means less total time the whole system draws power. Performance and energy efficiency can both improve together.</li>
+    <li><b>"ISA and implementation are the same thing."</b> <span class="no">No.</span> ISA is the abstract interface (what programmers write to). Implementation is the specific hardware realizing the ISA. Multiple implementations at different cost/performance can share one ISA.</li>
+    <li><b>"Replacing a uniprocessor with multicore always improves response time for any program."</b> <span class="no">No.</span> Multicore primarily improves throughput. A single-threaded sequential program does not benefit unless it is explicitly rewritten to use multiple cores.</li>
+    <li><b>"Embedded computers are just small PCs."</b> <span class="no">No.</span> Embedded computers run one predetermined application, are integrated into another device, are optimized for cost/power in a specific context, and often have no visible OS to users. They are not general-purpose.</li>
+    <li><b>"A program with a higher MIPS rating always runs faster."</b> <span class="no">No.</span> If the program with more MIPS executes more (but simpler) instructions with shorter clock cycles, MIPS can be higher while execution time is longer. Example: same task, one program uses 8 billion fast instructions, another uses 10 billion even faster ones &mdash; check all three factors.</li>
+  </ul>
+</div>
 
 <h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">90 questions</span></h2>
 <div class="panel">
@@ -874,26 +894,6 @@ document.addEventListener('keydown',function(e){
 })();</script>
 
 <!-- ===================== TRAPS ===================== -->
-<h2 id="trap">Common Exam Traps</h2>
-<div class="panel">
-  <ul>
-    <li><b>"An LCD display generates its own light."</b> <span class="no">No.</span> An LCD <em>controls</em> the transmission of light from a separate backlight &mdash; it does not emit light.</li>
-    <li><b>"A terabyte equals a tebibyte."</b> <span class="no">No.</span> TB = 10&sup1;&sup2; bytes (decimal). TiB = 2&sup4;&sup0; bytes (binary). TiB is about 10% larger than TB.</li>
-    <li><b>"Cache memory uses DRAM because it needs to be fast."</b> <span class="no">No.</span> Cache uses SRAM. DRAM is slower &mdash; it's used for main memory. SRAM is faster but more expensive and less dense.</li>
-    <li><b>"Flash memory is nonvolatile and never degrades."</b> <span class="no">No.</span> Flash is nonvolatile, but bits wear out after 100,000&ndash;1,000,000 write cycles. File systems must use wear leveling to manage this.</li>
-    <li><b>"Pipelining requires programmers to rewrite code."</b> <span class="no">No.</span> Pipelining (instruction-level parallelism) is transparent to programmers &mdash; the hardware/compiler handles it. Multicore parallelism, however, does require explicit programmer effort.</li>
-    <li><b>"The computer with fewer instructions executed always runs faster."</b> <span class="no">Not necessarily.</span> Fewer instructions with higher CPI can run slower. Execution time = IC &times; CPI &times; Clock_period. All three factors matter.</li>
-    <li><b>"MIPS is a reliable way to compare computer performance."</b> <span class="no">No.</span> MIPS varies by program on the same CPU, can't compare across ISAs, and can be inversely correlated with actual performance. Execution time is the only valid measure.</li>
-    <li><b>"Improving multiply by 5x will make a program 5x faster if multiply uses 80% of runtime."</b> <span class="no">No.</span> By Amdahl's Law: new time = 80/5 + 20 = 36 s (was 100 s) &rarr; only 100/36 &asymp; 2.78x speedup.</li>
-    <li><b>"A server at 10% utilization uses about 10% of peak power."</b> <span class="no">No.</span> Real servers use ~33% of peak power even at 10% load. Power is not proportional to utilization.</li>
-    <li><b>"Better performance always means worse energy efficiency."</b> <span class="no">No.</span> Faster execution means less total time the whole system draws power. Performance and energy efficiency can both improve together.</li>
-    <li><b>"ISA and implementation are the same thing."</b> <span class="no">No.</span> ISA is the abstract interface (what programmers write to). Implementation is the specific hardware realizing the ISA. Multiple implementations at different cost/performance can share one ISA.</li>
-    <li><b>"Replacing a uniprocessor with multicore always improves response time for any program."</b> <span class="no">No.</span> Multicore primarily improves throughput. A single-threaded sequential program does not benefit unless it is explicitly rewritten to use multiple cores.</li>
-    <li><b>"Embedded computers are just small PCs."</b> <span class="no">No.</span> Embedded computers run one predetermined application, are integrated into another device, are optimized for cost/power in a specific context, and often have no visible OS to users. They are not general-purpose.</li>
-    <li><b>"A program with a higher MIPS rating always runs faster."</b> <span class="no">No.</span> If the program with more MIPS executes more (but simpler) instructions with shorter clock cycles, MIPS can be higher while execution time is longer. Example: same task, one program uses 8 billion fast instructions, another uses 10 billion even faster ones &mdash; check all three factors.</li>
-  </ul>
-</div>
-
 <hr/>
 <p style="color:var(--muted);font-size:12px;">Built from ch2.pdf (zyBooks C952, exported 2026-04-22). If anything here disagrees with the source, trust the source.</p>
 

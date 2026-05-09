@@ -184,8 +184,8 @@
   <a href="#s11">3.11 Synchronization</a>
   <a href="#s12">3.12 Translate/start a program</a>
   <a href="#cheat">Cheat sheet</a>
-  <a href="#mc">Multiple-Choice Quiz</a>
   <a href="#trap">Common exam traps</a>
+  <a href="#mc">Multiple-Choice Quiz</a>
 </div>
 
 <!-- ===================== 3.1 ===================== -->
@@ -676,6 +676,22 @@ Running process in memory</pre>
   #q-bar{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .35s;}
 </style>
 
+<h2 id="trap">Common exam traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"ADD sets the flags."</b> <span class="no">False.</span> Only the S-suffix versions (ADDS, SUBS, ANDS, ADDIS, SUBIS, ANDIS) update NZCV.</li>
+    <li><b>"There's a NOT instruction."</b> <span class="no">No.</span> Use EOR with all-ones.</li>
+    <li><b>"Doubleword addresses go up by 1 each."</b> <span class="no">No.</span> Memory is byte-addressed; sequential doublewords differ by 8.</li>
+    <li><b>"Two's complement has +0 and −0."</b> <span class="no">No.</span> Only one zero; that's the whole reason it beats sign-and-magnitude.</li>
+    <li><b>"CBZ branches if the register is non-zero."</b> <span class="no">No</span> — CBZ branches if zero. CBNZ branches if non-zero.</li>
+    <li><b>"Conditional branches reach the entire program."</b> <span class="no">No.</span> ±1 MB only (CB-format). Far branches are split into a flipped condition + an unconditional B.</li>
+    <li><b>"Java compiles directly to native code."</b> <span class="no">Not initially.</span> Compiles to bytecode; JVM interprets; JIT compiles hot methods later.</li>
+    <li><b>"The linker is the same as the loader."</b> <span class="no">No.</span> Linker resolves symbols and produces the executable; loader (part of OS) puts the executable into memory and starts it.</li>
+    <li><b>"X0 is preserved across a call."</b> <span class="no">No.</span> X0–X7 are argument/return regs and not preserved. Saved set is X19–X27 (plus SP/FP/LR).</li>
+    <li><b>"Adding two negatives can overflow into a positive."</b> <span class="ok">Yes</span> — that's textbook signed overflow.</li>
+  </ul>
+</div>
+
 <h2 id="mc">Multiple-Choice Practice Quiz <span class="badge b-exam">110 questions</span></h2>
 <div class="panel">
   <div id="quiz-shell">
@@ -921,22 +937,6 @@ document.addEventListener('keydown',function(e){
 })();</script>
 
 <!-- ===================== Traps ===================== -->
-<h2 id="trap">Common exam traps</h2>
-<div class="panel">
-  <ul>
-    <li><b>"ADD sets the flags."</b> <span class="no">False.</span> Only the S-suffix versions (ADDS, SUBS, ANDS, ADDIS, SUBIS, ANDIS) update NZCV.</li>
-    <li><b>"There's a NOT instruction."</b> <span class="no">No.</span> Use EOR with all-ones.</li>
-    <li><b>"Doubleword addresses go up by 1 each."</b> <span class="no">No.</span> Memory is byte-addressed; sequential doublewords differ by 8.</li>
-    <li><b>"Two's complement has +0 and −0."</b> <span class="no">No.</span> Only one zero; that's the whole reason it beats sign-and-magnitude.</li>
-    <li><b>"CBZ branches if the register is non-zero."</b> <span class="no">No</span> — CBZ branches if zero. CBNZ branches if non-zero.</li>
-    <li><b>"Conditional branches reach the entire program."</b> <span class="no">No.</span> ±1 MB only (CB-format). Far branches are split into a flipped condition + an unconditional B.</li>
-    <li><b>"Java compiles directly to native code."</b> <span class="no">Not initially.</span> Compiles to bytecode; JVM interprets; JIT compiles hot methods later.</li>
-    <li><b>"The linker is the same as the loader."</b> <span class="no">No.</span> Linker resolves symbols and produces the executable; loader (part of OS) puts the executable into memory and starts it.</li>
-    <li><b>"X0 is preserved across a call."</b> <span class="no">No.</span> X0–X7 are argument/return regs and not preserved. Saved set is X19–X27 (plus SP/FP/LR).</li>
-    <li><b>"Adding two negatives can overflow into a positive."</b> <span class="ok">Yes</span> — that's textbook signed overflow.</li>
-  </ul>
-</div>
-
 <hr/>
 <p style="color:var(--muted);font-size:12px;">Built from C952 zyBooks ch3.pdf. If anything here disagrees with the book, trust the book.</p>
 
