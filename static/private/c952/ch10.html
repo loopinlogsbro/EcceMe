@@ -3,36 +3,754 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<title>C952 — Chapter 10 Study Guide</title>
+<title>C952 — Chapter 10 Study Guide: Graphics &amp; Computing GPUs</title>
 <style>
-  :root { --bg:#0f1115; --panel:#161a22; --panel-2:#1d222c; --border:#2a3140; --text:#e6e8ec; --muted:#9aa3b2; --accent:#7cc4ff; }
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
   * { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--text); }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
   header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
   header .sub { color: var(--muted); font-size: 13px; }
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 10px 0; color: var(--muted); }
-  .chnav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
   .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
   .chnav a:hover { border-color: var(--accent); }
   .chnav .spacer { visibility: hidden; }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
 <div class="wrap">
   <nav class="chnav">
-    <a href="ch9.html">← Ch 9</a>
+    <a href="ch9.html">&larr; Ch 9</a>
     <a href="index.html">All chapters</a>
-    <a href="ch11.html">Ch 11 →</a>
+    <a href="ch11.html">Ch 11 &rarr;</a>
   </nav>
-  <header>
-    <h1>C952 — Chapter 10 Study Guide</h1>
-    <div class="sub">Placeholder — fill in from zyBooks ch10.</div>
-  </header>
-  <div class="panel">TODO: chapter 10 content.</div>
+
+<header>
+  <h1>C952 — Chapter 10 Study Guide <span class="badge b-key">Graphics &amp; Computing GPUs</span></h1>
+  <div class="sub">Tesla architecture, CUDA, SIMT, multithreaded multiprocessors, GPU memory hierarchy — WGU C952 zyBook Ch10 (COD Appendix B by NVIDIA's Nickolls &amp; Kirk)</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">10.1 Introduction</a>
+  <a href="#s2">10.2 GPU System Architectures</a>
+  <a href="#s3">10.3 Programming GPUs (CUDA)</a>
+  <a href="#s4">10.4 Multithreaded Multiprocessor</a>
+  <a href="#s5">10.5 Parallel Memory System</a>
+  <a href="#s6">10.6 Floating-Point Arithmetic</a>
+  <a href="#s7">10.7 Real Stuff: GeForce 8800</a>
+  <a href="#s8">10.8 Mapping Apps to GPUs</a>
+  <a href="#s9">10.9 Fallacies &amp; Pitfalls</a>
+  <a href="#s10">10.10 Concluding Remarks</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
 </div>
+
+<p class="hint">zyBook flags the chapter as <i>Optional</i>. It is COD Appendix B, written by NVIDIA. The unifying theme: GPUs are massively parallel SIMT multiprocessors with a programming model (CUDA) designed to scale transparently across hardware sizes.</p>
+
+<!-- 10.1 -->
+<h2 id="s1">10.1 Introduction <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Core Definitions</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>GPU</b><span class="d">Graphics Processing Unit. A processor optimized for 2D/3D graphics, video, visual computing, and display. Modern GPU = highly parallel, highly multithreaded multiprocessor.</span></div>
+    <div class="term"><b>Visual computing</b><span class="d">Mix of graphics processing + computing that lets you visually interact with computed objects via graphics, images, and video.</span></div>
+    <div class="term"><b>Heterogeneous system</b><span class="d">A system combining different processor types — e.g., a PC's CPU + GPU.</span></div>
+    <div class="term"><b>API</b><span class="d">Application Programming Interface. OpenGL (open standard) and Direct3D (Microsoft) are the two main graphics APIs.</span></div>
+  </div>
+
+  <h3>VGA → GPU Evolution Timeline</h3>
+  <ul>
+    <li><b>1990:</b> No GPU — graphics done by VGA controller (memory controller + display generator over DRAM).</li>
+    <li><b>1997:</b> VGA controllers add 3D acceleration (triangle setup, rasterization, texture mapping, shading).</li>
+    <li><b>2000:</b> Term "GPU" coined when single chips fold in the whole graphics pipeline.</li>
+    <li>Programmability progresses: indexed → integer/fixed → single-precision FP → double-precision FP.</li>
+    <li>Recent: hundreds of cores, thousands of threads, programmable in C/C++ via CUDA.</li>
+  </ul>
+
+  <h3>GPGPU vs GPU Computing vs CUDA <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td><b>GPGPU</b></td><td>General-Purpose computing on GPU using a graphics API and graphics pipeline (awkward — you cast your problem as a graphics op).</td></tr>
+    <tr><td><b>GPU computing</b></td><td>Using the GPU for computing via a parallel programming language and compute API — bypasses the graphics pipeline.</td></tr>
+    <tr><td><b>CUDA</b></td><td>Compute Unified Device Architecture. NVIDIA's scalable parallel programming model and software platform built on C/C++. SPMD style.</td></tr>
+  </table>
+</div>
+
+<!-- 10.2 -->
+<h2 id="s2">10.2 GPU System Architectures <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Heterogeneous CPU-GPU System (Today)</h3>
+  <ul>
+    <li><b>Discrete GPU + CPU</b> with separate memories. GPU attached via PCI-Express (16-lane PCIe 2.0 = 16 GB/s peak, 8 GB/s each direction).</li>
+    <li>GPU and CPU can access each other's memory (lower bandwidth than direct).</li>
+    <li><b>UMA</b> (Unified Memory Architecture): no dedicated GPU memory — uses CPU system memory only. Lower performance — limited by system memory bandwidth and latency.</li>
+    <li><b>Multi-GPU systems</b>: e.g., NVIDIA SLI (Scalable Link Interconnect), 2–4 GPUs working in parallel.</li>
+    <li>Integrated GPUs sit on the north bridge (Intel) or chipset (AMD) — with or without dedicated graphics memory.</li>
+  </ul>
+
+  <h3>Memory Visibility</h3>
+  <p>GPU has its own MMU. Page tables managed by the OS kernel. Accesses can be coherent or non-coherent PCI-Express transactions, set by an attribute in the GPU page table. CPU reads GPU memory via an aperture in PCIe address space.</p>
+
+  <h3>PCI-Express &amp; AGP</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>PCI-Express (PCIe)</b><span class="d">Standard system I/O interconnect using point-to-point links. Configurable lane count and bandwidth.</span></div>
+    <div class="term"><b>AGP</b><span class="d">Older PCI extension dedicated to graphics — provided up to 8× PCI bandwidth to a single card slot.</span></div>
+  </div>
+
+  <h3>Logical Graphics Pipeline (Direct3D 10 / OpenGL)</h3>
+  <p>Programmable stages (blue) interleaved with fixed-function stages (white):</p>
+  <ol>
+    <li>Input assembler — collect vertices into primitives (points, lines, triangles).</li>
+    <li><b>Vertex shader</b> (programmable) — per-vertex; transform position, compute lighting/color.</li>
+    <li><b>Geometry shader</b> (programmable) — per-primitive; can add or drop primitives.</li>
+    <li>Setup / rasterizer — generate pixel fragments covered by primitives.</li>
+    <li><b>Pixel (fragment) shader</b> (programmable) — per-fragment; interpolation, texturing, coloring.</li>
+    <li>Raster operations / output merger — Z-buffer test, stencil test, blend with framebuffer.</li>
+  </ol>
+
+  <h3>Basic Unified GPU Architecture <span class="badge b-key">key</span></h3>
+  <ul>
+    <li>Earlier GPUs had separate processors per shader stage (vertex, geometry, pixel). Modern unified GPUs run all three on the same array of <b>SP cores</b>.</li>
+    <li>Example (Tesla / GeForce 8800 baseline): 112 SP cores organized as 14 streaming multiprocessors (SMs) — 8 SP cores per SM.</li>
+    <li>Each SM contains: 8 SP cores, 2 SFUs, multithreaded instruction unit, instruction cache, constant cache, shared memory.</li>
+    <li>SMs connect through an interconnection network to four 64-bit DRAM partitions.</li>
+    <li>Two SMs share a texture unit and a small streaming texture L1 cache (filter regions overlap → caching pays off).</li>
+    <li><b>Unification benefits:</b> dramatic scalability (more cores = more throughput), automatic load balancing across stages, the same array can serve graphics or compute work.</li>
+  </ul>
+</div>
+
+<!-- 10.3 -->
+<h2 id="s3">10.3 Programming GPUs &amp; CUDA <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>GPUs offer 2–3 orders of magnitude more thread/data parallelism than CPUs. Programmer writes code for one thread; GPU runs millions of instances in parallel. The same program scales transparently across hardware sizes.</p>
+
+  <h3>Graphics Programming Languages</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>HLSL</b><span class="d">High-Level Shading Language (Microsoft, used with Direct3D).</span></div>
+    <div class="term"><b>Cg</b><span class="d">"C for graphics" (NVIDIA). Both have C-like syntax. Lack general memory access, pointers, file I/O, recursion. I/O is implicit through the graphics pipeline.</span></div>
+    <div class="term"><b>Shader</b><span class="d">A program that operates on graphics data — a vertex, primitive, or pixel fragment.</span></div>
+    <div class="term"><b>Texture</b><span class="d">1D/2D/3D array supporting filtered, interpolated lookups.</span></div>
+  </div>
+
+  <h3>CUDA Hierarchy <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Level</th><th>Definition</th><th>Memory</th></tr>
+    <tr><td><b>Thread</b></td><td>One instance of a kernel function</td><td>Local memory (private, in DRAM)</td></tr>
+    <tr><td><b>Thread block (CTA)</b></td><td>Set of concurrent threads (up to 512); can cooperate via barrier sync and shared memory</td><td>Shared memory (per-block, on-chip SRAM)</td></tr>
+    <tr><td><b>Grid</b></td><td>Set of thread blocks executing the same kernel</td><td>Global memory (per-application, in DRAM)</td></tr>
+  </table>
+
+  <h3>Key CUDA Vocabulary</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Kernel</b><span class="d">A function written for a single thread, designed to be executed by many threads in parallel.</span></div>
+    <div class="term"><b>Thread block / CTA</b><span class="d">Cooperative Thread Array. Implements a CUDA thread block as one or more warps of parallel threads.</span></div>
+    <div class="term"><b>Grid</b><span class="d">Set of independent thread blocks executing the same kernel.</span></div>
+    <div class="term"><b>Synchronization barrier</b><span class="d">Threads block at the barrier until all threads in the block arrive. Implemented via <code>__syncthreads()</code> in CUDA / <code>bar.sync</code> in PTX.</span></div>
+    <div class="term"><b>Atomic memory op</b><span class="d">Read-modify-write that completes without intervening access. CUDA <code>atom.op.u32</code>: add, min, max, and, or, xor, exchange, cas.</span></div>
+    <div class="term"><b>SPMD</b><span class="d">Single-Program Multiple Data. All threads execute the same program; CUDA is a flexible SPMD model.</span></div>
+  </div>
+
+  <h3>Kernel Launch Syntax</h3>
+  <pre>kernel&lt;&lt;&lt;dimGrid, dimBlock&gt;&gt;&gt;(args);
+__global__ void saxpy(int n, float a, float *x, float *y) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i &lt; n) y[i] = a * x[i] + y[i];
+}
+saxpy&lt;&lt;&lt;(n+255)/256, 256&gt;&gt;&gt;(n, 2.0f, x, y);</pre>
+  <p>Each thread gets a <code>threadIdx</code> within its block and a <code>blockIdx</code> within the grid. Both have <code>.x .y .z</code> dimension fields.</p>
+
+  <h3>Three CUDA Memory Spaces</h3>
+  <table>
+    <tr><th>Space</th><th>Visibility</th><th>Storage</th><th>Declaration</th></tr>
+    <tr><td>Local</td><td>Per-thread</td><td>External DRAM</td><td>Automatic for spilled registers and locals</td></tr>
+    <tr><td>Shared</td><td>Per-block (CTA)</td><td>On-chip SRAM, low latency</td><td><code>__shared__</code></td></tr>
+    <tr><td>Global</td><td>All threads, persistent across kernels</td><td>External DRAM</td><td><code>__device__</code> or <code>cudaMalloc</code></td></tr>
+  </table>
+
+  <h3>CUDA Restrictions</h3>
+  <ul>
+    <li>Threads/thread blocks can only be created by launching a kernel — not from within one.</li>
+    <li>Thread blocks must execute <b>independently</b>; no inter-block communication during a kernel (must launch a new kernel to combine results, or use atomics on global memory).</li>
+    <li>No recursion in kernels (would need stack space for tens of thousands of threads).</li>
+    <li>Programmer must <code>cudaMemcpy</code> to/from device memory (CPU-GPU DMA over PCIe).</li>
+  </ul>
+</div>
+
+<!-- 10.4 -->
+<h2 id="s4">10.4 Multithreaded Multiprocessor Architecture <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>A GPU is a multiprocessor of multiprocessors: many SMs, each highly multithreaded. Example SM: 8 SP cores tightly coupled, executing up to 512 threads (Tesla SM described later: up to 768).</p>
+
+  <h3>Why Massive Multithreading?</h3>
+  <ul>
+    <li>Cover the latency of memory loads and texture fetches from DRAM (hundreds of cycles).</li>
+    <li>Support fine-grained parallel programming models.</li>
+    <li>Virtualize physical processors as threads/blocks for transparent scaling.</li>
+    <li>Simplify the programming model down to writing a serial program for one thread.</li>
+  </ul>
+  <p>While one thread waits on memory, the SP runs another thread. Hardware multithreading = zero scheduling overhead.</p>
+
+  <h3>SP Core Resources</h3>
+  <ul>
+    <li>Scalar integer + FP arithmetic. Pipelined; one scalar instruction per thread per clock at 1.2–1.6 GHz.</li>
+    <li><b>Register file:</b> 1024 general-purpose 32-bit registers, partitioned among threads. Programs declare register demand — compiler trades thread count vs spill cost.</li>
+    <li>SP core hardware-multithreaded for up to 64 threads. Pixel shaders typically use ≤16 regs (so 64 threads/SP); CUDA kernels often use 32 regs (so 32 threads/SP).</li>
+  </ul>
+
+  <h3>SIMT (Single-Instruction Multiple-Thread) <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Concept</th><th>Definition</th></tr>
+    <tr><td><b>SIMT</b></td><td>One instruction applied to multiple <i>independent</i> threads in parallel — not just multiple data lanes.</td></tr>
+    <tr><td><b>Warp</b></td><td>The set of parallel threads that execute the same instruction together. Tesla warp size = <b>32 threads</b>.</td></tr>
+    <tr><td>Issue</td><td>Each warp instruction broadcasts synchronously to its 32 active threads. On the example multiprocessor, executes as 4 sets of 8 threads over 4 clocks.</td></tr>
+    <tr><td>Divergence</td><td>If threads in a warp branch differently, execution serializes for each path; warp re-converges when all paths complete. A perfectly split if-else is 50% efficient. Different warps execute independently — no penalty for divergence between warps.</td></tr>
+    <tr><td>Scheduler</td><td>Selects a ready warp every issue cycle (round-robin + priority + scoreboard for instruction dependencies). For 8-warp round-robin, the same warp re-issues every 32 cycles → can hide instruction latency up to 32 cycles.</td></tr>
+  </table>
+
+  <h3>SIMT vs SIMD</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>SIMD</b><span class="d">One instruction → multiple data lanes. Programmer must express parallelism explicitly in vector instructions; lane alignment is required for memory access.</span></div>
+    <div class="term"><b>SIMT</b><span class="d">One instruction → multiple independent threads. Each thread has its own scalar registers, PC, branch path. Hardware finds data parallelism among threads at runtime. Coalesced memory access is preferred but not required.</span></div>
+  </div>
+  <p class="hint">SIMT thread programs look like serial code. Compare to SIMD where you must hand-code vector ops with edge-case handling.</p>
+
+  <h3>PTX (Parallel Thread eXecution) ISA</h3>
+  <ul>
+    <li>Stable virtual ISA that compilers target. Translated/optimized at install/run time to binary microinstructions for the specific GPU.</li>
+    <li>Register-based load/store scalar ISA.</li>
+    <li>Format: <code>opcode.type d, a, b, c;</code> — <code>.type</code> is .b/.u/.s/.f with width 8/16/32/64 bits.</li>
+    <li>Predication: prefix instruction with <code>@p</code> or <code>@!p</code>.</li>
+    <li>Scalar instructions (unlike older 4-component vector GPU ISAs); compiler-friendly. Texture instructions stay vector-based.</li>
+    <li>Memory ops: <code>ld.global / st.global / ld.shared / st.shared / ld.local / st.local / atom.op.u32</code>.</li>
+    <li>Sync: <code>bar.sync</code>.</li>
+  </ul>
+
+  <h3>Special Function Unit (SFU)</h3>
+  <ul>
+    <li>2 SFUs per multiprocessor. Computes 1 special-function result per cycle → roughly ¼ the simple-instruction rate of the 8 SPs.</li>
+    <li>Functions: reciprocal, reciprocal sqrt, log₂, 2^x, sin/cos — accuracy 22–24 mantissa bits.</li>
+    <li>Implementation: quadratic interpolation based on enhanced minimax approximations.</li>
+    <li>Also performs FP planar attribute interpolation for pixel shaders.</li>
+    <li>Can also execute <code>mul.f32</code> concurrently with the SPs → up to +50% peak compute rate for the right instruction mix.</li>
+  </ul>
+</div>
+
+<!-- 10.5 -->
+<h2 id="s5">10.5 Parallel Memory System <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>The memory system is the most important determiner of GPU performance. GeForce 8800 example: 32 pixels per clock × 600 MHz × ~28 bytes/pixel ≈ <b>896 bytes per clock</b> of memory bandwidth demand.</p>
+
+  <h3>GPU Memory Subsystem Characteristics</h3>
+  <ul>
+    <li><b>Wide</b> — many pins, many DRAM chips for large total bus width.</li>
+    <li><b>Fast</b> — aggressive signaling for high bits/sec per pin (DDR, GDDR).</li>
+    <li>Optimized for <b>throughput</b>, not latency — these are fundamentally in conflict; GPUs choose throughput.</li>
+    <li>Compression (lossy and lossless).</li>
+    <li>Caches and request-coalescing structures to reduce off-chip traffic.</li>
+  </ul>
+
+  <h3>DRAM Reality</h3>
+  <ul>
+    <li>DRAMs internally arranged as banks (4–8) × rows (~16,384) × bits per row (~8192).</li>
+    <li>Activating a row takes dozens of cycles; once activated, columns randomly accessible every ~4 clocks.</li>
+    <li>DDR transfers on both clock edges; 1 GHz DDR = 2 Gbps/pin. 32 bidirectional pins → 8 bytes per clock.</li>
+    <li><b>Memory controller groups requests by DRAM row</b> to amortize row-activation overhead. Latency goes up but throughput goes way up.</li>
+    <li>GPU memory is split into multiple <b>partitions</b>, each with its own controller; addresses interleaved across partitions in blocks of a few hundred bytes.</li>
+  </ul>
+
+  <h3>Streaming Cache Architecture</h3>
+  <ul>
+    <li>GPU working sets are huge (hundreds of MB per frame); GPU caches can't hold them.</li>
+    <li>CPUs aim for &gt;99.9% hit rates; GPUs accept ~90%.</li>
+    <li>GPUs proceed with many misses in flight ("streaming cache") — they don't stall on a miss.</li>
+    <li>Texture caches must deliver enormous bandwidth (multibank/multiport SRAM) to serve many addresses per clock.</li>
+  </ul>
+
+  <h3>MMU &amp; Virtual Memory</h3>
+  <p>GeForce 8800: 40-bit virtual address space. Compute load/store uses 32-bit byte addresses + 40-bit offset → 40-bit virtual. MMU translates virtual to physical. Page sizes: 4–128 KB. Page table entries also specify per-page compression algorithm.</p>
+
+  <h3>Memory Spaces in Detail</h3>
+  <table>
+    <tr><th>Space</th><th>Where</th><th>Notes</th></tr>
+    <tr><td>Global</td><td>External DRAM</td><td>Visible to all CTAs in all grids. Relaxed memory ordering — same-thread same-address ordering is preserved; everything else may not be. Use <code>bar.sync</code> or <code>membar</code> for ordering.</td></tr>
+    <tr><td>Shared</td><td>On-chip SRAM (closely coupled to SM)</td><td>16 KB per SM. 16 independently addressable banks (16-by-16 interconnect to threads). Lifetime = CTA lifetime. Doesn't compete with off-chip bandwidth.</td></tr>
+    <tr><td>Local</td><td>External DRAM</td><td>Per-thread private (register spills, large stack frames). Cached on-chip.</td></tr>
+    <tr><td>Constant</td><td>External DRAM, cached in SM</td><td>Read-only at kernel runtime. Cache designed to broadcast a single value to all threads in a warp per clock.</td></tr>
+    <tr><td>Texture</td><td>External DRAM, streaming cache</td><td>Read-only 1D/2D/3D arrays with filtered interpolated access. Cached for throughput.</td></tr>
+  </table>
+
+  <h3>Coalescing</h3>
+  <p>Local and global load/store instructions <b>coalesce</b> requests from the same warp into a single block transfer when addresses fall in the same block and meet alignment. This is a major performance lever.</p>
+
+  <h3>ROP (Raster Operation Processor)</h3>
+  <p>Each ROP unit paired with a memory partition. Performs depth/stencil tests, color blending, lossless color/depth compression up to 8:1, and atomic memory operations.</p>
+</div>
+
+<!-- 10.6 -->
+<h2 id="s6">10.6 Floating-Point Arithmetic</h2>
+<div class="panel">
+  <h3>Supported Formats</h3>
+  <table>
+    <tr><th>Format</th><th>Bits</th><th>Use</th></tr>
+    <tr><td>Half precision</td><td>16 (1s + 5e + 10m + implied bit)</td><td>Storage and movement; texture filtering and pixel blending. Used in OpenEXR HDR image format.</td></tr>
+    <tr><td>Single precision</td><td>32</td><td>Most computation in programmable cores. IEEE 754-compatible.</td></tr>
+    <tr><td>Double precision</td><td>64</td><td>Newer GPUs (e.g., Tesla T10P). IEEE 754. Includes fused-multiply-add (FMA).</td></tr>
+  </table>
+
+  <h3>Multiply-Add (MAD)</h3>
+  <p>Single instruction = FP multiply (truncated) followed by FP add (round-to-nearest-even). NOT fused — product is truncated before the add. Doubles instruction throughput.</p>
+
+  <h3>FMA (Fused Multiply-Add) <span class="badge b-key">key</span></h3>
+  <p>Double-precision FMA performs A × B + C with a <b>single rounding</b>. Full 106-bit intermediate product preserved through addition. Enables more accurate dot products, matrix multiply, polynomial eval. Also enables exact-rounded software division/sqrt — eliminating the need for HW divider/sqrt units.</p>
+
+  <h3>Default Rounding &amp; Quirks</h3>
+  <ul>
+    <li>Add/multiply use IEEE round-to-nearest-even.</li>
+    <li>Single-precision: input denormals flushed to sign-preserved zero; underflowed results flushed to sign-preserved zero after rounding.</li>
+    <li>Specific IEEE features (precise FP exceptions, denormal handling) often not implemented in early GPUs. Tesla T10P added full IEEE rounding, FMA, denormal support for double precision.</li>
+  </ul>
+
+  <h3>Texture-Mapping FP</h3>
+  <p>GeForce 8800 Ultra delivers ~500 GFLOPS of proprietary-format FP for texture mapping, in addition to IEEE single-precision FP from the SPs.</p>
+</div>
+
+<!-- 10.7 -->
+<h2 id="s7">10.7 Real Stuff: NVIDIA GeForce 8800 (Tesla)</h2>
+<div class="panel">
+  <p>First implementation of the <b>Tesla unified graphics and computing architecture</b> (Nov 2006). Supports CUDA.</p>
+
+  <h3>Top-Level: Streaming Processor Array (SPA)</h3>
+  <ul>
+    <li><b>128 SP cores</b> total, organized as <b>16 SMs</b>, grouped into <b>8 TPCs</b> (Texture/Processor Clusters).</li>
+    <li>2 SMs share a texture unit per TPC.</li>
+    <li>Connected to <b>6 × 64-bit DRAM partitions</b> via interconnection network.</li>
+    <li>Host interface uses PCI-Express. Input assembler collects primitives. Work distribution dispatches threads to TPCs.</li>
+  </ul>
+
+  <h3>Texture/Processor Cluster (TPC)</h3>
+  <p>Geometry controller + SMC + 2 SMs + texture unit. SMC arbitrates the shared texture unit, load/store path, and I/O. Texture unit is deeply pipelined with a streaming cache (handles hits and misses without stalling).</p>
+
+  <h3>Streaming Multiprocessor (SM)</h3>
+  <ul>
+    <li>8 SP cores + 2 SFUs + multithreaded instruction unit + instruction cache + read-only constant cache + 16 KB shared memory.</li>
+    <li>SP cores and SFUs clocked at 1.5 GHz on GeForce 8800 Ultra → <b>36 GFLOPS per SM</b>.</li>
+    <li>Hardware-multithreaded for up to <b>768 concurrent threads</b> per SM, zero scheduling overhead.</li>
+    <li>Schedules <b>24 warps</b> per SM. Warp = 32 threads. Each issued warp executes as 4 sets of 8 threads over 4 cycles.</li>
+    <li>SP and SFU issue on alternate cycles → both stay busy.</li>
+    <li>Scoreboard + priority scheduler picks a ready warp each cycle.</li>
+  </ul>
+
+  <h3>SP Specs</h3>
+  <ul>
+    <li>1024 scalar 32-bit registers, supports up to 96 threads.</li>
+    <li>FP add/multiply IEEE 754 single precision; round-to-nearest-even default. Denormal inputs flush to sign-preserved zero.</li>
+    <li>Implements all 32-bit and 64-bit integer arith/compare/convert/logical PTX instructions.</li>
+  </ul>
+</div>
+
+<!-- 10.8 -->
+<h2 id="s8">10.8 Real Stuff: Mapping Applications to GPUs</h2>
+<div class="panel">
+  <p>The book walks through several CUDA-accelerated applications. Headline takeaways:</p>
+  <ul>
+    <li><b>N-body simulation</b> (all-pairs): GeForce 8800 delivers &gt;240 GFLOPS vs &lt;2 GFLOPS on a recent sequential processor — &gt;100× speedup. Coupled with graphical display: 16K bodies interacting at 44 fps.</li>
+    <li><b>Other domains shown in the chapter:</b> sparse matrix solvers, sorting, searching, computational chemistry, seismic processing, physics models, computational finance.</li>
+    <li>Applications scale transparently: one program can run on GPUs of any size, the same one program scales to multicore CPUs as well (CUDA can target both).</li>
+  </ul>
+</div>
+
+<!-- 10.9 -->
+<h2 id="s9">10.9 Fallacies &amp; Pitfalls <span class="badge b-exam">core</span></h2>
+<div class="panel">
+
+  <h3>Fallacy: GPUs are just SIMD vector multiprocessors.</h3>
+  <p><span class="no">No.</span> Each GPU thread has its own scalar registers, thread-private memory, thread state, ID, independent execution and branch path, effective PC, and can address memory independently. Execution is more efficient when warp threads share a PC, but not required. A GPU is closer to MIMD with barrier synchronization and SIMT optimizations. SIMT also runs multiple warps concurrently — pure SIMD doesn't.</p>
+
+  <h3>Fallacy: GPU performance can't grow faster than Moore's law.</h3>
+  <p><span class="no">No.</span> Moore's law is just a transistor-cost rate. GPUs gain by (1) applying transistors to more parallel cores, (2) improving architecture efficiency, (3) larger chips at higher cost, (4) faster/wider memory + compression + better caches. GPUs have doubled performance every 12–18 months for ~10 years.</p>
+
+  <h3>Fallacy: GPUs only render 3D graphics; they can't do general computation.</h3>
+  <p><span class="no">No.</span> GPUs are Turing-complete. CUDA exposes the cores to arbitrary C/C++ code without going through graphics APIs.</p>
+
+  <h3>Fallacy: GPUs cannot run double-precision FP fast.</h3>
+  <p><span class="no">Outdated.</span> Modern GPUs (Tesla T10P+) support IEEE 754 double precision in hardware, currently 5–10× slower than single. Closing the gap costs incremental area and improves with each generation.</p>
+
+  <h3>Fallacy: GPUs don't do floating-point correctly.</h3>
+  <p><span class="no">No.</span> Tesla family is IEEE 754-compliant for single precision. Some specific features (denormals, precise FP exceptions) historically missing on single precision but added later. Tesla T10P adds full IEEE rounding, FMA, and denormal support for double precision.</p>
+
+  <h3>Pitfall: Just use more threads to cover longer memory latencies.</h3>
+  <p><span class="no">Only works if</span> (a) you have enough threads, and (b) the threads have good locality of memory access. Without coalesced or correlated access, the memory system itself becomes the bottleneck and even thousands of threads can't hide it.</p>
+
+  <h3>Fallacy: O(n) algorithms are difficult to speed up.</h3>
+  <p><span class="no">Sometimes.</span> PCIe transfer (~48 GB/s peak, DMA) can be the limit for low-arithmetic-intensity work like vector add. Mitigations: (1) keep data on the GPU between kernel launches, (2) overlap copy and compute (concurrent transfer + execution), (3) use CPU and GPU together as heterogeneous platform.</p>
+</div>
+
+<!-- 10.10 -->
+<h2 id="s10">10.10 Concluding Remarks</h2>
+<div class="panel">
+  <ul>
+    <li>GPUs are massively parallel processors used for graphics AND general computing.</li>
+    <li>Programming model: graphics API (DirectX/OpenGL) for graphics; SPMD-style CUDA for general compute.</li>
+    <li>Parallelism continues to scale via Moore's law (more processors per chip).</li>
+    <li>Only programming models that scale to hundreds of cores and thousands of threads will succeed; only applications with abundant independent parallel tasks will benefit.</li>
+    <li>CUDA evolving toward full C/C++. Graphics APIs adopting compute features.</li>
+    <li>Future: more cores, more threads, more memory bandwidth, heterogeneous CPU+GPU programming models.</li>
+  </ul>
+
+  <h3>Key Historical Takeaways</h3>
+  <ul>
+    <li>NVIDIA GeForce 3 (2001): first big step toward programmable shading.</li>
+    <li>ATI Radeon 9700 (2002): programmable 24-bit FP pixel fragment processor (DirectX 9).</li>
+    <li>XBox 360 (2005): first unified processor GPU (vertex + pixel on same processor).</li>
+    <li>NVIDIA GeForce 8800 (2006): first Tesla architecture GPU; first to fully support CUDA.</li>
+    <li>3dfx SLI (1998): first multi-GPU scaling. NVIDIA continued with multi-GPU SLI starting GeForce 6800 (2004).</li>
+  </ul>
+</div>
+
+<!-- Cheat Sheet -->
+<h2 id="cheat">Quick-Reference Cheat Sheet</h2>
+<div class="panel">
+
+  <h3>Acronym Wall</h3>
+  <pre>GPU    Graphics Processing Unit
+GPGPU  General-Purpose computing on GPU (via graphics API — old way)
+CUDA   Compute Unified Device Architecture (NVIDIA's programming model)
+SP     Streaming Processor (a single core)
+SM     Streaming Multiprocessor (8 SPs + shared resources)
+SPA    Streaming Processor Array (top-level GPU array)
+TPC    Texture/Processor Cluster (2 SMs + texture unit)
+SFU    Special Function Unit (sin/cos/rcp/rsqrt/exp/log)
+ROP    Raster Operation Processor (depth, blend, atomics)
+SIMT   Single-Instruction Multiple-Thread
+SPMD   Single-Program Multiple Data
+CTA    Cooperative Thread Array (= CUDA thread block)
+MAD    Multiply-Add (truncated mul then rounded add)
+FMA    Fused Multiply-Add (single rounding, full precision)
+PTX    Parallel Thread eXecution (NVIDIA's virtual ISA)
+LUT    Lookup Table (used in SFU function approximation)
+TLB    Translation Lookaside Buffer
+PCIe   PCI-Express
+UMA    Unified Memory Architecture (no dedicated GPU mem)
+SLI    Scalable Link Interconnect (NVIDIA multi-GPU)</pre>
+
+  <h3>CUDA Hierarchy</h3>
+  <pre>thread        — one kernel instance        ↔  local memory  (DRAM)
+thread block  — concurrent threads, sync   ↔  shared memory (on-chip)
+grid          — set of blocks (independent) ↔  global memory (DRAM)</pre>
+
+  <h3>Memory Latency Hierarchy (fast → slow)</h3>
+  <pre>register file        few cycles
+shared memory       few cycles (16-bank SRAM)
+constant cache      ~few cycles for broadcast
+texture cache       streaming cache
+global / local      hundreds of cycles (DRAM)
+PCIe to host        even slower</pre>
+
+  <h3>SIMT Execution</h3>
+  <pre>warp = 32 threads
+SP runs 4 threads/warp over 4 clocks
+divergent if-else  → 50% efficient (serialize paths, then converge)
+different warps    → no efficiency loss for divergent code paths</pre>
+
+  <h3>GeForce 8800 Stats Worth Memorizing</h3>
+  <pre>128 SP cores, 16 SMs, 8 TPCs, 6 × 64-bit DRAM
+SP/SFU clocked at 1.5 GHz (Ultra)
+Up to 768 threads per SM
+24 warps × 32 threads scheduled per SM
+16 KB shared memory per SM
+1024 32-bit registers per SP, up to 96 threads/SP
+~36 GFLOPS per SM
+Warp size = 32 (executes as 4 × 8 threads × 4 cycles)</pre>
+
+  <h3>Kernel Launch Pattern</h3>
+  <pre>__global__ void kernel(args) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    /* per-thread work */
+}
+kernel&lt;&lt;&lt;dimGrid, dimBlock&gt;&gt;&gt;(args);
+__syncthreads();   // barrier inside block</pre>
+
+  <h3>Three CUDA Memory Spaces</h3>
+  <pre>local    per-thread  DRAM   — implicit; slow
+shared   per-block   SRAM   — __shared__; fast
+global   per-app     DRAM   — __device__ / cudaMalloc</pre>
+
+  <h3>Why GPU Architecture is Different from CPU</h3>
+  <pre>CPU: few big cores, large caches, optimize single-thread latency
+GPU: many simple cores, small streaming caches, optimize throughput
+     — covers latency with thousands of threads instead of caching</pre>
+
+  <h3>FMA vs MAD</h3>
+  <pre>MAD  multiply (truncate) → add (round). Faster, less accurate.
+FMA  multiply → add with ONE rounding. Full precision intermediate.</pre>
+</div>
+
+<!-- Self-test -->
+<h2 id="quiz">Self-Test Q&amp;A</h2>
+<div class="panel">
+
+  <details>
+    <summary>Foundations: GPUs, GPGPU, CUDA (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">When was the term "GPU" coined and why?</div><div class="a">~2000, when single chips first incorporated essentially the entire graphics pipeline — beyond simple "VGA controller" capabilities.</div></div>
+      <div class="qa"><div class="q">What's the difference between GPGPU and GPU computing?</div><div class="a">GPGPU = general computing using a graphics API and graphics pipeline (awkward — pretend your computation is graphics). GPU computing = direct compute via parallel programming language/API like CUDA, no graphics pipeline.</div></div>
+      <div class="qa"><div class="q">What does CUDA stand for and what is it?</div><div class="a">Compute Unified Device Architecture. NVIDIA's scalable parallel programming model and platform on top of C/C++ for GPUs (and multicore CPUs).</div></div>
+      <div class="qa"><div class="q">Name two graphics APIs.</div><div class="a">OpenGL (open standard, managed by Khronos) and Direct3D (Microsoft, part of DirectX).</div></div>
+      <div class="qa"><div class="q">What are the two main shading languages used with these APIs?</div><div class="a">HLSL (High-Level Shading Language, Direct3D) and Cg (C for graphics, NVIDIA).</div></div>
+      <div class="qa"><div class="q">Why is a CPU+GPU system called heterogeneous?</div><div class="a">Different processor types — primarily-serial CPU and massively-parallel GPU — combined in one system, each best for different workloads.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>System architecture (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">How is a discrete GPU connected to the CPU today?</div><div class="a">Via PCI-Express — typically 16 lanes of PCIe 2.0, ~16 GB/s peak (8 GB/s each direction).</div></div>
+      <div class="qa"><div class="q">What is UMA in this context?</div><div class="a">Unified Memory Architecture — GPU has no dedicated memory and shares CPU system memory. Lower performance than discrete GPUs because of system memory bandwidth limits.</div></div>
+      <div class="qa"><div class="q">What is SLI?</div><div class="a">Scalable Link Interconnect — NVIDIA's multi-GPU technology. 2–4 GPUs cooperate, transparently to the programmer.</div></div>
+      <div class="qa"><div class="q">Name the programmable graphics pipeline stages in order.</div><div class="a">Input assembler → vertex shader → geometry shader → setup/rasterizer → pixel/fragment shader → raster operations (output merger).</div></div>
+      <div class="qa"><div class="q">What does GPU unification mean architecturally?</div><div class="a">All shader stage types (vertex, geometry, pixel) run on the same array of programmable processors. One program type can use the entire array → load balancing across stages.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>CUDA hierarchy &amp; memory (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is a kernel in CUDA?</div><div class="a">A function written for a single thread that the GPU executes in many parallel thread instances.</div></div>
+      <div class="qa"><div class="q">What is a thread block / CTA?</div><div class="a">A set of concurrent threads (up to 512) that can cooperate via shared memory and barrier synchronization. CTA = Cooperative Thread Array, the hardware implementation of a CUDA thread block.</div></div>
+      <div class="qa"><div class="q">What is a grid?</div><div class="a">A set of independent thread blocks that execute the same kernel. Blocks within a grid must execute independently — no inter-block sync allowed.</div></div>
+      <div class="qa"><div class="q">Why must thread blocks be independent?</div><div class="a">So they can be scheduled on any number of cores in any order, supporting transparent scaling. Also avoids deadlock between blocks.</div></div>
+      <div class="qa"><div class="q">What does <code>__syncthreads()</code> do?</div><div class="a">Barrier — every thread in the block waits until all threads reach it. After the barrier, all writes to memory by block threads are visible to all of them.</div></div>
+      <div class="qa"><div class="q">Three CUDA memory spaces and their visibility?</div><div class="a">Local (per-thread, DRAM). Shared (per-block/CTA, on-chip SRAM). Global (per-application, DRAM, accessible by all threads).</div></div>
+      <div class="qa"><div class="q">Why is shared memory fast?</div><div class="a">It's on-chip SRAM (a low-latency RAM with ~16 banks) and physically near each multiprocessor — doesn't compete with off-chip bandwidth.</div></div>
+      <div class="qa"><div class="q">What does <code>cudaMemcpy</code> do?</div><div class="a">Transfers data between host (CPU) memory and device (GPU) memory over PCIe. Required because the two have separate memory systems.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>SIMT, warps, divergence (7)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is a warp in NVIDIA terminology?</div><div class="a">A set of parallel threads that execute the same instruction together in a SIMT machine. Tesla warp = 32 threads.</div></div>
+      <div class="qa"><div class="q">What does SIMT add over SIMD?</div><div class="a">Each thread is independent (own registers, PC, branch path) and the hardware finds data parallelism among threads at runtime. SIMD requires the software to express data parallelism explicitly per vector instruction.</div></div>
+      <div class="qa"><div class="q">What happens when threads in a warp branch differently?</div><div class="a">Execution serializes for each path; threads on inactive paths idle. Once all paths complete, the warp re-converges. A perfectly even if-else is 50% efficient.</div></div>
+      <div class="qa"><div class="q">What about divergence between different warps?</div><div class="a">No penalty — different warps execute independently, so they can take different paths without slowing each other.</div></div>
+      <div class="qa"><div class="q">Why does Tesla execute a warp as 4 × 8 threads over 4 clocks?</div><div class="a">There are 8 SP cores per SM and 32 threads per warp — 32/8 = 4 cycles to issue the warp.</div></div>
+      <div class="qa"><div class="q">What does the SIMT instruction scheduler do?</div><div class="a">Each cycle picks a ready warp (one whose instruction's source operands are available) and issues. Uses a scoreboard to qualify ready warps and a priority/fairness policy to choose.</div></div>
+      <div class="qa"><div class="q">For an 8-warp round robin, how much instruction latency can be hidden?</div><div class="a">Up to 32 cycles between successive instructions of the same warp.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Multiprocessor, SP, SFU (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What's inside an SM in the basic example?</div><div class="a">8 SP cores, 2 SFUs, multithreaded instruction unit, instruction cache, constant cache, shared memory.</div></div>
+      <div class="qa"><div class="q">What's an SP core's register file size?</div><div class="a">1024 32-bit scalar registers, partitioned among the SP's threads (up to 64 threads on the basic example).</div></div>
+      <div class="qa"><div class="q">If a CUDA kernel needs 32 registers per thread, how many threads can the SP run?</div><div class="a">1024 / 32 = 32 threads per SP.</div></div>
+      <div class="qa"><div class="q">What does an SFU compute?</div><div class="a">Reciprocal, reciprocal sqrt, log₂, 2^x, sin, cos — using quadratic interpolation with enhanced minimax approximations. Also FP planar attribute interpolation for pixel shaders. 22–24 mantissa bits accuracy.</div></div>
+      <div class="qa"><div class="q">Why is the SFU only quarter-rate?</div><div class="a">Two SFUs serve eight SP cores → each SFU produces 1 result per cycle, so the SFU rate is 2/8 = ¼ the simple-instruction rate of the SPs.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Memory system (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why don't GPUs minimize memory latency?</div><div class="a">GPUs optimize for throughput (lots of bytes per second) by accumulating requests to the same DRAM row before activating it. This raises latency but maximizes bus utilization. Multithreading hides the latency.</div></div>
+      <div class="qa"><div class="q">What does a streaming cache do differently from a CPU cache?</div><div class="a">It proceeds with many misses in flight rather than stalling. CPUs assume &gt;99.9% hit rates; GPUs accept ~90%.</div></div>
+      <div class="qa"><div class="q">What is memory request coalescing?</div><div class="a">Combining individual thread load/store requests in the same warp into a single block memory transaction when addresses fall in the same block and meet alignment criteria.</div></div>
+      <div class="qa"><div class="q">Why does a memory controller batch requests by DRAM row?</div><div class="a">Activating a row takes dozens of cycles; once activated, columns are cheap. Servicing many requests to the same row amortizes the activation cost.</div></div>
+      <div class="qa"><div class="q">What's special about constant memory?</div><div class="a">Read-only at kernel runtime. Cached in the SM. Designed to broadcast a single scalar value to all threads in a warp per clock.</div></div>
+      <div class="qa"><div class="q">Why is shared memory built with 16 banks?</div><div class="a">Each cycle 16 threads' worth of shared memory requests must be handled. 16 independently addressable SRAM banks deliver enough bandwidth in the common case (assuming addresses fall in different banks).</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Floating-point (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is half precision?</div><div class="a">A 16-bit IEEE binary FP format: 1 sign bit, 5-bit exponent, 10-bit fraction, implied integer bit. Used for storage and texture/blending. OpenEXR uses this.</div></div>
+      <div class="qa"><div class="q">Difference between MAD and FMA?</div><div class="a">MAD multiplies, truncates the product, then adds with rounding (one instruction, less accurate). FMA does multiply + add with a single rounding using the full intermediate product (more accurate, slightly more hardware).</div></div>
+      <div class="qa"><div class="q">Why does FMA enable software division and sqrt?</div><div class="a">Newton-Raphson-style iterations need accumulation of products without losing precision. The FMA's single-rounding behavior provides exactly the accuracy guarantee required for IEEE-rounded software division/sqrt.</div></div>
+      <div class="qa"><div class="q">What rounding mode do GPU FP add and multiply default to?</div><div class="a">IEEE round-to-nearest-even.</div></div>
+      <div class="qa"><div class="q">Where do GPUs treat denormals on single-precision SP cores?</div><div class="a">Inputs flushed to sign-preserved zero; underflowing results flushed to sign-preserved zero after rounding.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>GeForce 8800 specifics (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">How many SPs, SMs, TPCs, and DRAM partitions in GeForce 8800?</div><div class="a">128 SPs, 16 SMs (8 SPs each), 8 TPCs (2 SMs each), 6 × 64-bit DRAM partitions.</div></div>
+      <div class="qa"><div class="q">Maximum concurrent threads per SM and per warp?</div><div class="a">768 threads per SM. 32 threads per warp → 24 warps per SM.</div></div>
+      <div class="qa"><div class="q">Per-SM peak FLOPS at 1.5 GHz?</div><div class="a">~36 GFLOPS.</div></div>
+      <div class="qa"><div class="q">What does the geometry controller in a TPC do?</div><div class="a">Maps the logical graphics vertex pipeline into recirculation on the physical SMs by directing primitive/vertex/topology flow.</div></div>
+      <div class="qa"><div class="q">What does the SMC do?</div><div class="a">Controls multiple SMs in a TPC, arbitrating the shared texture unit, load/store path, and I/O path. Serves vertex, geometry, and pixel workloads concurrently.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Fallacies &amp; pitfalls (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Are GPUs SIMD vector multiprocessors?</div><div class="a">No — they're SIMT. Each thread is independent with its own state, can branch independently, and can address memory independently. SIMD requires hand-aligned vector access and uniform execution.</div></div>
+      <div class="qa"><div class="q">Why has GPU performance grown faster than Moore's law?</div><div class="a">Because Moore's law is just a transistor cost rate. GPUs combine more parallel cores, architectural improvements, larger chips, and faster wider memory + compression. Combined effect ≈ 2× every 12–18 months for ~10 years.</div></div>
+      <div class="qa"><div class="q">Can GPUs run general computation?</div><div class="a">Yes — they are Turing complete. CUDA exposes GPU cores to arbitrary C/C++ programs without going through graphics APIs.</div></div>
+      <div class="qa"><div class="q">Are GPUs IEEE 754 compliant?</div><div class="a">Single-precision FP add/mul on Tesla family is IEEE 754-compliant. Some specific features (denormals, precise FP exceptions) historically missing on early GPUs; T10P added full support for double precision.</div></div>
+      <div class="qa"><div class="q">When does "just add more threads" fail to hide memory latency?</div><div class="a">When thread memory accesses are scattered or uncorrelated, the memory system itself becomes the bottleneck. Coalesced (locality-friendly) access is required.</div></div>
+      <div class="qa"><div class="q">Why are O(n) algorithms hard to accelerate on a GPU?</div><div class="a">PCIe transfer (~48 GB/s peak) often dominates execution time when there's only a small amount of work per datum. Mitigations: keep data on the GPU between launches, overlap transfer with compute, use CPU and GPU together.</div></div>
+    </div>
+  </details>
+
+</div>
+
+<!-- Common Traps -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"A GPU is just a fancy SIMD unit."</b> <span class="no">No.</span> SIMT lets each thread branch independently. Different warps run different code paths simultaneously without efficiency loss.</li>
+    <li><b>"Threads in a warp can communicate freely."</b> <span class="no">Implicitly yes via shared memory + barriers, but only inside the same block.</span> Threads in different blocks cannot synchronize within a kernel — must launch a new kernel or use atomics on global memory.</li>
+    <li><b>"All threads in a block must execute the same instruction at the same time."</b> <span class="no">Only at the warp level (32 threads).</span> Threads in the same warp execute together; threads in different warps of the same block may be at different points in the code.</li>
+    <li><b>"GPU caches are large like CPU caches."</b> <span class="no">No.</span> GPU caches are tiny "streaming caches." Latency is hidden by multithreading, not by hit rates.</li>
+    <li><b>"Global memory ordering is sequentially consistent."</b> <span class="no">No.</span> CUDA uses a relaxed ordering model. Within a thread, same-address ordering holds; everything else needs <code>bar.sync</code> or <code>membar</code>.</li>
+    <li><b>"MAD and FMA are the same instruction."</b> <span class="no">No.</span> MAD truncates the product before the add. FMA performs the multiply-add with a single final rounding using the full intermediate product.</li>
+    <li><b>"GPUs always use single precision."</b> <span class="no">No.</span> Modern GPUs (Tesla T10P+) support IEEE 754 double precision in hardware, including FMA and denormals.</li>
+    <li><b>"All shared memory accesses are conflict-free."</b> <span class="no">No.</span> Shared memory has ~16 banks. If two threads in the same warp access different addresses on the same bank, accesses serialize.</li>
+    <li><b>"You can do recursion in a CUDA kernel."</b> <span class="no">No (in the era covered).</span> Recursion is disallowed because providing stack space for thousands of threads would be prohibitive.</li>
+    <li><b>"GPU divergence is always cheap because the warp re-converges."</b> <span class="no">No.</span> During divergence, the inactive lanes idle. A perfectly even if-else gets you 50% of peak performance for that block.</li>
+    <li><b>"More threads is always better."</b> <span class="no">No.</span> More threads need more registers; if your per-thread register demand is high, you can't fit as many threads → less latency hiding. The compiler trades the two.</li>
+    <li><b>"PCIe bandwidth is the same as the GPU's internal memory bandwidth."</b> <span class="no">No.</span> PCIe is ~48 GB/s peak (DMA). GPU on-board memory bandwidth is many times higher (often &gt;100 GB/s). PCIe is the bottleneck for low-arithmetic-intensity workloads.</li>
+    <li><b>"CUDA programs only run on GPUs."</b> <span class="no">No.</span> The CUDA programming model is also applicable to multicore CPUs — NVIDIA's CUDA toolchain can target both.</li>
+    <li><b>"GPU = warp-wide SIMD with no scalar registers."</b> <span class="no">No.</span> Each thread has its own scalar registers in the SP's register file. The instruction is broadcast across the warp, but the operand state is per-thread.</li>
+    <li><b>"Blocks within a grid execute in order from block 0 upward."</b> <span class="no">No.</span> CUDA explicitly says blocks may execute in any order, in parallel or in series. Programs must not assume any block ordering.</li>
+  </ul>
+</div>
+
+<hr/>
+<p class="hint">Source: WGU C952 zyBook Chapter 10 — "Graphics and Computing GPUs" (COD Appendix B by John Nickolls and David Kirk, NVIDIA). Chapter is marked <i>Optional</i> in zyBook.</p>
+
+</div>
+<script>
+  (function() {
+    var btn = document.getElementById('themeBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var next;
+      if (!current) {
+        next = prefersLight ? 'dark' : 'light';
+      } else {
+        next = current === 'dark' ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>

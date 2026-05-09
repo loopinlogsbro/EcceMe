@@ -3,36 +3,885 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<title>C952 — Chapter 8 Study Guide</title>
+<title>C952 — Chapter 8 Study Guide: Parallel Processors from Client to Cloud</title>
 <style>
-  :root { --bg:#0f1115; --panel:#161a22; --panel-2:#1d222c; --border:#2a3140; --text:#e6e8ec; --muted:#9aa3b2; --accent:#7cc4ff; }
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
   * { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--text); }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
   header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
   header .sub { color: var(--muted); font-size: 13px; }
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 10px 0; color: var(--muted); }
-  .chnav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
   .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
   .chnav a:hover { border-color: var(--accent); }
   .chnav .spacer { visibility: hidden; }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
 <div class="wrap">
   <nav class="chnav">
-    <a href="ch7.html">← Ch 7</a>
+    <a href="ch7.html">&larr; Ch 7</a>
     <a href="index.html">All chapters</a>
-    <a href="ch9.html">Ch 9 →</a>
+    <a href="ch9.html">Ch 9 &rarr;</a>
   </nav>
-  <header>
-    <h1>C952 — Chapter 8 Study Guide</h1>
-    <div class="sub">Placeholder — fill in from zyBooks ch8.</div>
-  </header>
-  <div class="panel">TODO: chapter 8 content.</div>
+
+<header>
+  <h1>C952 — Chapter 8 Study Guide <span class="badge b-key">Parallel Processors from Client to Cloud</span></h1>
+  <div class="sub">SISD/MIMD/SIMD/SPMD, multithreading, SMP/NUMA, GPUs, clusters, WSC, network topologies, roofline model — WGU C952 zyBook Ch8 (COD Ch6)</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">8.1 Introduction</a>
+  <a href="#s2">8.2 Difficulty of Parallelism</a>
+  <a href="#s3">8.3 SISD/MIMD/SIMD/SPMD/Vector</a>
+  <a href="#s4">8.4 Hardware Multithreading</a>
+  <a href="#s5">8.5 Multicore &amp; SMP</a>
+  <a href="#s6">8.6 Intro to GPUs</a>
+  <a href="#s7">8.7 Clusters &amp; WSCs</a>
+  <a href="#s8">8.8 Network Topologies</a>
+  <a href="#s9">8.9 Cluster Networking</a>
+  <a href="#s10">8.10 Benchmarks &amp; Roofline</a>
+  <a href="#s11">8.11 Core i7 vs Tesla GPU</a>
+  <a href="#s12">8.12 Multi-CPU Matrix Multiply</a>
+  <a href="#s13">8.13 Fallacies &amp; Pitfalls</a>
+  <a href="#s14">8.14 Concluding Remarks</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
 </div>
+
+<!-- 8.1 -->
+<h2 id="s1">8.1 Introduction <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Energy is now the dominant constraint, so future performance increases come from <b>explicit hardware parallelism</b> rather than higher clock rates. Sequential code = slow code today.</p>
+
+  <h3>Core Definitions</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Multiprocessor</b><span class="d">A computer with at least two processors. Uniprocessors are increasingly rare.</span></div>
+    <div class="term"><b>Multicore microprocessor</b><span class="d">A microprocessor with multiple processors ("cores") on one IC. Cores are typically Shared Memory Processors (SMPs).</span></div>
+    <div class="term"><b>Task / process-level parallelism</b><span class="d">Run independent single-threaded apps simultaneously. Different from running ONE program in parallel.</span></div>
+    <div class="term"><b>Parallel processing program</b><span class="d">A SINGLE program that runs on multiple processors simultaneously.</span></div>
+    <div class="term"><b>Cluster</b><span class="d">Set of computers connected over a LAN, functioning as a single large multiprocessor (message-passing).</span></div>
+    <div class="term"><b>Shared memory multiprocessor (SMP)</b><span class="d">Parallel processor with a single physical address space. Almost all multicore chips are SMPs.</span></div>
+  </div>
+
+  <h3>Sequential vs Concurrent vs Serial vs Parallel <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th></th><th>Sequential SW</th><th>Concurrent SW</th></tr>
+    <tr><td><b>Serial HW</b></td><td>MATLAB matrix-multiply on Pentium 4</td><td>OS on a uniprocessor</td></tr>
+    <tr><td><b>Parallel HW</b></td><td>MATLAB matrix-multiply on Core i7 (auto-parallelized)</td><td>OS on a multicore</td></tr>
+  </table>
+  <p>Two axes — software is <i>sequential</i> or <i>concurrent</i>; hardware is <i>serial</i> or <i>parallel</i>. The parallel revolution challenge: make both kinds of software fast on parallel hardware.</p>
+</div>
+
+<!-- 8.2 -->
+<h2 id="s2">8.2 The Difficulty of Creating Parallel Processing Programs <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>The hardware is not the hard part — getting parallel <i>software</i> to actually run faster is. Challenges:</p>
+  <ul>
+    <li>Scheduling, partitioning into balanced pieces.</li>
+    <li>Load balancing (one slow processor wastes the others).</li>
+    <li>Synchronization overhead.</li>
+    <li>Communication overhead.</li>
+    <li><b>Amdahl's Law</b> — even small sequential portions limit total speed-up.</li>
+  </ul>
+
+  <h3>Amdahl's Law (re-formulation)</h3>
+  <div class="formula">Speed-up = 1 / [ (Fraction_affected / Improvement) + (1 - Fraction_affected) ]</div>
+  <p>Example: To get 90× speed-up with 100 processors, the sequential portion must be ≤ 0.1%.</p>
+
+  <h3>Strong vs Weak Scaling <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Strong scaling</b><span class="d">Speed-up while keeping problem size FIXED. Limited by Amdahl's Law for large N.</span></div>
+    <div class="term"><b>Weak scaling</b><span class="d">Problem size grows proportionally with the number of processors. Often easier — many real workloads naturally scale this way (TPC-C, Linpack).</span></div>
+  </div>
+  <p class="hint">Memory hierarchy can flip the conventional wisdom: if a weakly-scaled dataset no longer fits in last-level cache, performance collapses.</p>
+
+  <h3>Load Balance</h3>
+  <p>40-processor example with sum of 400 additions: if one processor has 5% of the load (20 ops while others share 380/39 ≈ 9.7 each), max time = 20×t. Speed-up drops from 20.5 to ~10. With 12.5% load on one processor → speed-up drops to ~8 — others idle &gt;80% of the time.</p>
+</div>
+
+<!-- 8.3 -->
+<h2 id="s3">8.3 SISD, MIMD, SIMD, SPMD, and Vector <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Flynn's Taxonomy</h3>
+  <table>
+    <tr><th>Acronym</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><b>SISD</b></td><td>Single Instruction stream, Single Data stream</td><td>Conventional uniprocessor</td></tr>
+    <tr><td><b>SIMD</b></td><td>Single Instruction stream, Multiple Data streams</td><td>Vector processor; x86 SSE/AVX subword parallelism</td></tr>
+    <tr><td><b>MISD</b></td><td>Multiple Instruction streams, Single Data stream</td><td>"Stream processor" — pipelined ops on a single stream (rare)</td></tr>
+    <tr><td><b>MIMD</b></td><td>Multiple Instruction streams, Multiple Data streams</td><td>Multicore, cluster, multiprocessor</td></tr>
+  </table>
+
+  <h3>SPMD <span class="badge b-key">key</span></h3>
+  <p>Single Program, Multiple Data streams. The conventional way to program a MIMD: write one program, all processors run it, branches decide which processor does what.</p>
+
+  <h3>Why SIMD Is Useful</h3>
+  <ul>
+    <li>All execution units synchronized to one PC → simpler programming, close to SISD.</li>
+    <li>Reduced instruction bandwidth: one copy of code, not n copies.</li>
+    <li>Best when there's lots of identically-structured data ("data-level parallelism").</li>
+    <li>Worst on case/switch statements — each unit needs different logic; the wrong-data units are disabled, so SIMD effectively runs at 1/n speed.</li>
+  </ul>
+
+  <h3>SIMD in x86</h3>
+  <p>MMX (1996) → SSE → SSE2 → AVX → AVX2. AVX supports four 64-bit FP ops simultaneously. Width and op are encoded in the opcode → hundreds of opcodes accumulated over time.</p>
+
+  <h3>Vector Architecture <span class="badge b-key">key</span></h3>
+  <p>Older, more elegant SIMD style (Cray, 1970s). Pipelines an ALU rather than building 64 parallel ALUs. Uses <b>vector registers</b> (e.g., 32 vector regs × 64 64-bit elements).</p>
+
+  <h3>DAXPY Example: Scalar vs Vector</h3>
+  <p>Conventional LEGv8 DAXPY: ~10-instruction inner loop × 64 iterations ≈ 600 dynamic instructions. Vector LEGv8 DAXPY: 6 instructions total. Bonus: pipeline stalls happen once per vector op, not once per element.</p>
+  <pre>// Scalar (per iteration)
+LDURD D2,[X19,#0]
+FMULD D2,D2,D0
+LDURD D4,[X20,#0]
+FADDD D4,D4,D2
+STURD D4,[X20,#0]
+ADDI  X19,X19,#8 / ADDI X20,X20,#8 / loop branch
+
+// Vector (whole loop)
+LDURD   D0,[x28,a]
+LDURDV  V1,[X19,#0]
+FMULDVS V2,V1,D0
+LDURDV  V3,[X20,#0]
+FADDDV  V4,V2,V3
+STURDV  V4,[X20,#0]</pre>
+
+  <h3>Vector vs Scalar — Why Vectors Win</h3>
+  <ul>
+    <li>One instruction = an entire loop's worth of work; instruction fetch/decode bandwidth drops dramatically.</li>
+    <li>Compiler/programmer asserts independence within a vector → hardware skips intra-vector hazard checks.</li>
+    <li>Hazard checking once per vector operand, not per element.</li>
+    <li>Memory access pattern is known (contiguous, strided, or indexed/gather-scatter). Latency is amortized over the vector.</li>
+    <li>No control hazard from a loop branch.</li>
+    <li>Energy-efficient.</li>
+  </ul>
+
+  <h3>Vector vs Multimedia Extensions</h3>
+  <table>
+    <tr><th></th><th>Vector</th><th>Multimedia (SSE/AVX)</th></tr>
+    <tr><td>Operation count per instruction</td><td>Dozens (set in a separate length register)</td><td>A few (encoded in opcode)</td></tr>
+    <tr><td>Length compatibility</td><td>Binary-compatible across implementations</td><td>New opcodes for each width (MMX→SSE→AVX)</td></tr>
+    <tr><td>Memory access patterns</td><td>Contiguous, strided, indexed (gather-scatter)</td><td>Mostly contiguous; SSE requires 16-byte alignment</td></tr>
+  </table>
+
+  <h3>Vector Lanes</h3>
+  <p>A vector unit may have multiple parallel <b>lanes</b>, each containing functional units + a slice of the vector register file. Going from 1 lane → 4 lanes reduces clocks per vector instruction by ~4×. Per-lane register storage holds every Nth element of each vector register.</p>
+
+  <h3>Strip Mining</h3>
+  <p>When a loop is longer than the maximum vector length, the compiler emits bookkeeping code to iterate full-length vector ops plus a leftover handler.</p>
+</div>
+
+<!-- 8.4 -->
+<h2 id="s4">8.4 Hardware Multithreading <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Lets multiple threads share the functional units of one processor in an overlapping way to improve utilization. The processor must duplicate per-thread state (PC, register file). Memory shared via standard virtual memory.</p>
+
+  <h3>Thread vs Process</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Thread</b><span class="d">PC, register state, stack. A lightweight process. Shares an address space with sibling threads. Thread switch can be near-instantaneous.</span></div>
+    <div class="term"><b>Process</b><span class="d">One or more threads + address space + OS state. Process switch invokes the OS — hundreds to thousands of cycles.</span></div>
+  </div>
+
+  <h3>Three Hardware-Multithreading Styles <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Style</th><th>When to switch</th><th>Pros</th><th>Cons</th></tr>
+    <tr><td><b>Fine-grained</b></td><td>Every clock cycle (round-robin, skipping stalled threads)</td><td>Hides short and long stalls</td><td>Slows execution of an individual ready thread</td></tr>
+    <tr><td><b>Coarse-grained</b></td><td>Only on expensive stalls (e.g., last-level cache miss)</td><td>Doesn't slow a thread when no stall; cheap thread switch</td><td>Pipeline must be drained/refilled at switch → start-up cost; bad at hiding short stalls</td></tr>
+    <tr><td><b>Simultaneous Multithreading (SMT)</b></td><td>Never — multiple threads issue instructions in the SAME cycle on a multi-issue, dynamically-scheduled superscalar</td><td>Exploits ILP and TLP simultaneously; uses dynamic scheduling that already exists</td><td>Adds hardware complexity, register-renaming pressure</td></tr>
+  </table>
+  <p>Intel Core i7 has 2-thread SMT per core. Average speed-up from SMT on PARSEC: ~1.31×, with ~1.07× energy improvement.</p>
+</div>
+
+<!-- 8.5 -->
+<h2 id="s5">8.5 Multicore and Other Shared Memory Multiprocessors <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>SMP = Shared Memory Processor. All processors share a single physical address space. Hardware typically provides <b>cache coherence</b>. Programs communicate through shared variables.</p>
+
+  <h3>UMA vs NUMA <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>UMA — Uniform Memory Access</b><span class="d">Memory access latency is the same regardless of which processor and which word. Easier to program. Limits scalability.</span></div>
+    <div class="term"><b>NUMA — Non-Uniform Memory Access</b><span class="d">Some memory accesses are faster than others (memory is divided across processors). Harder to program but scales to more processors and offers low local-memory latency.</span></div>
+  </div>
+
+  <h3>Synchronization</h3>
+  <p>Shared address spaces need coordination; one approach is a <b>lock</b> — only one processor at a time may hold it. Other processors wait. ARMv8 has lock instructions covered earlier.</p>
+
+  <h3>Reduction Pattern</h3>
+  <p>To sum 64,000 numbers on 64 processors:</p>
+  <ol>
+    <li>Each processor sums 1,000 of them in parallel into <code>sum[Pn]</code>.</li>
+    <li>Hierarchical reduction: 32 processors add pairs of partial sums → 16 → 8 → 4 → 2 → 1, with barrier synchronization between rounds.</li>
+  </ol>
+
+  <h3>OpenMP <span class="badge b-key">key</span></h3>
+  <p>Portable API for shared memory parallelism in C/C++/Fortran. Built into most C compilers (<code>cc -fopenmp foo.c</code>). Uses pragmas:</p>
+  <pre>#pragma omp parallel num_threads(P)        // set thread count
+#pragma omp parallel for                   // parallelize a for loop
+#pragma omp parallel for reduction(+:sum)  // parallel reduction</pre>
+</div>
+
+<!-- 8.6 -->
+<h2 id="s6">8.6 Introduction to GPUs <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>GPUs distinguished themselves from CPUs by following the game industry's drive for high graphics performance. Today they're widely used for compute too.</p>
+
+  <h3>How GPUs Differ from CPUs</h3>
+  <ul>
+    <li><b>GPUs are accelerators</b> — they supplement a CPU, don't replace it.</li>
+    <li>Problem sizes: hundreds of MB to a few GB (vs CPUs with hundreds of GB).</li>
+    <li><b>No multilevel caches to hide latency</b> — uses massive hardware multithreading instead.</li>
+    <li><b>Memory oriented for bandwidth, not latency</b> — graphics DRAM (GDDR) with wide buses.</li>
+    <li>More processors, each one more multithreaded than a CPU core.</li>
+    <li>For general compute, you must include CPU↔GPU memory transfer time.</li>
+  </ul>
+
+  <h3>NVIDIA Fermi-style GPU Vocabulary <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Descriptive name</th><th>NVIDIA term</th><th>Meaning</th></tr>
+    <tr><td>Vectorizable Loop</td><td>Grid</td><td>A vectorizable loop = one or more thread blocks that can run in parallel</td></tr>
+    <tr><td>Body of vectorized loop</td><td>Thread Block</td><td>One or more SIMD thread "warps" that can communicate via Local Memory</td></tr>
+    <tr><td>Sequence of SIMD-lane ops</td><td>CUDA Thread</td><td>A vertical cut through a SIMD thread = one element on one SIMD lane</td></tr>
+    <tr><td>Thread of SIMD instructions</td><td>Warp</td><td>A traditional thread that contains only SIMD instructions; runs on a multithreaded SIMD processor</td></tr>
+    <tr><td>SIMD instruction</td><td>PTX instruction</td><td>A single SIMD op executed across all lanes of a warp</td></tr>
+    <tr><td>Multithreaded SIMD processor</td><td>Streaming Multiprocessor (SM)</td><td>The processing unit that executes warps independently of other SIMD processors</td></tr>
+    <tr><td>Thread Block Scheduler</td><td>Giga Thread Engine</td><td>Assigns thread blocks to SMs</td></tr>
+    <tr><td>SIMD Thread Scheduler</td><td>Warp Scheduler</td><td>Schedules ready warps to execute (uses scoreboarding)</td></tr>
+    <tr><td>SIMD Lane</td><td>Thread Processor</td><td>Executes one element of a warp's SIMD instruction</td></tr>
+    <tr><td>GPU Memory</td><td>Global Memory</td><td>Off-chip DRAM accessible by all SMs</td></tr>
+    <tr><td>Local Memory</td><td>Shared Memory</td><td>Fast on-chip SRAM private to one SM</td></tr>
+    <tr><td>SIMD Lane Registers</td><td>Thread Processor Registers</td><td>Per-lane register file allocated across a thread block</td></tr>
+  </table>
+
+  <h3>Two Levels of Hardware Schedulers</h3>
+  <ol>
+    <li><b>Thread Block Scheduler:</b> assigns blocks of threads to SMs.</li>
+    <li><b>SIMD Thread Scheduler:</b> inside an SM, picks which SIMD threads run when (fine-grained multithreading).</li>
+  </ol>
+
+  <h3>Fermi Specifics</h3>
+  <ul>
+    <li>32-wide SIMD threads mapped to 16 SIMD lanes → each SIMD instruction takes 2 clock cycles.</li>
+    <li>Each SM has 32,768 32-bit registers; each SIMD thread limited to 64 registers.</li>
+    <li>Each lane: 2048 registers. Each CUDA thread = one element on one lane.</li>
+    <li>4 implementations: 7, 11, 14, or 15 multithreaded SIMD processors.</li>
+  </ul>
+
+  <h3>CUDA &amp; OpenCL</h3>
+  <p>NVIDIA's CUDA = C-inspired language for writing GPU programs directly, bypassing graphics APIs. OpenCL = multi-vendor portable equivalent.</p>
+</div>
+
+<!-- 8.7 -->
+<h2 id="s7">8.7 Clusters &amp; Warehouse-Scale Computers <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Message-Passing Multiprocessors</h3>
+  <ul>
+    <li>Each processor has its own private physical address space.</li>
+    <li>Communicate via <b>send_message</b> and <b>receive_message</b> routines.</li>
+    <li>Coordination is built-in: sender knows when sent, receiver knows when received.</li>
+    <li>Easier hardware, harder programming (must identify all communication explicitly).</li>
+    <li>Better for task-level parallelism with little communication (web search, mail, file servers).</li>
+  </ul>
+
+  <h3>Clusters</h3>
+  <ul>
+    <li>Set of computers connected over Ethernet → message-passing multiprocessor.</li>
+    <li>Each node runs its own OS copy.</li>
+    <li>Lower communication performance than SMP, but cheaper, more available, easier to expand and replace failed nodes.</li>
+    <li>Powers Internet services (Amazon, Facebook, Google, Microsoft).</li>
+  </ul>
+
+  <h3>Warehouse-Scale Computers (WSCs) <span class="badge b-key">key</span></h3>
+  <p>Buildings housing 50,000–100,000 servers, designed as one giant computer. Cost ~$150M for building, power, cooling, servers, networking. Three distinguishing characteristics vs traditional servers:</p>
+  <ol>
+    <li><b>Ample, easy parallelism:</b> batch (MapReduce/Hadoop) and interactive (SaaS) workloads have huge request-level parallelism with few synchronization needs.</li>
+    <li><b>Operational costs count:</b> 10+ year lifespans → energy/power/cooling is &gt;30% of TCO.</li>
+    <li><b>Scale opportunities AND problems:</b> volume discounts → cloud computing is profitable. But with 100K servers and 25-year MTBF, you still see ~5 server failures per day. With 4 disks/server at 2% AFR, ~1 disk fails per hour. Fault tolerance is essential.</li>
+  </ol>
+
+  <h3>MapReduce / Hadoop</h3>
+  <p>Inspired by Lisp. <b>Map</b>: programmer-supplied function processes each input record, emitting (key, value) pairs. <b>Reduce</b>: collects values per key and collapses with another programmer function. Highly parallel, easy to use.</p>
+
+  <h3>SaaS &amp; Cloud Computing</h3>
+  <p>Software run at remote site, available via Internet (typically web). Customers pay for use, not ownership. Cloud's economy of scale lets cloud companies rent servers at a profit while undercutting the customer's own infrastructure cost.</p>
+
+  <h3>Grid Computing</h3>
+  <p>Distributed over wide areas; PCs harvest idle cycles. SETI@home: 5M+ users, 200+ countries; ~3.5 PetaFLOPS by end of 2011 — faster than the best 2013 supercomputer.</p>
+</div>
+
+<!-- 8.8 -->
+<h2 id="s8">8.8 Multiprocessor Network Topologies</h2>
+<div class="panel">
+  <h3>Performance Metrics <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Total network bandwidth</b><span class="d">Sum of all link bandwidths. Best-case (peak) metric. For a ring with P processors and link bandwidth B: total = P × B.</span></div>
+    <div class="term"><b>Bisection bandwidth</b><span class="d">Sum of bandwidth of links crossing the worst-case bisection of the network. For a ring: 2 × B. For a bus: 1 × B. For a fully connected network: (P/2)² × B.</span></div>
+  </div>
+
+  <h3>Common Topologies</h3>
+  <table>
+    <tr><th>Topology</th><th>Total bandwidth (P nodes, link B)</th><th>Bisection bandwidth</th><th>Notes</th></tr>
+    <tr><td>Bus</td><td>B (shared)</td><td>B</td><td>One transfer at a time, but broadcast is free</td></tr>
+    <tr><td>Ring</td><td>P × B</td><td>2 × B</td><td>Multiple simultaneous transfers; messages may hop</td></tr>
+    <tr><td>2-D mesh / 2-D torus</td><td>~2P × B</td><td>O(√P × B)</td><td>Used in many supercomputers</td></tr>
+    <tr><td>n-cube (Boolean n-cube)</td><td>n × P × B / 2</td><td>O(P/2 × B)</td><td>2ⁿ nodes, n links per switch, n nearest neighbors</td></tr>
+    <tr><td>Fully connected</td><td>P(P-1)/2 × B</td><td>(P/2)² × B</td><td>Wonderful but prohibitively expensive</td></tr>
+  </table>
+
+  <h3>Multistage Networks</h3>
+  <ul>
+    <li><b>Crossbar</b> — any node to any other in one pass. n² switches.</li>
+    <li><b>Omega network</b> — fewer switches (2n log n) but contention possible (can't always route arbitrary permutations). ~25% the switches of a crossbar but limited routing flexibility.</li>
+  </ul>
+
+  <p class="hint">Pretty topologies often don't survive contact with silicon: chip area is 2D, long wires cost more energy and are slower. Practical multicore on-chip networks tend to be simple grids.</p>
+</div>
+
+<!-- 8.9 -->
+<h2 id="s9">8.9 Cluster Networking</h2>
+<div class="panel">
+  <h3>Hardware Players</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Ethernet</b><span class="d">Dominant cluster interconnect. 1 Gb/s standard, 10 Gb/s in datacenters.</span></div>
+    <div class="term"><b>NIC</b><span class="d">Network Interface Card. Has DMA engine, MAC chips (encode preamble + CRC), PHY chips (physical layer).</span></div>
+    <div class="term"><b>PCIe</b><span class="d">Peripheral Component Interconnect Express. Each "lane" = 4 wires (2 RX + 2 TX). PCIe 1.1 = 2 Gb/s/lane; 2.0 = 4 Gb/s; 3.0 = 8 Gb/s.</span></div>
+    <div class="term"><b>MAC address</b><span class="d">Media Access Control — 48-bit unique Ethernet ID per NIC.</span></div>
+  </div>
+
+  <h3>I/O Mechanisms <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Mechanism</th><th>Definition</th></tr>
+    <tr><td><b>Memory-mapped I/O</b></td><td>Address regions assigned to I/O devices. Reads/writes to those addresses are commands to the device. OS protects via address translation.</td></tr>
+    <tr><td><b>DMA</b></td><td>Direct Memory Access — device controller transfers data to/from memory without involving the processor.</td></tr>
+    <tr><td><b>Interrupt-driven I/O</b></td><td>Device asserts interrupt when an I/O operation completes; OS handles. Asynchronous to instruction execution.</td></tr>
+    <tr><td><b>Polling</b></td><td>Processor periodically checks status bits — alternative to interrupts. Reduces wakeup latency but uses cycles.</td></tr>
+  </table>
+
+  <h3>Five-Step NIC Driver (TX and RX)</h3>
+  <ol>
+    <li>Driver allocates a packet buffer in host memory; copies user data in (TX) or allocates an empty one (RX).</li>
+    <li>Driver writes I/O descriptor to NIC register (buffer addr + length).</li>
+    <li>NIC's DMA copies the packet over PCIe (TX: from buffer to NIC; RX: from NIC into buffer).</li>
+    <li>DMA interrupts processor when transfer is complete.</li>
+    <li>Driver de-allocates (TX) or copies into user space (RX).</li>
+  </ol>
+
+  <h3>Performance Optimizations <span class="badge b-key">key</span></h3>
+  <ul>
+    <li><b>Zero-copy:</b> DMA reads from / writes to user space directly, skipping intermediate OS buffers.</li>
+    <li><b>User-space communication:</b> bypass OS to avoid context switch overhead.</li>
+    <li><b>Polling instead of interrupts:</b> avoid low-power wake latency. Best for low-latency small packets.</li>
+    <li><b>Hardware preamble + CRC computation:</b> NIC offloads the easy stuff.</li>
+    <li><b>Direct Data IO (DDIO):</b> Recent Intel — dedicate up to 10% of last-level cache as a scratchpad for DMA. Latency and bandwidth win.</li>
+  </ul>
+
+  <h3>TCP/IP</h3>
+  <p>Ethernet is the foundation; TCP/IP layers reliable communication on top. TCP retransmits until acknowledged; IP includes header checksum for destination integrity.</p>
+</div>
+
+<!-- 8.10 -->
+<h2 id="s10">8.10 Multiprocessor Benchmarks &amp; Performance Models <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Common Parallel Benchmarks</h3>
+  <table>
+    <tr><th>Name</th><th>What it measures</th><th>Scaling</th></tr>
+    <tr><td><b>Linpack</b></td><td>Linear algebra (Gaussian elimination)</td><td>Weak; result published twice/year as Top500</td></tr>
+    <tr><td><b>SPECrate</b></td><td>Throughput by running many copies of SPEC CPU programs (task-level parallelism)</td><td>Weak</td></tr>
+    <tr><td><b>SPLASH / SPLASH 2</b></td><td>Stanford parallel apps for shared memory</td><td>Strong (with two data sets)</td></tr>
+    <tr><td><b>NAS</b></td><td>NASA computational fluid dynamics kernels (5)</td><td>Weak; C or Fortran only</td></tr>
+    <tr><td><b>PARSEC</b></td><td>Princeton multithreaded apps using Pthreads + OpenMP</td><td>Mixed</td></tr>
+    <tr><td><b>YCSB</b></td><td>Yahoo Cloud Serving Benchmark — cloud data services (Cassandra, HBase)</td><td>Cloud</td></tr>
+  </table>
+
+  <h3>Roofline Model <span class="badge b-key">key</span></h3>
+  <p>Williams, Waterman, Patterson 2009. Visualization tool that bounds achievable performance from above.</p>
+
+  <h3>Arithmetic Intensity</h3>
+  <div class="formula">Arithmetic Intensity = (Total FP operations) / (Total bytes accessed from main memory)</div>
+  <p>Higher AI = more compute per byte = less likely to be memory-bound. Some kernels (e.g., dense matrix) have AI that grows with problem size.</p>
+
+  <h3>Roofline Equation</h3>
+  <div class="formula">Achievable GFLOPS = MIN( Peak Compute,  Peak Memory Bandwidth × Arithmetic Intensity )</div>
+  <p>Plot: log(GFLOPS) vs log(FLOPs/byte). Two lines:</p>
+  <ul>
+    <li>Horizontal "roof" at peak compute (GFLOPS)</li>
+    <li>Diagonal slope = peak memory bandwidth (GB/s)</li>
+  </ul>
+  <p><b>Ridge point</b> = where the two meet. If your kernel's AI is to the LEFT of the ridge → memory-bound. To the RIGHT → compute-bound.</p>
+
+  <h3>Optimization Ceilings</h3>
+  <p>Add progressive ceilings under the roofline showing what optimizations buy you:</p>
+  <ul>
+    <li><b>Computation:</b> (1) FP op mix balance (equal mul/add); (2) Improve ILP and apply SIMD (e.g., AVX 4×64-bit).</li>
+    <li><b>Memory:</b> (1) Software prefetching; (2) Memory affinity (NUMA-aware data placement).</li>
+  </ul>
+
+  <h3>Stream Benchmark</h3>
+  <p>Used to find the actual achievable peak memory bandwidth (the diagonal line). Raw DRAM bandwidth would be too optimistic.</p>
+</div>
+
+<!-- 8.11 -->
+<h2 id="s11">8.11 Real Stuff: Core i7 960 vs NVIDIA Tesla GTX 280</h2>
+<div class="panel">
+  <p>Lee et al. (Intel) compared a quad-core Core i7 960 (multimedia SIMD) vs Tesla GTX 280.</p>
+
+  <h3>Specs Snapshot</h3>
+  <table>
+    <tr><th></th><th>Core i7 960</th><th>GTX 280</th></tr>
+    <tr><td>DP FP peak</td><td>51.2 GFLOPS</td><td>78 GFLOPS (1.5×)</td></tr>
+    <tr><td>SP FP peak</td><td>102.4 GFLOPS</td><td>624 GFLOPS (~6×)</td></tr>
+    <tr><td>Memory bandwidth</td><td>16.4 GB/s</td><td>127 GB/s (~7.7× DRAM pin)</td></tr>
+    <tr><td>DP ridge point</td><td>3.1 FLOP/byte</td><td>0.6 FLOP/byte (much easier to reach roof)</td></tr>
+  </table>
+
+  <h3>14-Kernel Performance Findings</h3>
+  <ul>
+    <li><b>Memory-bound kernels (LBM, SAXPY, SpMV):</b> GTX wins by 5–5.3× — explained by 4.4× memory bandwidth.</li>
+    <li><b>Compute-bound (SGEMM, Conv, FFT, MC, Bilat):</b> GTX wins 1.8–5.7×. Bilat wins 5.7× thanks to GPU hardware transcendentals.</li>
+    <li><b>Cache-friendly (RC, Search, Sort):</b> Core i7 cache blocking saves it; smaller margins or i7 wins. Sort: i7 1.25× FASTER than GTX (the split SIMD primitive bloats instruction count).</li>
+    <li><b>Gather-scatter heavy (GJK):</b> GTX wins 15.2× — vector-style gather-scatter is missing from x86 SIMD extensions. 6 of 14 kernels would benefit from gather-scatter on i7.</li>
+    <li><b>Synchronization (Hist, Solv):</b> Solv: i7 actually wins 2× because GTX 280 lacks the right memory consistency model.</li>
+  </ul>
+
+  <p class="hint">Successor (Fermi) addressed many GTX 280 weaknesses: faster DP FP, faster atomics, real caches.</p>
+</div>
+
+<!-- 8.12 -->
+<h2 id="s12">8.12 Going Faster: Multi-CPU DGEMM</h2>
+<div class="panel">
+  <p>The big finale of the matrix-multiply optimization journey: 16 cores (two 8-core Sandy Bridge i7s).</p>
+
+  <h3>Single-Line OpenMP Change</h3>
+  <pre>#pragma omp parallel for
+for (int sj = 0; sj &lt; n; sj += BLOCKSIZE)
+   for (int si = 0; si &lt; n; si += BLOCKSIZE)
+      for (int sk = 0; sk &lt; n; sk += BLOCKSIZE)
+         do_block(n, si, sj, sk, A, B, C);</pre>
+
+  <h3>Speed-up vs Single Thread (16 threads)</h3>
+  <table>
+    <tr><th>Matrix size</th><th>Speed-up</th><th>Notes</th></tr>
+    <tr><td>32 × 32</td><td>~0.5×</td><td>Slowdown — fits in L1, threading overhead hurts</td></tr>
+    <tr><td>160 × 160</td><td>~6×</td><td></td></tr>
+    <tr><td>480 × 480</td><td>~12×</td><td></td></tr>
+    <tr><td>960 × 960</td><td>14×</td><td>~174 GFLOPS</td></tr>
+  </table>
+
+  <h3>Cumulative Speed-up Across the Book</h3>
+  <table>
+    <tr><th>Optimization</th><th>Speed-up factor</th></tr>
+    <tr><td>SIMD (AVX, 4×64-bit FP)</td><td>3.85×</td></tr>
+    <tr><td>ILP (4× loop unrolling)</td><td>2.3×</td></tr>
+    <tr><td>Cache blocking</td><td>2.0–2.5×</td></tr>
+    <tr><td>Multi-threaded (16 cores)</td><td>4–14×</td></tr>
+    <tr><td><b>Total speed-up vs unoptimized C</b></td><td><b>up to 212× for 960×960</b></td></tr>
+  </table>
+
+  <h3>Why Not 32 Threads (2 SMT × 16 cores)?</h3>
+  <p>Sandy Bridge has 1 AVX unit per core shared between the two SMT threads → multiplexing hurts.</p>
+</div>
+
+<!-- 8.13 -->
+<h2 id="s13">8.13 Fallacies and Pitfalls <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Fallacy: Amdahl's Law doesn't apply to parallel computers.</h3>
+  <p><span class="no">No.</span> Amdahl's Law always applies. The 1987 "broken Amdahl" claim was actually weak scaling — the sequential portion was constant and the parallel work grew with the problem.</p>
+
+  <h3>Fallacy: Peak performance tracks observed performance.</h3>
+  <p><span class="no">No.</span> Marketing multiplies peak per-CPU by core count, then assumes perfect scaling — Amdahl's Law and the roofline model both refute this.</p>
+
+  <h3>Pitfall: Not developing software to take advantage of multiprocessor architecture.</h3>
+  <p>Example: SGI OS protected its page table with a single lock — fine on a uniprocessor. On a multiprocessor where many processes initialize many pages at startup, the lock serializes everyone. The fix: many small locks on smaller portions of the page table. The pitfall: even task-level parallelism with no shared data was hurt by this OS-level bottleneck.</p>
+
+  <h3>Fallacy: You can get good vector performance without providing memory bandwidth.</h3>
+  <p><span class="no">No.</span> DAXPY uses ~1.5 memory references per FP op. Even if the FP unit took zero time, memory bandwidth caps performance. Cache blocking on the Cray-1 nearly doubled performance simply by reducing memory references per FLOP.</p>
+</div>
+
+<!-- 8.14 -->
+<h2 id="s14">8.14 Concluding Remarks</h2>
+<div class="panel">
+  <ul>
+    <li>The IT industry has tied its future to parallel computing.</li>
+    <li>SaaS + clusters deliver high-availability services at scale (5-nines).</li>
+    <li>Warehouse-Scale Computers and mobile clients are reshaping server and microprocessor design.</li>
+    <li>SIMD/vector are easier than MIMD and more energy-efficient. SIMD potential growth ≈ 2× MIMD growth over the next decade.</li>
+    <li>Clusters dominate scientific computing — &gt;80% of the 2012 Top500.</li>
+    <li>Open-source movement is critical to the parallel revolution.</li>
+    <li>Just-in-time compilation and autotuning let software adapt to growing core counts.</li>
+  </ul>
+
+  <h3>SIMD Persistence</h3>
+  <p>Pure SIMD multiprocessors (Illiac IV, Connection Machine, MasPar) failed: too inflexible, can't ride microprocessor cost curves. But SIMD lives on as instruction-set extensions (MMX/SSE/AVX) on commodity CPUs and as the core idea behind GPU SIMT.</p>
+</div>
+
+<!-- Cheat Sheet -->
+<h2 id="cheat">Quick-Reference Cheat Sheet</h2>
+<div class="panel">
+
+  <h3>Flynn's Taxonomy</h3>
+  <pre>SISD  uniprocessor
+SIMD  vector / SSE / AVX / GPU SIMT
+MISD  rare ("stream processors")
+MIMD  multicore, cluster
+SPMD  the typical MIMD program style — one program, branches per processor</pre>
+
+  <h3>Amdahl's Law</h3>
+  <pre>Speed-up = 1 / [ F_affected/Improvement + (1 - F_affected) ]
+For 90× with 100 procs:  F_seq ≤ 0.1%</pre>
+
+  <h3>Strong vs Weak Scaling</h3>
+  <pre>Strong  fixed problem size, scale processors  → bound by Amdahl's Law
+Weak    grow problem size with processors    → easier in practice
+Caveat  weak scaling can fall off cache → performance collapses</pre>
+
+  <h3>Hardware Multithreading</h3>
+  <pre>Fine-grained  switch every cycle (round-robin)
+Coarse        switch on big stalls (e.g. LLC miss)
+SMT           multiple threads issue together (out-of-order superscalar)
+Core i7 SMT speed-up ≈ 1.31× (PARSEC), energy +1.07×</pre>
+
+  <h3>Memory Models</h3>
+  <pre>SMP (UMA)   single physical addr space, equal latency
+NUMA        single addr space, unequal latency, scales bigger
+Message     separate address spaces, explicit send/recv (cluster, MPI)</pre>
+
+  <h3>OpenMP Quick Reference</h3>
+  <pre>#pragma omp parallel num_threads(P)
+#pragma omp parallel for
+#pragma omp parallel for reduction(+:sum)
+#pragma omp barrier</pre>
+
+  <h3>Vector vs Multimedia SIMD</h3>
+  <pre>Vector: length in a register (binary-compatible); strided + gather/scatter
+SIMD:   length encoded in opcode; mostly contiguous, alignment-required
+        AVX = 4×64-bit FP per instruction</pre>
+
+  <h3>GPU = MIMD of Multithreaded SIMD Processors</h3>
+  <pre>Grid       = vectorizable loop  = many independent thread blocks
+Thread Blk = body of a strip-mined loop = one or more warps
+Warp       = thread of SIMD instructions (32 wide)
+SIMD Lane  = thread processor (CUDA "thread" is one lane × one warp)
+SM         = multithreaded SIMD processor
+Local mem  = on-chip per-SM SRAM (NVIDIA "Shared Memory")
+GPU mem    = off-chip DRAM (NVIDIA "Global Memory")</pre>
+
+  <h3>Network Bandwidth Metrics</h3>
+  <pre>Total bandwidth   = link bw × #links               (best case)
+Bisection bw      = min over splits of crossing-link bw  (worst case)
+Ring  total = P×B,  bisection = 2×B
+Bus   total = B,    bisection = B
+Full  total = P(P-1)/2 × B, bisection = (P/2)² × B</pre>
+
+  <h3>WSC vs Server Differences</h3>
+  <pre>1. Ample easy parallelism (request-level)
+2. Operational costs (energy, cooling) &gt; 30% of TCO over 10 years
+3. Scale economy + scale failure rate (~5 servers/day fail in 100K WSC)</pre>
+
+  <h3>Roofline Model</h3>
+  <pre>Achievable = MIN( Peak FLOPS,  Peak BW × Arithmetic Intensity )
+AI = FLOPs / bytes from main memory
+Ridge point = where the two roofs meet
+Compute optimizations: (1) FP balance, (2) ILP + SIMD
+Memory optimizations:  (1) prefetch,    (2) memory affinity</pre>
+
+  <h3>I/O Mechanisms</h3>
+  <pre>Memory-mapped I/O  : addresses → device commands
+DMA                : device transfers without CPU
+Interrupts         : asynchronous OS notification
+Polling            : CPU checks status periodically</pre>
+
+  <h3>Roofline for i7 vs Tesla 280 — Why GPU Wins</h3>
+  <pre>GPU memory bw      4.4× → wins on memory-bound (LBM, SAXPY, SpMV)
+GPU SP FP peak     ~6×  → wins on compute-bound SP (SGEMM, FFT, Conv)
+GPU gather/scatter      → 15.2× win on GJK (i7 SIMD lacks this)
+i7 caches               → catches up on cacheable kernels (Sort, Search)
+i7 atomics + memory model → wins on Solv (sync)</pre>
+</div>
+
+<!-- Self-test -->
+<h2 id="quiz">Self-Test Q&amp;A</h2>
+<div class="panel">
+
+  <details>
+    <summary>Foundations &amp; Amdahl (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Difference between task-level parallelism and a parallel processing program?</div><div class="a">Task-level: independent single-threaded apps run concurrently. Parallel processing program: ONE program split across multiple processors.</div></div>
+      <div class="qa"><div class="q">What is SMP?</div><div class="a">Shared Memory Processor — multiprocessor with a single physical address space. Almost all multicore chips are SMPs.</div></div>
+      <div class="qa"><div class="q">Write Amdahl's Law for speed-up.</div><div class="a">Speed-up = 1 / [ F_affected/Improvement + (1 - F_affected) ].</div></div>
+      <div class="qa"><div class="q">For 90× speed-up with 100 processors, max sequential fraction?</div><div class="a">0.1% (i.e., F_affected = 0.999).</div></div>
+      <div class="qa"><div class="q">Strong vs weak scaling?</div><div class="a">Strong = fixed problem size as N grows (Amdahl-bound). Weak = problem size grows with N (often easier).</div></div>
+      <div class="qa"><div class="q">Why can weak scaling underperform strong scaling?</div><div class="a">If the weakly-scaled dataset no longer fits in last-level cache, the hit rate collapses and performance degrades.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Flynn's taxonomy (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What does SISD stand for and what's the example?</div><div class="a">Single Instruction stream, Single Data stream — a uniprocessor.</div></div>
+      <div class="qa"><div class="q">SIMD definition + two examples?</div><div class="a">Single Instruction stream, Multiple Data streams — vector processors and x86 SSE/AVX (subword parallelism).</div></div>
+      <div class="qa"><div class="q">SPMD vs MIMD?</div><div class="a">MIMD is the hardware model; SPMD is the conventional way to PROGRAM a MIMD: one program, conditional branches direct different processors to different code paths.</div></div>
+      <div class="qa"><div class="q">When does SIMD lose efficiency?</div><div class="a">Case/switch statements — units must do different operations on different data; "wrong" units are disabled, so SIMD effectively runs at 1/n speed.</div></div>
+      <div class="qa"><div class="q">Why is SIMD energy-efficient?</div><div class="a">Only one instruction fetch + one decode for many operations; no need for per-thread duplicated control.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Vector vs SIMD extensions (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Vector vs multimedia: where is the operation count?</div><div class="a">Vector: in a separate length register (binary-compatible across implementations). Multimedia: encoded in the opcode (new opcodes per width: MMX → SSE → AVX → AVX2).</div></div>
+      <div class="qa"><div class="q">What is gather/scatter, and why does it matter?</div><div class="a">Indexed memory access — load every Nth element or by an arbitrary index vector. Vector ISAs support it; x86 SIMD extensions don't (Haswell added gather but not scatter). Lack of gather/scatter cost x86 a 15× performance gap to GPU on GJK.</div></div>
+      <div class="qa"><div class="q">What does strip mining do?</div><div class="a">When the loop is longer than the maximum vector length, the compiler emits a wrapper that issues full-length vector ops repeatedly + a leftover handler.</div></div>
+      <div class="qa"><div class="q">Why do vectors help pipelining?</div><div class="a">Hazards are checked ONCE per vector instruction (not once per element), so stalls happen once per vector op. ~64× fewer stalls on a 64-element vector.</div></div>
+      <div class="qa"><div class="q">What's a vector lane?</div><div class="a">A functional unit + slice of vector register file that handles every Nth element of each vector. More lanes = more parallel execution per cycle.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Hardware multithreading (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Fine-grained vs coarse-grained vs SMT — when does each switch?</div><div class="a">Fine-grained: every cycle. Coarse-grained: only on expensive stalls. SMT: never explicitly — multiple threads issue in the SAME cycle on a multi-issue, dynamically-scheduled processor.</div></div>
+      <div class="qa"><div class="q">Why does coarse-grained multithreading have pipeline start-up costs?</div><div class="a">When a stall causes a switch, the pipeline must drain and refill with the new thread's instructions before they complete.</div></div>
+      <div class="qa"><div class="q">Average SMT performance gain on Core i7 (PARSEC)?</div><div class="a">~1.31×, with energy efficiency improvement ≈ 1.07×.</div></div>
+      <div class="qa"><div class="q">Why must per-thread state be duplicated?</div><div class="a">Each thread needs its own PC, registers, and stack so the hardware can switch between them quickly without going through OS context-switch overhead.</div></div>
+      <div class="qa"><div class="q">Process vs thread switch — which is faster, why?</div><div class="a">Thread switch is much faster (potentially 1 cycle in hardware multithreading). Process switch involves the OS, address-space change, page-table updates → hundreds-thousands of cycles.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>SMP, UMA, NUMA, OpenMP (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">UMA vs NUMA?</div><div class="a">UMA: latency to any word is the same regardless of processor. NUMA: latency depends on which processor touches which word; some memory is local, some is remote.</div></div>
+      <div class="qa"><div class="q">What is a lock and why is it needed?</div><div class="a">Synchronization primitive: only one processor at a time can hold it. Required to avoid race conditions when multiple processors update shared state.</div></div>
+      <div class="qa"><div class="q">What is a reduction in parallel computing?</div><div class="a">A function that processes a data structure and returns a single value (e.g., sum, max). Typically built via a hierarchical pairwise add tree.</div></div>
+      <div class="qa"><div class="q">Three OpenMP pragmas?</div><div class="a"><code>#pragma omp parallel num_threads(P)</code>, <code>#pragma omp parallel for</code>, <code>#pragma omp parallel for reduction(+:sum)</code>.</div></div>
+      <div class="qa"><div class="q">Why is sharing virtual address space (instead of physical) too expensive?</div><div class="a">It would shift coherence/communication burden onto the OS — the overhead is too high to deliver a workable shared-memory abstraction at performance levels programmers expect.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>GPUs (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why do GPUs not need large multilevel caches like CPUs?</div><div class="a">They use massive hardware multithreading to hide memory latency — between a memory request and its return, the GPU runs hundreds or thousands of independent threads.</div></div>
+      <div class="qa"><div class="q">A GPU is a MIMD of WHAT?</div><div class="a">Multithreaded SIMD processors. Each SM runs a SIMD thread (warp) in lock-step across its lanes; SMs run independently of each other (MIMD).</div></div>
+      <div class="qa"><div class="q">In NVIDIA terms, what's a Warp?</div><div class="a">A traditional thread that contains only SIMD instructions. Warp = 32 threads that execute the same instruction together on the SIMD lanes.</div></div>
+      <div class="qa"><div class="q">CUDA Thread vs OS thread?</div><div class="a">A CUDA thread is one element of one warp on one SIMD lane — a vertical cut. POSIX/OS threads can do arbitrary system calls and synchronize freely; CUDA threads can't.</div></div>
+      <div class="qa"><div class="q">Two levels of GPU hardware schedulers?</div><div class="a">(1) Thread Block Scheduler (Giga Thread Engine) assigns blocks to SMs. (2) SIMD Thread Scheduler (Warp Scheduler) inside an SM picks ready warps and dispatches them.</div></div>
+      <div class="qa"><div class="q">In Fermi, why does each SIMD instruction take 2 cycles?</div><div class="a">A 32-wide warp is mapped to 16 SIMD lanes, so each warp instruction takes 2 cycles to issue all 32 elements.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Clusters &amp; WSCs (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Message-passing vs shared-memory — pros and cons?</div><div class="a">Message-passing hardware is easier to build (no cache coherence). Shared-memory is easier for programmers (implicit communication). Multicore chose shared-memory; clusters chose message-passing.</div></div>
+      <div class="qa"><div class="q">Why are clusters good for Internet services?</div><div class="a">Lower cost, higher availability, easy to swap a failed node, incremental expandability. Internet services (search, mail, web) have lots of independent requests with little shared state.</div></div>
+      <div class="qa"><div class="q">What three characteristics distinguish a WSC from a server?</div><div class="a">(1) Ample easy parallelism (batch + interactive). (2) Operational costs dominate (energy, cooling, power distribution &gt; 30% of 10-year TCO). (3) Scale opportunities (volume discounts, cloud) and scale failures (~5 server failures/day in 100K-server WSC).</div></div>
+      <div class="qa"><div class="q">What's MapReduce?</div><div class="a">Inspired by Lisp. Map applies a function to each input record producing (key, value) pairs. Reduce collects all values per key and collapses with another function. Highly parallel, easy to use.</div></div>
+      <div class="qa"><div class="q">What is SaaS?</div><div class="a">Software as a Service — software runs at a remote site, customers access it over the Internet (typically web). Pay-per-use, not pay-for-ownership.</div></div>
+      <div class="qa"><div class="q">Why is fault tolerance more important in WSCs than servers?</div><div class="a">Sheer scale. Even with 25-year-MTBF servers, ~5 fail per day in a 100K cluster. Disks: 2% AFR × 4 disks × 100K servers ≈ 1 disk fails per hour.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Network topologies (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Bisection bandwidth definition?</div><div class="a">Sum of the bandwidths of links crossing the worst-case split of the network into two halves. A worst-case (pessimistic) metric.</div></div>
+      <div class="qa"><div class="q">Total network bandwidth for a ring with P processors and link bandwidth B?</div><div class="a">P × B (each link is independent and can carry its own message simultaneously).</div></div>
+      <div class="qa"><div class="q">Bisection bandwidth of a ring vs a bus?</div><div class="a">Ring: 2 × B. Bus: 1 × B (bus is shared).</div></div>
+      <div class="qa"><div class="q">Crossbar vs Omega network?</div><div class="a">Crossbar: any node to any other in one pass, n² switches, supports arbitrary permutations. Omega: 2n log n switches (~25% the area of crossbar) but contention possible — can't always route arbitrary permutations.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Cluster networking (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is memory-mapped I/O?</div><div class="a">Address regions assigned to I/O devices. Reads and writes to those addresses are interpreted as device commands. OS protects via address translation.</div></div>
+      <div class="qa"><div class="q">What is DMA, and why does it help?</div><div class="a">Direct Memory Access — controller transfers data between device and memory without involving the processor. Frees the CPU from copying.</div></div>
+      <div class="qa"><div class="q">Polling vs interrupts — when do you prefer polling?</div><div class="a">For very low-latency small packets where avoiding the wakeup penalty of an interrupt + the overhead of context switches matters more than CPU cycles wasted polling.</div></div>
+      <div class="qa"><div class="q">What does the zero-copy optimization do?</div><div class="a">Lets DMA transfer data directly between user space and the NIC, skipping intermediate OS buffers. Saves copies.</div></div>
+      <div class="qa"><div class="q">What is DDIO?</div><div class="a">Direct Data IO — recent Intel CPUs reserve up to 10% of the last-level cache as a DMA scratchpad so NIC writes go to cache rather than DRAM. Latency + bandwidth win.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Roofline &amp; benchmarks (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Define arithmetic intensity.</div><div class="a">FLOPs per byte transferred to/from main memory. Higher AI → less memory-bound.</div></div>
+      <div class="qa"><div class="q">Write the Roofline equation.</div><div class="a">Achievable GFLOPS = MIN( Peak Compute, Peak Memory Bandwidth × Arithmetic Intensity ).</div></div>
+      <div class="qa"><div class="q">What does the ridge point tell you?</div><div class="a">If your kernel's AI is to the LEFT of the ridge point → memory-bound. To the RIGHT → compute-bound. A ridge point far left means many kernels can hit peak; far right means only high-AI kernels can.</div></div>
+      <div class="qa"><div class="q">Two computational ceilings to optimize?</div><div class="a">(1) Floating-point operation mix (equal mul/add or use FMA). (2) Improve ILP and apply SIMD (e.g., AVX).</div></div>
+      <div class="qa"><div class="q">Two memory ceilings to optimize?</div><div class="a">(1) Software prefetching. (2) Memory affinity (NUMA-aware data placement).</div></div>
+      <div class="qa"><div class="q">Why use Stream instead of raw DRAM bandwidth?</div><div class="a">Raw DRAM bandwidth is unattainable in practice. Stream measures what real programs can actually achieve, giving a much more honest roofline.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Real stuff &amp; matrix multiply (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why is the GTX 280 faster than i7 on memory-bound kernels?</div><div class="a">It has ~4.4× the memory bandwidth. The slope of the memory roofline explains a 5× speed-up on LBM, SAXPY.</div></div>
+      <div class="qa"><div class="q">Why does GTX 280 win 15.2× on GJK?</div><div class="a">GJK uses gather/scatter accesses. GPU has hardware gather/scatter inherited from vector architectures; x86 SIMD extensions don't.</div></div>
+      <div class="qa"><div class="q">Why does i7 sometimes win (Sort, Solv)?</div><div class="a">Cache blocking + better atomics + memory consistency. Sort's split SIMD primitive bloats instruction count on GPU; Solv's batched sync needs the i7's memory model.</div></div>
+      <div class="qa"><div class="q">In multi-CPU DGEMM, why does 32×32 actually slow down with threads?</div><div class="a">It fits in L1 cache; thread synchronization and scheduling overhead exceeds the parallel benefit.</div></div>
+      <div class="qa"><div class="q">What total speed-up does the book demonstrate over unoptimized C for 960×960 DGEMM?</div><div class="a">~212× combined: SIMD (3.85×), ILP (2.3×), cache blocking (2–2.5×), 16-thread MIMD (4–14×).</div></div>
+    </div>
+  </details>
+
+</div>
+
+<!-- Common Traps -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"Amdahl's Law doesn't apply to weak scaling."</b> <span class="no">It does.</span> Weak scaling lets you do MORE work proportionally — it doesn't make the sequential portion vanish. The 1987 "broken Amdahl" claim was just careful weak scaling, not a refutation.</li>
+    <li><b>"Concurrent software requires parallel hardware."</b> <span class="no">No.</span> Concurrent software (e.g., an OS) can run on a uniprocessor; the OS just multiplexes a single CPU.</li>
+    <li><b>"SIMD and SPMD are the same thing."</b> <span class="no">No.</span> SIMD = one instruction stream broadcast across many data elements. SPMD = one PROGRAM running on many processors, each free to take different branches at runtime — typical MIMD programming style.</li>
+    <li><b>"Vector and SIMD extensions are interchangeable."</b> <span class="no">No.</span> Vector encodes length in a register (binary-compatible across widths), supports gather-scatter; SIMD extensions encode length in the opcode (new opcodes per width) and require contiguous aligned access.</li>
+    <li><b>"Hardware multithreading and multicore are the same thing."</b> <span class="no">No.</span> Multithreading shares a single core's functional units across multiple threads. Multicore replicates entire cores. They compose: a multicore chip can have SMT per core.</li>
+    <li><b>"NUMA always loses to UMA."</b> <span class="no">No.</span> UMA scales poorly — at large processor counts the shared memory becomes a bottleneck. NUMA scales bigger and offers low local-memory latency.</li>
+    <li><b>"Clusters are message-passing because they have to be."</b> <span class="no">Largely yes</span>, since each cluster node runs its own OS and has its own physical memory. But the deeper reason is dependability: separate memories make it easy to replace a failed node without bringing the cluster down.</li>
+    <li><b>"Interrupts are always faster than polling."</b> <span class="no">No.</span> For low-latency small packets in a tight loop, polling avoids interrupt setup, low-power exit, and context switches — faster than interrupts.</li>
+    <li><b>"GPUs don't have caches."</b> <span class="no">Misleading.</span> They have small streaming caches and texture caches. They simply don't rely on caches for latency hiding (multithreading does that).</li>
+    <li><b>"Roofline's diagonal line is the raw DRAM bandwidth."</b> <span class="no">No.</span> Use the Stream benchmark's measured bandwidth — raw DRAM is too optimistic to be useful.</li>
+    <li><b>"Peak performance is what you'll see in real workloads."</b> <span class="no">Almost never.</span> Marketing multiplies peak per chip × number of chips and assumes perfect scaling. Both Amdahl and the roofline model show why this is fantasy.</li>
+    <li><b>"More threads always equals more performance."</b> <span class="no">No.</span> If the working set fits in L1 already (e.g., 32×32 DGEMM), threading overhead can slow you down. SMT also limits you when threads contend for shared functional units (Sandy Bridge AVX example).</li>
+    <li><b>"You only need cache coherence in shared memory; clusters are coherent because they have separate memories."</b> <span class="no">Cluster nodes don't share memory at all</span> — there's no coherence problem because there's no shared cache. Coherence is a problem inside an SMP, not across cluster nodes.</li>
+    <li><b>"Strong scaling is always preferable."</b> <span class="no">Depends.</span> Strong scaling is what you want for real-time problems; weak scaling matches "bigger problems on bigger machines" — common in databases (TPC-C), scientific simulation, and search indexing.</li>
+    <li><b>"OpenMP is hard to use."</b> <span class="no">No.</span> Adding ONE pragma (<code>#pragma omp parallel for</code>) to a clean loop typically parallelizes it. The hard part is making the underlying algorithm efficient on a parallel machine.</li>
+    <li><b>"All multimedia SIMD instructions support gather/scatter."</b> <span class="no">No.</span> Most x86 SIMD requires contiguous, 16-byte-aligned access. Haswell added gather (not scatter). Vector ISAs always supported both — that's the historical advantage.</li>
+  </ul>
+</div>
+
+<hr/>
+<p class="hint">Source: WGU C952 zyBook Chapter 8 — "Parallel Processors from Client to Cloud" (COD Chapter 6).</p>
+
+</div>
+<script>
+  (function() {
+    var btn = document.getElementById('themeBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var next;
+      if (!current) {
+        next = prefersLight ? 'dark' : 'light';
+      } else {
+        next = current === 'dark' ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>
