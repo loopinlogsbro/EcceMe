@@ -3,36 +3,817 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<title>C952 — Chapter 9 Study Guide</title>
+<title>C952 — Chapter 9 Study Guide: Logic Design Basics</title>
 <style>
-  :root { --bg:#0f1115; --panel:#161a22; --panel-2:#1d222c; --border:#2a3140; --text:#e6e8ec; --muted:#9aa3b2; --accent:#7cc4ff; }
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
   * { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--text); }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
   header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
   header .sub { color: var(--muted); font-size: 13px; }
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 10px 0; color: var(--muted); }
-  .chnav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
   .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
   .chnav a:hover { border-color: var(--accent); }
   .chnav .spacer { visibility: hidden; }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
 <div class="wrap">
   <nav class="chnav">
-    <a href="ch8.html">← Ch 8</a>
+    <a href="ch8.html">&larr; Ch 8</a>
     <a href="index.html">All chapters</a>
-    <a href="ch10.html">Ch 10 →</a>
+    <a href="ch10.html">Ch 10 &rarr;</a>
   </nav>
-  <header>
-    <h1>C952 — Chapter 9 Study Guide</h1>
-    <div class="sub">Placeholder — fill in from zyBooks ch9.</div>
-  </header>
-  <div class="panel">TODO: chapter 9 content.</div>
+
+<header>
+  <h1>C952 — Chapter 9 Study Guide <span class="badge b-key">Logic Design Basics</span></h1>
+  <div class="sub">Gates, Boolean algebra, combinational/sequential logic, ALUs, carry lookahead, clocking, flip-flops, SRAM/DRAM, FSMs — WGU C952 zyBook Ch9 (COD Appendix A)</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">9.1 Introduction</a>
+  <a href="#s2">9.2 Gates, Truth Tables, Equations</a>
+  <a href="#s3">9.3 Combinational Logic</a>
+  <a href="#s4">9.4 Verilog HDL</a>
+  <a href="#s5">9.5 Building a Basic ALU</a>
+  <a href="#s6">9.6 Carry Lookahead</a>
+  <a href="#s7">9.7 Clocks</a>
+  <a href="#s8">9.8 Flip-Flops, Latches, Registers</a>
+  <a href="#s9">9.9 SRAMs &amp; DRAMs</a>
+  <a href="#s10">9.10 Finite-State Machines</a>
+  <a href="#s11">9.11 Timing Methodologies</a>
+  <a href="#s12">9.12 Field Programmable Devices</a>
+  <a href="#s13">9.13 Concluding Remarks</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
 </div>
+
+<p class="hint">zyBook flags this whole chapter as <i>Optional</i>. It is COD Appendix A, the prerequisite for the processor (Ch4/6), memory (Ch5/7), and control mapping (Ch11) chapters.</p>
+
+<!-- 9.1 -->
+<h2 id="s1">9.1 Introduction</h2>
+<div class="panel">
+  <p>Two big distinctions to anchor everything else:</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Combinational logic</b><span class="d">No memory. Output depends only on current inputs. Same inputs → same outputs. Examples: AND/OR gates, ALU, decoders, multiplexors.</span></div>
+    <div class="term"><b>Sequential logic</b><span class="d">Contains memory (state). Output depends on inputs AND current state. Examples: register file, FSM, the entire processor.</span></div>
+    <div class="term"><b>Asserted signal</b><span class="d">(Logically) true, value 1.</span></div>
+    <div class="term"><b>Deasserted signal</b><span class="d">(Logically) false, value 0.</span></div>
+  </div>
+  <p class="hint">Two voltage levels (high/low) → 1/0; intermediate voltages happen only briefly during transitions. We talk about asserted/deasserted instead of voltage to avoid ambiguity across logic families.</p>
+</div>
+
+<!-- 9.2 -->
+<h2 id="s2">9.2 Gates, Truth Tables, Logic Equations <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Boolean Operators</h3>
+  <table>
+    <tr><th>Operator</th><th>Notation</th><th>Result</th></tr>
+    <tr><td>AND (logical product)</td><td><code>A · B</code> or <code>A &amp; B</code></td><td>1 iff both inputs are 1</td></tr>
+    <tr><td>OR (logical sum)</td><td><code>A + B</code> or <code>A | B</code></td><td>1 if either input is 1</td></tr>
+    <tr><td>NOT (inverter)</td><td><code>Ā</code> or <code>~A</code></td><td>1 iff input is 0</td></tr>
+    <tr><td>XOR</td><td><code>A ⊕ B</code> or <code>A ^ B</code></td><td>1 iff exactly one input is 1</td></tr>
+  </table>
+
+  <h3>Boolean Algebra Laws (for manipulation/minimization)</h3>
+  <table>
+    <tr><th>Law</th><th>Form</th></tr>
+    <tr><td>Identity</td><td>A + 0 = A · 1 = A</td></tr>
+    <tr><td>Zero / One</td><td>A + 1 = 1; A · 0 = 0</td></tr>
+    <tr><td>Inverse</td><td>A + Ā = 1; A · Ā = 0</td></tr>
+    <tr><td>Commutative</td><td>A + B = B + A; A · B = B · A</td></tr>
+    <tr><td>Associative</td><td>(A + B) + C = A + (B + C); same for ·</td></tr>
+    <tr><td>Distributive</td><td>A · (B + C) = AB + AC; A + BC = (A+B)(A+C)</td></tr>
+    <tr><td>DeMorgan</td><td>~(A + B) = Ā · B̄;  ~(A · B) = Ā + B̄</td></tr>
+  </table>
+
+  <h3>Truth Tables &amp; Gates</h3>
+  <ul>
+    <li>A truth table fully describes any combinational logic: 2<sup>n</sup> rows for n inputs.</li>
+    <li>"Bubbles" on a gate input or output indicate inversion (saves drawing inverters).</li>
+    <li><b>NAND</b> = inverted AND; <b>NOR</b> = inverted OR. Either is <b>universal</b> — any logic function can be built from a single gate type if it is inverting.</li>
+  </ul>
+  <div class="formula">A 2-input multiplexor is also universal — it can build NAND or NOR.</div>
+</div>
+
+<!-- 9.3 -->
+<h2 id="s3">9.3 Combinational Logic <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Common Building Blocks</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Decoder</b><span class="d">n-bit input → 2<sup>n</sup> outputs. Exactly one output is asserted, corresponding to the binary value of the input. A "3-to-8 decoder" has 3 inputs and 8 outputs.</span></div>
+    <div class="term"><b>Encoder</b><span class="d">Inverse: 2<sup>n</sup> inputs → n-bit output.</span></div>
+    <div class="term"><b>Multiplexor (mux)</b><span class="d">Selector. n data inputs + ⌈log₂n⌉ select bits → 1 output. Internally: decoder + AND array + OR. 2-input mux: <code>C = (Ā · S̄ · A) ... </code> = A if S=0, else B.</span></div>
+    <div class="term"><b>Bus</b><span class="d">Multi-bit signal treated as one logical line. A 64-bit mux is built from 64 1-bit muxes sharing a single select. Drawn as a thicker line.</span></div>
+  </div>
+
+  <h3>Two-Level Logic</h3>
+  <p>Any logic function can be written in <b>canonical form</b> with at most 2 levels of gates: AND followed by OR (sum-of-products / SOP) or OR followed by AND (product-of-sums / POS). Inversions appear only on individual variables.</p>
+
+  <h3>PLA (Programmable Logic Array) <span class="badge b-key">key</span></h3>
+  <ul>
+    <li>Two-stage structured implementation of SOP.</li>
+    <li><b>AND plane</b> — each row is a product term (also called a <b>minterm</b>) made from inputs and their inverses.</li>
+    <li><b>OR plane</b> — each output is the OR of selected product terms.</li>
+    <li>Total size ∝ (#inputs × #product terms) + (#outputs × #product terms).</li>
+    <li>PLA is sparse: only the product terms that are actually true contribute.</li>
+  </ul>
+
+  <h3>ROM (Read-Only Memory)</h3>
+  <ul>
+    <li><b>Height</b> = 2<sup>m</sup> entries (m address lines). <b>Width</b> = output bits per entry. Total bits = height × width. "Shape" = both.</li>
+    <li>Variants: <b>PROM</b> (one-time programmable), <b>EPROM</b> (UV-erasable).</li>
+    <li>Encodes the truth table directly: address = inputs, contents = outputs.</li>
+    <li>Fully decoded — every input combination has an entry. PLA is partially decoded — only used product terms have entries.</li>
+    <li>ROMs scale exponentially with input count; PLAs grow with the number of distinct product terms (usually much slower).</li>
+    <li>ROM advantage: any function with the same I/O dimensions fits, easy to update by changing contents.</li>
+  </ul>
+
+  <h3>Don't Cares <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Type</th><th>Meaning</th></tr>
+    <tr><td>Output don't care</td><td>X in output column. Output value is irrelevant for that input combination — minimization tools may set it to whatever shrinks the equation.</td></tr>
+    <tr><td>Input don't care</td><td>X in input column. The output doesn't depend on that input for the row.</td></tr>
+  </table>
+  <p class="hint">Specifying don't-cares is essential for efficient logic. Karnaugh maps (K-maps) help with hand minimization but are impractical beyond ~5 variables — use a CAD tool (e.g., Espresso).</p>
+</div>
+
+<!-- 9.4 -->
+<h2 id="s4">9.4 Hardware Description Language (Verilog)</h2>
+<div class="panel">
+  <p>Modern digital design uses HDLs for both simulation and logic synthesis. Two main HDLs: <b>Verilog</b> (C-flavored, more common in industry) and <b>VHDL</b> (Ada-flavored).</p>
+
+  <h3>Spec Styles</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Behavioral</b><span class="d">Describes <i>what</i> the system does (functionality). Synthesis tools generate gates from this.</span></div>
+    <div class="term"><b>Structural</b><span class="d">Describes <i>how</i> the system is organized (gates, modules, interconnects).</span></div>
+  </div>
+
+  <h3>Verilog Datatypes</h3>
+  <table>
+    <tr><th>Type</th><th>Use</th></tr>
+    <tr><td><code>wire</code></td><td>Combinational signal — can only be set with continuous (<code>assign</code>) statements.</td></tr>
+    <tr><td><code>reg</code></td><td>Holds a value (may or may not become an actual register). Set inside <code>always</code> blocks.</td></tr>
+    <tr><td>Values</td><td><code>0</code>, <code>1</code>, <code>X</code> (unknown), <code>Z</code> (high impedance for tri-state).</td></tr>
+  </table>
+
+  <h3>Constant Notation</h3>
+  <pre>4'b0100   // 4-bit binary 0100  (= 4)
+4'd4      // 4-bit decimal 4
+8'h F0    // 8-bit hex F0
+{32{2'b01}}  // replicate 32 times → 64-bit pattern 010101...
+{A[31:16], B[15:0]}  // concatenate</pre>
+
+  <h3>Module Body Constructs</h3>
+  <ul>
+    <li><b><code>initial</code></b> — initialize regs at startup.</li>
+    <li><b>Continuous <code>assign</code></b> — combinational logic only. <code>wire</code> targets only.</li>
+    <li><b><code>always @(...)</code></b> — block re-evaluated when sensitivity-list signals change. Can produce combinational <i>or</i> sequential logic depending on construction.</li>
+    <li><b>Module instances</b> — hierarchical composition.</li>
+  </ul>
+
+  <h3>Blocking vs Nonblocking Assignment <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Form</th><th>Behavior</th><th>Use for</th></tr>
+    <tr><td><code>=</code> (blocking)</td><td>Like C: RHS evaluated, LHS assigned, then next statement runs.</td><td>Combinational logic inside <code>always</code></td></tr>
+    <tr><td><code>&lt;=</code> (nonblocking)</td><td>All RHSs in the block evaluated first, then all LHSs assigned simultaneously.</td><td>Sequential logic (e.g., flip-flop updates on clock edge)</td></tr>
+  </table>
+
+  <h3>Avoiding Accidental Sequential Logic</h3>
+  <ul>
+    <li>Place all combinational logic in <code>assign</code> or in an <code>always</code> block whose sensitivity list includes <b>all</b> input signals.</li>
+    <li>Every path through an <code>always</code> block must assign the <b>same set of bits</b> — otherwise the synthesizer infers a latch.</li>
+  </ul>
+
+  <h3>Edge-Triggered Register in Verilog</h3>
+  <pre>always @(posedge clock) A &lt;= b;   // A is a reg, written on rising clock edge</pre>
+</div>
+
+<!-- 9.5 -->
+<h2 id="s5">9.5 Constructing a Basic ALU <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Build a 64-bit ALU from 64 connected 1-bit ALUs.</p>
+
+  <h3>1-Bit Adder ("Full Adder", 3 inputs / 2 outputs)</h3>
+  <div class="formula">CarryOut = (a · b) + (b · CarryIn) + (a · CarryIn)
+Sum     = (a · ~b · ~CarryIn) + (~a · b · ~CarryIn) + (~a · ~b · CarryIn) + (a · b · CarryIn)
+        = a ⊕ b ⊕ CarryIn  (using XOR)</div>
+  <p>A full adder has 3 inputs and 2 outputs (3,2). A half-adder has 2 inputs and 2 outputs (2,2).</p>
+
+  <h3>1-Bit ALU Build-Up</h3>
+  <ol>
+    <li>Logical unit: AND gate + OR gate, mux selects with control <code>Operation</code>.</li>
+    <li>Add full adder. 4-to-1 mux selects AND / OR / Add (and a 0 input for utility).</li>
+    <li><b>Subtract:</b> add a 2:1 mux to invert <code>b</code> (Binvert). Set <code>CarryIn</code>=1 on least-significant bit. Result = a + ~b + 1 = a − b. (This is why two's complement is universal: cheap subtraction.)</li>
+    <li><b>NOR:</b> by DeMorgan, ~(a + b) = ~a · ~b. Add an Ainvert mux too — pass ~a and ~b through the AND.</li>
+    <li><b>CBZ pass:</b> add a "Pass" input to the operation mux that just hands through one operand (for compare-zero).</li>
+  </ol>
+
+  <h3>64-Bit ALU = 64 1-Bit ALUs (Ripple-Carry)</h3>
+  <ul>
+    <li>CarryOut of bit i feeds CarryIn of bit i+1 — slow, but simple.</li>
+    <li>Adds a Zero detect (NOR of all 64 result bits) to support equality compare and CBZ.</li>
+    <li>Most-significant bit's adder has a direct "Set" output for <code>set on less than</code>.</li>
+  </ul>
+
+  <h3>ALU Control Lines</h3>
+  <p>Combination of <code>Ainvert</code>, <code>Bnegate</code> (Binvert + CarryIn=1), and 2-bit <code>Operation</code> = 4 control bits selecting AND / OR / add / subtract / SLT / NOR / pass.</p>
+
+  <p class="hint">Shifts (1–63 bits) are typically done outside the ALU in a <b>barrel shifter</b>, which performs any shift in roughly the time of one add.</p>
+</div>
+
+<!-- 9.6 -->
+<h2 id="s6">9.6 Faster Addition: Carry Lookahead <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Ripple carry is too slow for wide adders — every bit waits for the previous bit's carry. Speed up by computing carries in parallel.</p>
+
+  <h3>Generate &amp; Propagate <span class="badge b-key">key</span></h3>
+  <div class="formula">g_i = a_i · b_i        // bit i generates a carry regardless of input
+p_i = a_i + b_i        // bit i propagates an incoming carry
+c_{i+1} = g_i + p_i · c_i</div>
+  <p><b>Domino analogy:</b> a far-away "generate" can tip the chain provided every "propagate" between it and the target is true.</p>
+
+  <h3>4-Bit CarryIn Equations (level 1 abstraction)</h3>
+  <pre>c1 = g0 + p0·c0
+c2 = g1 + p1·g0 + p1·p0·c0
+c3 = g2 + p2·g1 + p2·p1·g0 + p2·p1·p0·c0
+c4 = g3 + p3·g2 + p3·p2·g1 + p3·p2·p1·g0 + p3·p2·p1·p0·c0</pre>
+
+  <h3>Two-Level Carry Lookahead (16-bit using 4 × 4-bit blocks)</h3>
+  <div class="formula">P0 = p3·p2·p1·p0                         // group propagate
+G0 = g3 + p3·g2 + p3·p2·g1 + p3·p2·p1·g0 // group generate
+C_{i+1} = G_i + P_i · C_i</div>
+  <p>The "super" propagate/generate signals plug into the same lookahead formula, one level higher. This is how the book builds a 16-bit CLA from 4 × 4-bit CLA blocks plus a top-level lookahead unit.</p>
+
+  <h3>Speed Comparison (count gate delays)</h3>
+  <table>
+    <tr><th>Adder type</th><th>16-bit gate delays for carry-in → carry-out</th></tr>
+    <tr><td>Ripple carry</td><td>16 × 2 = 32</td></tr>
+    <tr><td>Two-level carry lookahead</td><td>2 (for p,g) + 2 (for P,G) + 1 ≈ 5 — roughly 6× faster</td></tr>
+  </table>
+</div>
+
+<!-- 9.7 -->
+<h2 id="s7">9.7 Clocks <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>A clock is a free-running square wave with fixed cycle time. Clock <b>frequency</b> = 1 / clock period.</p>
+
+  <h3>Edge-Triggered Clocking</h3>
+  <ul>
+    <li>State changes happen only on a clock <b>edge</b> (rising or falling). The book uses edge-triggered throughout.</li>
+    <li>Sampling on an edge is essentially instantaneous → no race condition from "almost-the-same-time" sampling.</li>
+    <li>Clock period must be ≥ longest combinational path so all signals settle before the next edge.</li>
+    <li>Allows reading and writing the same state element in one cycle (e.g., register file) without race.</li>
+  </ul>
+
+  <p>A <b>synchronous system</b> uses a clock and only reads signals when the clock indicates they are stable.</p>
+</div>
+
+<!-- 9.8 -->
+<h2 id="s8">9.8 Memory Elements: Flip-Flops, Latches, Registers <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>S-R Latch (unclocked)</h3>
+  <p>Cross-coupled NOR (or NAND) pair. <code>S</code> sets, <code>R</code> resets, both deasserted holds. Asserting both at once is illegal (oscillation/metastability).</p>
+
+  <h3>D Latch vs D Flip-Flop <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Element</th><th>State changes when…</th><th>Sometimes called</th></tr>
+    <tr><td><b>D Latch</b></td><td>Clock is asserted (level-sensitive). While clock is high, output Q tracks D. "Transparent latch."</td><td>Open / closed</td></tr>
+    <tr><td><b>D Flip-Flop</b></td><td>Only on the clock <b>edge</b>. Built from two D latches (master/slave) so output changes only when clock transitions.</td><td>Edge-triggered</td></tr>
+  </table>
+
+  <h3>Setup &amp; Hold Times</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Setup time (t<sub>setup</sub>)</b><span class="d">Minimum time the input must be valid <i>before</i> the clock edge.</span></div>
+    <div class="term"><b>Hold time (t<sub>hold</sub>)</b><span class="d">Minimum time the input must remain valid <i>after</i> the clock edge.</span></div>
+  </div>
+  <p class="hint">Hold times are usually 0 or near-zero on modern flip-flops, so setup is the main concern.</p>
+
+  <h3>Verilog D Flip-Flop</h3>
+  <pre>module DFF(clock, D, Q, Qbar);
+  input clock, D;
+  output reg Q;
+  output Qbar;
+  assign Qbar = ~Q;
+  always @(posedge clock)
+    Q = D;
+endmodule</pre>
+
+  <h3>Register File <span class="badge b-key">key</span></h3>
+  <ul>
+    <li>Set of registers indexed by a register number.</li>
+    <li>For read: a decoder + multiplexor combination per port. (For two read ports: two n-to-1 muxes, each 64 bits wide.)</li>
+    <li>For write: a decoder converts the register number into a one-hot enable that gates the clock to the chosen register only.</li>
+    <li>Reading is combinational; writing is sequential — that's why in Verilog the read is a continuous <code>assign</code> and the write is in an <code>always @(posedge clock)</code> block.</li>
+    <li>If you read and write the <i>same</i> register in one cycle, you get the OLD value (write happens at edge); to "forward" the new value, extra logic is required.</li>
+  </ul>
+</div>
+
+<!-- 9.9 -->
+<h2 id="s9">9.9 SRAMs &amp; DRAMs <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>SRAM</h3>
+  <ul>
+    <li>Static — value held by cross-coupled inverters as long as power is on. <b>4–6 transistors per bit.</b></li>
+    <li>Single access port (read OR write). Fixed access time.</li>
+    <li>Configuration: "4M × 8" = 4M addressable entries, each 8 bits. <b>Height</b> = entries, <b>width</b> = bits per entry.</li>
+    <li>Control signals: <b>Chip Select</b>, <b>Output Enable</b> (for reads), <b>Write Enable</b> (for writes).</li>
+    <li>Typical 2004 read access time: 2–4 ns (small) up to 8–20 ns (large, ~32Mb).</li>
+    <li>Built using a two-level decode (rectangular array) + <b>bit lines</b> driven by <b>tri-state buffers</b> from each cell. A tri-state buffer can be asserted, deasserted, or high-impedance — only one driver per shared line at a time.</li>
+  </ul>
+
+  <h3>DRAM</h3>
+  <ul>
+    <li>Dynamic — value stored as charge on a capacitor accessed by 1 transistor (the <b>pass transistor</b>). <b>1 transistor per bit</b> → much denser/cheaper than SRAM.</li>
+    <li>Charge leaks → must be <b>refreshed</b> periodically (every few ms).</li>
+    <li>Refresh = read row, write same value back. Whole row refreshed in one cycle. Refresh consumes ~1–2% of cycles.</li>
+    <li>Two-level addressing: <b>RAS</b> (Row Access Strobe) selects a row → all column bits latched; <b>CAS</b> (Column Access Strobe) selects bit(s) from latched row. Same address pins reused for row and column to save package cost.</li>
+    <li>Read works by precharging the bit line halfway and detecting the small voltage swing with a <b>sense amplifier</b>.</li>
+    <li>Typical 2004 access time: 45–65 ns (5–10× slower than SRAM).</li>
+    <li><b>Use:</b> DRAM = main memory (cheap per bit). SRAM = caches and registers (fast).</li>
+  </ul>
+
+  <h3>SDRAM &amp; DDR</h3>
+  <ul>
+    <li><b>SDRAM</b> (synchronous DRAM): clock-driven burst transfers from sequential addresses within a row. Burst = starting address + length; subsequent bits clocked out without re-supplying address.</li>
+    <li><b>DDR RAM</b>: transfers on both rising and falling edges → 2× bandwidth.</li>
+  </ul>
+
+  <h3>Error Detection &amp; Correction</h3>
+  <table>
+    <tr><th>Code</th><th>Capability</th><th>Notes</th></tr>
+    <tr><td>1-bit parity</td><td>Detect any single-bit error (or odd # of errors)</td><td>Distance-2 code. Cannot correct, cannot reliably detect 2 errors.</td></tr>
+    <tr><td>SEC (single-error correcting)</td><td>Correct 1-bit error</td><td>Distance-3 code. Uses Hamming code.</td></tr>
+    <tr><td>SEC-DED (1 correct, 2 detect)</td><td>Correct 1, detect 2</td><td>Distance-4 code. Typical: 7 extra bits per 64 data bits, 8 extra per 128.</td></tr>
+  </table>
+</div>
+
+<!-- 9.10 -->
+<h2 id="s10">9.10 Finite-State Machines (FSMs) <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Sequential systems are described by an FSM: a set of states, a <b>next-state function</b> (current state + inputs → next state), and an <b>output function</b>. With n state bits there are 2<sup>n</sup> possible states.</p>
+
+  <h3>Moore vs Mealy <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Moore machine</b><span class="d">Outputs depend ONLY on current state. May need more states. Faster (output is a function of a stable state register).</span></div>
+    <div class="term"><b>Mealy machine</b><span class="d">Outputs depend on current state AND inputs. Often fewer states. Output can change asynchronously with input.</span></div>
+  </div>
+  <p>Moore and Mealy are equivalent in capability — one can mechanically convert between them. The book uses Moore for the processor controller and a Mealy version for the cache controller.</p>
+
+  <h3>Designing an FSM</h3>
+  <ol>
+    <li>Decide states, inputs, outputs.</li>
+    <li>Build next-state table (state × input → next state).</li>
+    <li>Build output table (state → outputs for Moore; state × input → outputs for Mealy).</li>
+    <li>Draw the state diagram (nodes = states, arc labels = input conditions, node interior = active outputs).</li>
+    <li><b>State assignment:</b> assign binary numbers to states (clever choices reduce logic).</li>
+    <li>Implement: state register + combinational logic for next-state and output functions (often a PLA or ROM).</li>
+  </ol>
+
+  <h3>Example: 2-State Traffic Light</h3>
+  <ul>
+    <li>States: NSgreen, EWgreen.</li>
+    <li>Inputs: NScar, EWcar.</li>
+    <li>Outputs: NSlite, EWlite.</li>
+    <li>Rule: stay in current state if no car waiting in opposite direction; switch otherwise.</li>
+  </ul>
+</div>
+
+<!-- 9.11 -->
+<h2 id="s11">9.11 Timing Methodologies</h2>
+<div class="panel">
+  <h3>Edge-Triggered Clock-Period Constraint</h3>
+  <div class="formula">T_clock ≥ t_prop(FF) + t_combinational(max) + t_setup(FF)
+                              ( + t_skew  if there is clock skew )</div>
+  <p>Here t<sub>prop</sub> is the flip-flop's clock-to-Q delay. For correctness against skew, allow extra margin equal to the maximum skew between any two state elements.</p>
+
+  <div class="grid grid-2">
+    <div class="term"><b>Clock skew</b><span class="d">Difference in absolute time when two state elements see the clock edge. Caused by different routing path lengths.</span></div>
+    <div class="term"><b>Race</b><span class="d">When the contents of a state element depend on relative speeds of logic elements. Skew + short combinational path can let an output reach the next FF before that FF's clock edge arrives → incorrect operation.</span></div>
+  </div>
+
+  <h3>Level-Sensitive Timing &amp; Two-Phase Clocking</h3>
+  <ul>
+    <li>Alternative to edge-triggered. State changes occur while a clock level is high or low — not instantaneous.</li>
+    <li>Use <b>two non-overlapping clock phases</b> (φ₁, φ₂) — at most one is asserted at a time.</li>
+    <li>Alternate latches between phases: a φ₁-latch outputs into combinational logic, then a φ₂-latch captures. Non-overlap protects against race.</li>
+  </ul>
+
+  <h3>Asynchronous Inputs &amp; Synchronizers <span class="badge b-key">key</span></h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Metastability</b><span class="d">If a flip-flop input violates setup/hold, the output may settle in the indeterminate region between high and low for an unbounded time.</span></div>
+    <div class="term"><b>Synchronizer failure</b><span class="d">When metastable output is read by downstream logic; some gates see 0, others see 1 → divergent state.</span></div>
+    <div class="term"><b>Synchronizer (single FF)</b><span class="d">Naive sample of an asynchronous signal with one D-FF — exposed to metastability.</span></div>
+    <div class="term"><b>Two-FF synchronizer</b><span class="d">Reliable in practice: a metastable output of FF1 has time to resolve before FF2 samples it on the next clock edge. Probability of failure becomes vanishingly small (years between failures).</span></div>
+  </div>
+</div>
+
+<!-- 9.12 -->
+<h2 id="s12">9.12 Field Programmable Devices (FPDs)</h2>
+<div class="panel">
+  <p>For designs that don't justify a custom IC, FPDs let you configure off-the-shelf chips to implement combinational and sequential logic.</p>
+
+  <h3>FPD Family</h3>
+  <table>
+    <tr><th>Type</th><th>Description</th></tr>
+    <tr><td><b>PLD</b> (Programmable Logic Device)</td><td>Combinational only.</td></tr>
+    <tr><td><b>SPLD</b> (Simple PLD)</td><td>Single PLA or PAL. <b>PAL</b> = programmable AND-plane + <i>fixed</i> OR-plane.</td></tr>
+    <tr><td><b>CPLD</b> (Complex PLD)</td><td>Multiple logic blocks + configurable interconnect.</td></tr>
+    <tr><td><b>FPGA</b> (Field-Programmable Gate Array)</td><td>2-D array of cells (combinational logic + flip-flops) connected by configurable routing channels. Cells = <b>LUTs</b> (lookup tables) — small RAMs that act as truth tables. Modern FPGAs include adders, RAM blocks, even RISC cores.</td></tr>
+  </table>
+
+  <h3>Configuration Mechanisms</h3>
+  <ul>
+    <li><b>Antifuse:</b> programmed once at programming time → permanent connection.</li>
+    <li><b>SRAM-based:</b> downloads configuration on power-on. Volatile, slightly higher resistance, but reconfigurable.</li>
+  </ul>
+
+  <p class="hint">In FPGAs, ~90% of die area is interconnect, only ~10% is logic and memory blocks.</p>
+</div>
+
+<!-- 9.13 -->
+<h2 id="s13">9.13 Concluding Remarks</h2>
+<div class="panel">
+  <p>The chapter (Appendix A) is the prerequisite for the processor (COD Ch4) and memory (COD Ch5) chapters, and for the implementation discussion in COD Ch11 (Mapping Control to Hardware).</p>
+</div>
+
+<!-- Cheat Sheet -->
+<h2 id="cheat">Quick-Reference Cheat Sheet</h2>
+<div class="panel">
+
+  <h3>Quick Concept Map</h3>
+  <pre>combinational      sequential
+  no memory          state register + comb. logic
+  AND/OR/NOT         FSM, register file, processor
+  truth table        state diagram + transition table</pre>
+
+  <h3>Universal Gates</h3>
+  <pre>NAND alone   → all logic functions
+NOR alone    → all logic functions
+2-input mux  → all logic functions</pre>
+
+  <h3>Sum of Products vs PLA vs ROM</h3>
+  <pre>SOP        canonical 2-level form
+PLA        AND plane (minterms) + OR plane (sums)
+ROM        full truth table baked in
+                                 height = 2^m, width = #outputs</pre>
+
+  <h3>Don't Cares</h3>
+  <pre>Output X   value can be 0 or 1 — synthesizer's choice
+Input X    output independent of that input</pre>
+
+  <h3>1-Bit Full Adder</h3>
+  <pre>Sum     = a ⊕ b ⊕ Cin
+Cout    = a·b + b·Cin + a·Cin
+3 inputs, 2 outputs  →  "(3,2) adder"</pre>
+
+  <h3>Subtraction in a Two's-Complement ALU</h3>
+  <pre>a - b = a + ~b + 1
+       (set Binvert=1, CarryIn[bit0]=1)</pre>
+
+  <h3>Carry Lookahead</h3>
+  <pre>g_i = a_i · b_i      (generate)
+p_i = a_i + b_i      (propagate)
+c_{i+1} = g_i + p_i · c_i
+
+Group:
+P_i = p3·p2·p1·p0
+G_i = g3 + p3·g2 + p3·p2·g1 + p3·p2·p1·g0
+C_{i+1} = G_i + P_i · C_i
+
+Speed (16-bit): ripple ≈ 32 gate delays, 2-level CLA ≈ 5</pre>
+
+  <h3>Edge-Triggered Clock-Period Bound</h3>
+  <pre>T_clock ≥ t_prop_FF + t_comb_max + t_setup_FF (+ t_skew)</pre>
+
+  <h3>Latches vs Flip-Flops</h3>
+  <pre>D Latch       transparent while clock high (level-sensitive)
+D Flip-Flop   updates only on clock edge   (master+slave latches)</pre>
+
+  <h3>SRAM vs DRAM</h3>
+  <table>
+    <tr><th></th><th>SRAM</th><th>DRAM</th></tr>
+    <tr><td>Storage</td><td>Cross-coupled inverters</td><td>Capacitor + 1 pass transistor</td></tr>
+    <tr><td>Transistors/bit</td><td>4–6</td><td>1</td></tr>
+    <tr><td>Refresh?</td><td>No (powered)</td><td>Yes (every few ms)</td></tr>
+    <tr><td>Speed</td><td>Fast (2–20 ns)</td><td>Slow (45–65 ns)</td></tr>
+    <tr><td>Cost / bit</td><td>High</td><td>Low</td></tr>
+    <tr><td>Address scheme</td><td>Single address</td><td>RAS / CAS (two-level)</td></tr>
+    <tr><td>Use</td><td>Cache, registers</td><td>Main memory</td></tr>
+  </table>
+
+  <h3>Error Codes</h3>
+  <pre>Distance-2 = parity (detect 1)
+Distance-3 = SEC Hamming (correct 1)
+Distance-4 = SEC-DED (correct 1, detect 2)
+Cost: 7 bits per 64-bit word; 8 bits per 128-bit word</pre>
+
+  <h3>FSM</h3>
+  <pre>Moore   outputs = f(state)            faster, more states
+Mealy   outputs = f(state, inputs)    fewer states, output tracks input</pre>
+
+  <h3>Verilog Quick Hits</h3>
+  <pre>wire     combinational signal
+reg      can be sequential or combinational
+=        blocking — like C
+&lt;=       nonblocking — use for FF updates
+always @(posedge clock) Q &lt;= D;     // D flip-flop
+always @* C = A &amp; B;                // combinational</pre>
+
+  <h3>FPDs</h3>
+  <pre>SPLD    single PLA or PAL (PAL = fixed OR plane)
+CPLD    multiple logic blocks + interconnect
+FPGA    LUT cells + flip-flops + routing matrix
+        ~90% die area = interconnect</pre>
+</div>
+
+<!-- Self-test -->
+<h2 id="quiz">Self-Test Q&amp;A</h2>
+<div class="panel">
+
+  <details>
+    <summary>Combinational vs sequential, gates (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Define combinational logic.</div><div class="a">Logic with no memory — output depends only on current input. Same input → same output, every time.</div></div>
+      <div class="qa"><div class="q">Define sequential logic.</div><div class="a">Logic that contains state (memory). Output depends on current input AND stored state.</div></div>
+      <div class="qa"><div class="q">What does "asserted" mean?</div><div class="a">Logically true (1). "Deasserted" means logically false (0). The terms abstract away which voltage encodes which.</div></div>
+      <div class="qa"><div class="q">Why are NAND and NOR called universal?</div><div class="a">Any logic function can be built from a single inverting gate type. All other gates derive from these.</div></div>
+      <div class="qa"><div class="q">A 2-input mux is also universal — sketch how to build NOT.</div><div class="a">Wire S=A, input 0 = 1, input 1 = 0; output is ~A.</div></div>
+      <div class="qa"><div class="q">How many rows in a truth table for n inputs?</div><div class="a">2<sup>n</sup>.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Boolean algebra &amp; PLAs (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">State DeMorgan's two laws.</div><div class="a">~(A + B) = ~A · ~B and ~(A · B) = ~A + ~B.</div></div>
+      <div class="qa"><div class="q">What is sum-of-products form?</div><div class="a">A logical OR (sum) of product (AND) terms. The canonical 2-level form (after individual variable inversions) for any logic function.</div></div>
+      <div class="qa"><div class="q">What's a minterm?</div><div class="a">A product term in the AND plane of a PLA — a logical AND of inputs and/or their inverses corresponding to one truth-table row.</div></div>
+      <div class="qa"><div class="q">PLA vs ROM — which is more efficient for sparse logic and why?</div><div class="a">PLA. A ROM contains an entry for every possible input combination (2<sup>m</sup>), even if most go unused. A PLA encodes only the minterms that are actually needed.</div></div>
+      <div class="qa"><div class="q">What does ROM stand for, and what are PROM and EPROM?</div><div class="a">Read-Only Memory. PROM is a one-time-programmable ROM. EPROM is erasable (UV light).</div></div>
+      <div class="qa"><div class="q">What are output don't-cares useful for?</div><div class="a">They let logic minimization tools choose 0 or 1 for that input combination, which can collapse multiple truth-table rows together and shrink the gate network.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Decoders, multiplexors, buses (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">A 3-to-8 decoder — what's at its outputs?</div><div class="a">8 outputs; exactly one is asserted, corresponding to the binary value of the 3-bit input. All others are 0.</div></div>
+      <div class="qa"><div class="q">How is a multiplexor internally structured for n data inputs?</div><div class="a">Decoder generating n one-hot signals from log₂n select bits, AND each one-hot with the corresponding data input, OR the AND outputs.</div></div>
+      <div class="qa"><div class="q">A 64-bit-wide multiplexor selecting between two 64-bit buses — how many 1-bit muxes is that?</div><div class="a">64, all sharing the same select signal.</div></div>
+      <div class="qa"><div class="q">What is a "bus" in this context?</div><div class="a">A collection of data lines treated as a single logical signal, drawn as a thicker line in diagrams.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>1-bit ALU and full adder (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What does a (3,2) adder mean?</div><div class="a">A full adder — 3 inputs (a, b, CarryIn) and 2 outputs (Sum, CarryOut).</div></div>
+      <div class="qa"><div class="q">Write CarryOut as a Boolean equation.</div><div class="a">CarryOut = a·b + b·Cin + a·Cin.</div></div>
+      <div class="qa"><div class="q">Write Sum using XOR.</div><div class="a">Sum = a ⊕ b ⊕ CarryIn.</div></div>
+      <div class="qa"><div class="q">How does the ALU compute a − b?</div><div class="a">Asserts Binvert (so input 2 becomes ~b), sets the LSB CarryIn = 1; the adder computes a + ~b + 1 = a − b.</div></div>
+      <div class="qa"><div class="q">Why does this trick make two's complement universally cheap?</div><div class="a">Subtraction reuses the existing adder hardware — no separate subtractor needed.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Carry lookahead (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Define generate g_i and propagate p_i.</div><div class="a">g_i = a_i · b_i (carries out regardless of input). p_i = a_i + b_i (passes incoming carry through).</div></div>
+      <div class="qa"><div class="q">Write c_{i+1} in terms of g and p.</div><div class="a">c_{i+1} = g_i + p_i · c_i.</div></div>
+      <div class="qa"><div class="q">What's a "super propagate" P_i?</div><div class="a">AND of all the bit-level propagates in a group: P_i = p3·p2·p1·p0 — the group passes a carry only if every bit propagates.</div></div>
+      <div class="qa"><div class="q">Approximate gate-delay savings of a 16-bit two-level CLA vs ripple?</div><div class="a">~5 vs ~32 gate delays — about 6× faster.</div></div>
+      <div class="qa"><div class="q">Why doesn't software run the same speed-up?</div><div class="a">Hardware evaluates all gates in parallel. Software is sequential, so cleverness in algebra doesn't translate.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Verilog (6)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What's the difference between <code>wire</code> and <code>reg</code>?</div><div class="a">A <code>wire</code> is a combinational signal driven by continuous assignments. A <code>reg</code> holds a value across a simulation step and can be assigned only inside <code>always</code> or <code>initial</code> blocks.</div></div>
+      <div class="qa"><div class="q">Difference between blocking (=) and nonblocking (&lt;=) assignment?</div><div class="a">Blocking assigns immediately and blocks the next statement. Nonblocking evaluates all RHSs first, then assigns all LHSs simultaneously — needed for sequential logic so updates feel atomic on the clock edge.</div></div>
+      <div class="qa"><div class="q">How do you write a rising-edge D flip-flop in Verilog?</div><div class="a"><code>always @(posedge clock) Q &lt;= D;</code> with Q declared as a <code>reg</code>.</div></div>
+      <div class="qa"><div class="q">What three rules keep an <code>always</code> block from synthesizing into a latch?</div><div class="a">(1) Place all combinational logic in a continuous assign or always block. (2) Sensitivity list lists all inputs. (3) Every path through the always block assigns the same set of bits.</div></div>
+      <div class="qa"><div class="q">What does <code>{32{2'b01}}</code> evaluate to?</div><div class="a">A 64-bit value 0101...01 (the 2-bit pattern 01 repeated 32 times).</div></div>
+      <div class="qa"><div class="q">Behavioral vs structural Verilog?</div><div class="a">Behavioral describes what the logic does (synthesizes into something). Structural describes the circuit hierarchy explicitly (gates, modules, wires).</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Clocking, latches, flip-flops (7)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What does "edge-triggered" mean?</div><div class="a">All state changes occur on a clock edge (rising or falling), not while the clock is at a level.</div></div>
+      <div class="qa"><div class="q">Why is edge-triggered design preferred?</div><div class="a">Simpler to reason about. Allows reading and writing the same state element in one cycle without race because the write latches at the edge while the read sees the old value.</div></div>
+      <div class="qa"><div class="q">D latch vs D flip-flop?</div><div class="a">A D latch is transparent — Q tracks D while the clock is asserted. A D flip-flop changes only on a clock edge.</div></div>
+      <div class="qa"><div class="q">How is a falling-edge D-FF built from D latches?</div><div class="a">Master-slave: a D latch open while clock is high feeds a second D latch open while clock is low. The output changes only when the clock falls.</div></div>
+      <div class="qa"><div class="q">Define setup and hold time.</div><div class="a">Setup = minimum time the input must be valid before the clock edge. Hold = minimum time it must remain valid after the clock edge.</div></div>
+      <div class="qa"><div class="q">What is the formula for the minimum clock period?</div><div class="a">T ≥ t_prop(FF) + t_comb_max + t_setup(FF), plus skew margin if needed.</div></div>
+      <div class="qa"><div class="q">If the same register file slot is read and written in one cycle, what value do you read?</div><div class="a">The old value — the write doesn't take effect until the clock edge. To read the new value the same cycle, additional forwarding logic is needed.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>SRAM, DRAM, ECC (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why does SRAM use 4–6 transistors per bit while DRAM uses 1?</div><div class="a">SRAM stores the bit on cross-coupled inverters (need both an inverter pair and access transistors). DRAM stores it as charge on a capacitor accessed by one pass transistor.</div></div>
+      <div class="qa"><div class="q">Why must DRAM be refreshed?</div><div class="a">Because the capacitor leaks charge over a few milliseconds. The cell value would be lost without periodic read-then-rewrite.</div></div>
+      <div class="qa"><div class="q">What's the role of RAS and CAS?</div><div class="a">Address pins are reused: RAS (Row Access Strobe) tells the DRAM the bits on the address pins are a row address; CAS does the same for column. Two-step decode lets one set of pins serve both axes.</div></div>
+      <div class="qa"><div class="q">Why does refresh consume so few cycles (1–2%)?</div><div class="a">Because the row decode latches an entire row at once, refresh of all bits in one row happens in a single read-write cycle — far fewer cycles than touching every individual cell.</div></div>
+      <div class="qa"><div class="q">Why are tri-state buffers used in SRAM cell arrays?</div><div class="a">Many cells share one bit line; only the selected cell drives it. Tri-state's high-impedance state lets all unselected cells "disconnect."</div></div>
+      <div class="qa"><div class="q">What does DDR mean?</div><div class="a">Double Data Rate — transfers data on both rising and falling clock edges, doubling effective bandwidth.</div></div>
+      <div class="qa"><div class="q">What can a 1-bit parity code do and not do?</div><div class="a">Detect any single-bit error (and any odd number). Cannot correct any error. Cannot reliably detect 2-bit errors (parity matches again).</div></div>
+      <div class="qa"><div class="q">Cost of SEC-DED for a 64-bit word?</div><div class="a">7 extra bits per 64 data bits.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>FSMs (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What functions describe an FSM?</div><div class="a">A next-state function (state, inputs → next state) and an output function (state for Moore, or state + inputs for Mealy).</div></div>
+      <div class="qa"><div class="q">Difference between a Moore and a Mealy machine?</div><div class="a">Moore outputs depend only on state. Mealy outputs depend on state and inputs. Mealy may need fewer states; Moore is simpler/faster.</div></div>
+      <div class="qa"><div class="q">What is "state assignment" and why does it matter?</div><div class="a">Choosing the binary encoding of states. Smart assignment makes logic equations contain redundancy and minimize.</div></div>
+      <div class="qa"><div class="q">For the 2-state traffic light, when does it switch?</div><div class="a">Only when a car is waiting in the opposite direction. Otherwise it stays in the current state.</div></div>
+      <div class="qa"><div class="q">What's the typical hardware structure for an FSM?</div><div class="a">A state register holding the current state plus combinational logic (often a PLA or ROM) implementing the next-state and output functions.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Timing, skew, metastability (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is clock skew?</div><div class="a">The difference in absolute time at which two state elements see the same clock edge, caused by routing delay differences.</div></div>
+      <div class="qa"><div class="q">How does clock skew cause a race?</div><div class="a">If skew exceeds the propagation delay through a flip-flop, the data from FF1 can reach FF2's input before FF2's clock edge arrives — FF2 captures the new value instead of the intended old one.</div></div>
+      <div class="qa"><div class="q">What is metastability?</div><div class="a">A flip-flop's output settling in the indeterminate region between high and low for an unbounded time, after sampling an input that violated setup/hold.</div></div>
+      <div class="qa"><div class="q">What is synchronizer failure?</div><div class="a">Different downstream gates reading the metastable output and disagreeing — some see 1, some see 0 — diverging system state.</div></div>
+      <div class="qa"><div class="q">How does a 2-FF synchronizer mitigate metastability?</div><div class="a">FF1 may go metastable, but its output has one full clock period to resolve before FF2 samples it — making the probability of a metastable output reaching downstream logic vanishingly small (years/decades MTBF).</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>FPDs (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">SPLD vs FPGA?</div><div class="a">SPLD = single PLA or PAL (combinational only, simple). FPGA = array of LUT-based cells with flip-flops, configurable interconnect, supports complex sequential designs.</div></div>
+      <div class="qa"><div class="q">What's a LUT?</div><div class="a">Lookup Table — a small RAM whose contents are the truth table of the function the cell implements.</div></div>
+      <div class="qa"><div class="q">Difference between PLA and PAL?</div><div class="a">PLA has both AND and OR planes programmable. PAL has a programmable AND plane and a fixed OR plane.</div></div>
+      <div class="qa"><div class="q">What two configuration mechanisms are common in FPDs?</div><div class="a">Antifuse (one-time, permanent) and SRAM-based (volatile, reconfigurable on power-up).</div></div>
+    </div>
+  </details>
+
+</div>
+
+<!-- Common Traps -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"A latch and a flip-flop are the same thing."</b> <span class="no">No.</span> A latch is level-sensitive (transparent while clock is asserted). A flip-flop changes only on a clock edge.</li>
+    <li><b>"A 1-bit parity code can detect any 2-bit error."</b> <span class="no">No.</span> 2 errors flip parity twice, restoring the match. Parity detects only odd numbers of errors (in practice, single-bit).</li>
+    <li><b>"SRAM is faster than DRAM because it has more transistors per bit."</b> <span class="no">Misleading.</span> SRAM is faster because it stores state in inverters (no precharge, no sense amp, no refresh). Transistor count is a consequence, not the cause.</li>
+    <li><b>"DRAM is too slow to use because of refresh."</b> <span class="no">No.</span> Refresh consumes only 1–2% of cycles because whole rows refresh in one cycle. The other 98% are available for reads/writes.</li>
+    <li><b>"Carry lookahead computes carries serially, just faster gates."</b> <span class="no">No.</span> CLA computes all the carries in parallel using generate/propagate signals — that's where the speedup comes from.</li>
+    <li><b>"You can't read and write the same register in one clock cycle."</b> <span class="no">You can.</span> Edge-triggered registers permit it: the read sees the value stable before the edge, the write happens at the edge.</li>
+    <li><b>"Mealy machines are always smaller than Moore machines."</b> <span class="no">Sometimes.</span> Mealy can use fewer states, but it isn't guaranteed. The two are functionally equivalent.</li>
+    <li><b>"In Verilog, '&lt;=' is the comparison operator."</b> <span class="no">Not in this context.</span> Inside an <code>always</code> block, <code>&lt;=</code> is the nonblocking-assignment operator. (It IS still &le; comparison in expressions.)</li>
+    <li><b>"Don't-cares are bugs in the spec."</b> <span class="no">No.</span> They are an intentional way to give the logic minimizer freedom to merge truth-table rows and reduce gate count.</li>
+    <li><b>"Two-FF synchronizers eliminate metastability."</b> <span class="no">Reduce, not eliminate.</span> Probability shrinks exponentially over time but never reaches 0. Designers tolerate a vanishingly small failure rate (years between failures).</li>
+    <li><b>"NOR can be built from AND and OR but not the reverse."</b> <span class="no">Backwards.</span> NOR is universal — AND, OR, NOT can all be built from NOR alone. Same for NAND.</li>
+    <li><b>"PLAs and ROMs implement different kinds of functions."</b> <span class="no">No.</span> Both implement combinational logic. The difference is encoding: ROM is fully decoded (one entry per input combination), PLA is sparse (one minterm per active product term).</li>
+    <li><b>"Edge-triggered means the state changes whenever the clock is high."</b> <span class="no">No.</span> That's level-sensitive. Edge-triggered means changes happen only at the rising or falling edge.</li>
+    <li><b>"A bus is just a wire."</b> <span class="no">No.</span> A bus is a collection of data lines treated as a single logical signal — and may be a shared resource with multiple drivers (using tri-state).</li>
+    <li><b>"FPGAs are mostly logic."</b> <span class="no">No.</span> ~90% of FPGA die area is interconnect; logic and memory blocks are only ~10%.</li>
+  </ul>
+</div>
+
+<hr/>
+<p class="hint">Source: WGU C952 zyBook Chapter 9 — "Logic Design Basics" (COD Appendix A content). Chapter is marked <i>Optional</i> in zyBook.</p>
+
+</div>
+<script>
+  (function() {
+    var btn = document.getElementById('themeBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var next;
+      if (!current) {
+        next = prefersLight ? 'dark' : 'light';
+      } else {
+        next = current === 'dark' ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>

@@ -3,36 +3,782 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex,nofollow" />
-<title>C952 — Chapter 12 Study Guide</title>
+<title>C952 — Chapter 12 Study Guide: Survey of RISC Architectures</title>
 <style>
-  :root { --bg:#0f1115; --panel:#161a22; --panel-2:#1d222c; --border:#2a3140; --text:#e6e8ec; --muted:#9aa3b2; --accent:#7cc4ff; }
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222c;
+    --border: #2a3140;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #7cc4ff;
+    --warn: #f3b95f;
+    --good: #6ad29a;
+    --bad: #ff8a7a;
+    --code-bg: #0b0d12;
+    --hl: #2a3a55;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+      --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --warn: #b86a00; --good: #1d8a5a; --bad: #c0392b;
+    --code-bg: #f1f3f7; --hl: #d6e4ff; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --warn: #f3b95f; --good: #6ad29a; --bad: #ff8a7a;
+    --code-bg: #0b0d12; --hl: #2a3a55; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
   * { box-sizing: border-box; }
   html, body { background: var(--bg); color: var(--text); }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 22px 60px; }
   header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.2px; }
   header .sub { color: var(--muted); font-size: 13px; }
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 10px 0; color: var(--muted); }
-  .chnav { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; font-size: 13px; }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 14px; margin: 14px 0 22px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  h2 { font-size: 18px; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--text); opacity: 0.92; }
+  p { margin: 6px 0 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 8px 0 14px; }
+  .grid { display: grid; gap: 10px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .term { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+  .term b { color: var(--text); }
+  .term .d { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  pre, code { font-family: ui-monospace, Consolas, "Cascadia Mono", "JetBrains Mono", monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-left: 6px; }
+  .b-exam { background: rgba(243,185,95,0.15); color: var(--warn); border: 1px solid rgba(243,185,95,0.35); }
+  .b-key  { background: rgba(124,196,255,0.12); color: var(--accent); border: 1px solid rgba(124,196,255,0.35); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--text); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(127,127,127,0.05); }
+  .formula { background: var(--code-bg); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+  ul { margin: 4px 0 10px 18px; padding: 0; }
+  li { margin: 3px 0; }
+  details { margin: 8px 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; }
+  details summary { cursor: pointer; padding: 8px 12px; font-weight: 600; outline: none; user-select: none; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .body { padding: 10px 14px; }
+  .qa { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .qa:last-child { border-bottom: none; }
+  .qa .q { font-weight: 600; margin-bottom: 4px; }
+  .qa .a { color: var(--muted); font-size: 13.5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin: 0 4px 4px 0; }
+  .ok { color: var(--good); }
+  .no { color: var(--bad); }
+  .hl { background: var(--hl); padding: 0 3px; border-radius: 3px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+  .chnav { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 14px; font-size: 13px; }
   .chnav a { color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); }
   .chnav a:hover { border-color: var(--accent); }
   .chnav .spacer { visibility: hidden; }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
 <div class="wrap">
   <nav class="chnav">
-    <a href="ch11.html">← Ch 11</a>
+    <a href="ch11.html">&larr; Ch 11</a>
     <a href="index.html">All chapters</a>
-    <span class="spacer">·</span>
+    <a class="spacer" href="#">next</a>
   </nav>
-  <header>
-    <h1>C952 — Chapter 12 Study Guide</h1>
-    <div class="sub">Placeholder — fill in from zyBooks ch12.</div>
-  </header>
-  <div class="panel">TODO: chapter 12 content.</div>
+
+<header>
+  <h1>C952 — Chapter 12 Study Guide <span class="badge b-key">Survey of RISC Architectures</span></h1>
+  <div class="sub">10 RISC ISAs: MIPS-64, Alpha, SPARC v9, PowerPC, PA-RISC 2.0, ARM, Thumb, SuperH, M32R, MIPS-16 — WGU C952 zyBook Ch12 (COD Appendix D)</div>
+</header>
+
+<div class="toc">
+  <a href="#s1">12.1 Introduction</a>
+  <a href="#s2">12.2 Addressing &amp; Formats</a>
+  <a href="#s3">12.3 MIPS Core Subset</a>
+  <a href="#s4">12.4 Multimedia (SIMD) Ext</a>
+  <a href="#s5">12.5 DSP Extensions</a>
+  <a href="#s6">12.6 Common Extensions to MIPS</a>
+  <a href="#s7">12.7 MIPS-64 Unique</a>
+  <a href="#s8">12.8 Alpha Unique</a>
+  <a href="#s9">12.9 SPARC v9 Unique</a>
+  <a href="#s10">12.10 PowerPC Unique</a>
+  <a href="#s11">12.11 PA-RISC 2.0 Unique</a>
+  <a href="#s12">12.12 ARM Unique</a>
+  <a href="#s13">12.13 Thumb Unique</a>
+  <a href="#s14">12.14 SuperH Unique</a>
+  <a href="#s15">12.15 M32R Unique</a>
+  <a href="#s16">12.16 MIPS-16 Unique</a>
+  <a href="#s17">12.17 Concluding Remarks</a>
+  <a href="#cheat">Cheat Sheet</a>
+  <a href="#quiz">Self-Test Q&amp;A</a>
+  <a href="#trap">Common Exam Traps</a>
 </div>
+
+<p class="hint">zyBook flags this whole chapter as <i>Optional</i>. It is COD Appendix D, a quick survey. The unifying theme: 10 RISC ISAs are remarkably similar — most "uniqueness" boils down to small differences in branch handling, immediates, and register conventions.</p>
+
+<!-- 12.1 -->
+<h2 id="s1">12.1 Introduction <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>"RISC: any computer announced after 1985." The 10 architectures fall into two groups:</p>
+
+  <h3>Two Groups</h3>
+  <table>
+    <tr><th>Desktop / Server RISCs</th><th>Embedded RISCs</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>Digital Alpha</li>
+          <li>HP PA-RISC</li>
+          <li>IBM/Motorola PowerPC</li>
+          <li>MIPS Inc. MIPS-64</li>
+          <li>Sun SPARC</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>ARM (ARM v4)</li>
+          <li>ARM Thumb (v1)</li>
+          <li>Hitachi SuperH (SH-3)</li>
+          <li>Mitsubishi M32R (v1)</li>
+          <li>MIPS-16 (v1)</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h3>Headline Differences <span class="badge b-key">key</span></h3>
+  <ul>
+    <li>Desktop/server RISCs: <b>32 GPRs</b>, all instructions <b>32 bits</b>, modern versions are <b>flat 64-bit address</b>.</li>
+    <li>Embedded RISCs: <b>8–16 GPRs</b>, instructions <b>16 or 32 bits</b>.</li>
+    <li><b>Thumb</b> and <b>MIPS-16</b> are not standalone ISAs — they are 16-bit modes of ARM/MIPS, switched into via a call. Procedures must be all 16-bit or all 32-bit (no mixing inside a procedure).</li>
+  </ul>
+  <p class="hint">Survey order in the book: addressing modes & formats → MIPS core subset → multimedia extensions → DSP extensions → common extensions → unique features per ISA.</p>
+</div>
+
+<!-- 12.2 -->
+<h2 id="s2">12.2 Addressing Modes &amp; Instruction Formats <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Simplified addressing modes are a defining RISC trait. All desktop RISCs reserve one register that always reads as 0; this lets <b>absolute</b> and <b>register-indirect</b> be synthesized from <b>displacement</b> with a 0 base or 0 offset (PowerPC's r0 differs slightly — usable, can change).</p>
+
+  <h3>Desktop vs Embedded Addressing</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Desktop RISCs</b><span class="d">Mostly base + displacement only. PA-RISC adds short offset variants. MIPS-64 adds indexed for FP load/store.</span></div>
+    <div class="term"><b>Embedded RISCs</b><span class="d">No reserved zero register. ARM and SuperH offer richer modes, including shift-and-add forms; ARM can shift one register, add to another, and write back to one in a single mode.</span></div>
+  </div>
+
+  <h3>PC-Relative Branches</h3>
+  <ul>
+    <li>Desktop RISCs (32-bit aligned instructions): branch offset is <b>shifted left 2 bits</b> before adding to PC → 4× the reach.</li>
+    <li>Embedded RISCs (16-bit aligned): offset is shifted left 1 bit → 2× the reach.</li>
+    <li>Procedure return / case / function-pointer: jump-register-indirect.</li>
+  </ul>
+
+  <h3>Instruction Formats</h3>
+  <table>
+    <tr><th>Group</th><th>Number of formats</th><th>Notes</th></tr>
+    <tr><td>Desktop/server RISCs</td><td>4 primary formats</td><td>R-R, R-immediate (data transfer), branch, jump/call. Alpha has a separate format for arithmetic immediates (8-bit immediate in bits 20:13).</td></tr>
+    <tr><td>Embedded RISCs</td><td>6 formats</td><td>More formats because mixing 16- and 32-bit instructions and 8/16 register sets demands extra encoding.</td></tr>
+  </table>
+
+  <h3>Constant Extension Tricks</h3>
+  <ul>
+    <li>Most desktops: sign-extend immediates to 64 bits (or 32). Exception: MIPS jump/call constants are not sign-extended — they replace the lower 28 bits of PC.</li>
+    <li>16-bit-instruction ISAs have only 5–8 bit immediates, so most provide a 2-instruction sequence to build a long address (e.g., load upper, load lower).</li>
+    <li><b>ARM 8-bit immediate trick:</b> the 8-bit value is rotated right by an even number (2–30) chosen by 4 bits in the instruction. Result: every power of two is encodable as a single immediate.</li>
+  </ul>
+</div>
+
+<!-- 12.3 -->
+<h2 id="s3">12.3 Instructions: The MIPS Core Subset <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>~90% of executed instructions in any of these 10 ISAs are equivalent to the MIPS core. Categories:</p>
+  <ol>
+    <li>Data transfer</li>
+    <li>Arithmetic / logical</li>
+    <li>Control</li>
+    <li>Floating point (mostly absent on embedded RISCs)</li>
+    <li>Conventions (register usage, pseudoinstructions)</li>
+  </ol>
+
+  <h3>Compare-and-Branch Strategies <span class="badge b-key">key</span> — the biggest divergence</h3>
+  <table>
+    <tr><th>ISA</th><th>Mechanism</th></tr>
+    <tr><td><b>SPARC</b></td><td>Four condition codes (N, Z, C, V) in PSW — optional per instruction. Explicit compare = subtract with r0 destination. v9 added 64-bit CC set, register-test branches, FP CCs, branch-prediction bit.</td></tr>
+    <tr><td><b>PowerPC</b></td><td>Eight 4-bit CC registers (LT, GT, EQ, SO). Compare may target any of the 8. CR-logical instructions (CRAND, CROR, CRXOR, etc.) combine CCs.</td></tr>
+    <tr><td><b>MIPS</b></td><td>No integer CCs. <code>BEQ</code>/<code>BNE</code> compare two GPRs. <code>SLT/SLTI/SLTU/SLTIU</code> compute "less than" into a register. Special compare-with-zero branches (<code>BGEZ, BGTZ, BLEZ, BLTZ</code>). FP uses CCs (1 in MIPS I, 8 in MIPS IV).</td></tr>
+    <tr><td><b>Alpha</b></td><td><code>CMPxx</code> writes 1/0 into a GPR. FP compares write 2.0/0.0. Branches compare a register against 0 or test its LSB.</td></tr>
+    <tr><td><b>PA-RISC</b></td><td>Many branch options including <code>COMB</code> (compare and branch). Heavy use of nullification.</td></tr>
+    <tr><td><b>ARM</b></td><td>Four CCs, optionally set. <code>CMP</code> = subtract, <code>CMN</code> = add, <code>TST</code> = AND, <code>TEQ</code> = XOR. Every instruction is conditionally executable on CCs.</td></tr>
+    <tr><td><b>Thumb</b></td><td>Same CCs as ARM, but <i>setting</i> them is not optional and there's no conditional execution of arbitrary instructions.</td></tr>
+    <tr><td><b>SuperH</b></td><td>Single T-bit set by compares. Branch <code>BT</code> if T=1, <code>BF</code> if T=0.</td></tr>
+    <tr><td><b>M32R</b></td><td>Single C-bit. <code>BC</code>/<code>BNC</code>. Also <code>BEQ/BNE</code> + register-zero branches (32-bit forms).</td></tr>
+    <tr><td><b>MIPS-16</b></td><td>SLT writes into a special <b>T register</b> (= MIPS GPR 24). Branches: <code>BTEQZ</code>/<code>BTNEZ</code> test T; <code>BEQZ</code>/<code>BNEZ</code> test other regs. Added <code>CMP, CMPI</code> (XOR, result in T) since BEQ/BNE were dropped.</td></tr>
+  </table>
+</div>
+
+<!-- 12.4 -->
+<h2 id="s4">12.4 Multimedia (SIMD) Extensions for Desktop RISCs</h2>
+<div class="panel">
+  <p>By partitioning the carry chain in a 64-bit ALU, the same hardware can do parallel ops on packed bytes (8B), halfwords (4H), or words (2W). Origin: Intel i860 (1989). Sometimes called <b>subword parallelism</b>, vector, or <b>SIMD</b>; "SIMD" stuck because Intel marketed MMX that way.</p>
+
+  <h3>Per-ISA Multimedia Support</h3>
+  <table>
+    <tr><th>ISA</th><th>Extension name</th><th>Notes</th></tr>
+    <tr><td>HP PA-RISC</td><td>MAX2</td><td>4H ops; first desktop RISC to add multimedia. Includes average instruction.</td></tr>
+    <tr><td>SPARC</td><td>VIS</td><td>4H or 2W. Includes constant-set instructions, memory alignment ops.</td></tr>
+    <tr><td>MIPS</td><td>MDMX</td><td>8B or 4H. Adds a 192-bit (3×64) accumulator partitioned to 8B×24 or 4H×48 bits. Vector/scalar variants. Claimed 2–4× speedup.</td></tr>
+    <tr><td>Alpha</td><td>MAX</td><td>Minimal: byte versions of compare, min, max, abs-diff. Software does the rest.</td></tr>
+    <tr><td>PowerPC</td><td>(holdout)</td><td>Was last to adopt multimedia.</td></tr>
+  </table>
+
+  <h3>Saturating Arithmetic <span class="badge b-key">key</span></h3>
+  <p>On overflow, the result clamps to MAX or MIN instead of wrapping (mod). Common in DSP filtering. Helpful for audio/video where wrap-around would be a worse error than clipping.</p>
+
+  <p class="hint">Common across all four: only AND/OR/XOR — they don't need a partitioned ALU. Compilers can't easily target multimedia portably; these ops are intended for hand-written subroutine libraries.</p>
+</div>
+
+<!-- 12.5 -->
+<h2 id="s5">12.5 DSP Extensions for Embedded RISCs</h2>
+<div class="panel">
+  <p>The defining DSP feature: <b>integer multiply-accumulate</b> (MAC). Multiplies are typically narrow (16 bits) and accumulators are wide (≥ 32, often 64). MAC efficiently implements digital filters.</p>
+
+  <ul>
+    <li>Accumulators between 32 and 64 bits perform <b>saturation</b> on overflow (force max/min fixed-point).</li>
+    <li>Thumb and MIPS-16 are subsets — they have no DSP extensions; programmers use the 32-bit ARM/MIPS-64 modes for DSP work.</li>
+  </ul>
+</div>
+
+<!-- 12.6 -->
+<h2 id="s6">12.6 Common Extensions to the MIPS Core <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <p>Instructions <i>not</i> in the MIPS core but found in two or more ISAs.</p>
+
+  <h3>Notable Categories</h3>
+  <div class="grid grid-2">
+    <div class="term"><b>Atomic swap</b><span class="d">Exchange a register with memory uninterrupted. Foundation for OS semaphores and multiprocessor sync. (Cf. MIPS LL/SC.)</span></div>
+    <div class="term"><b>64-bit data transfer/ops</b><span class="d">SPARC: registers are 64 bits, only specific 64-bit shift/transfer/branch added. MIPS: separate 64-bit signed arithmetic. PowerPC: separate 32/64 mode bit; 64-bit ops fail in 32-bit mode. PA-RISC 2.0 went 64-bit.</span></div>
+    <div class="term"><b>Prefetch</b><span class="d">Address + hint (read/write soon, once vs many times). Never traps. MIPS has a 2-register-address form for FP code.</span></div>
+    <div class="term"><b>Endian bit</b><span class="d">"Big/little" entry: a PSR bit lets the processor act either way — implemented by complementing low address bits in data transfers.</span></div>
+    <div class="term"><b>Shared-memory sync</b><span class="d">All loads/stores before the instruction must complete before any after. Enables cache-coherent multiprocessor ordering.</span></div>
+    <div class="term"><b>Coprocessor ops</b><span class="d">Hooks for processor-specific extensions (e.g., FP, crypto).</span></div>
+  </div>
+
+  <h3>Branch Variants <span class="badge b-key">key</span></h3>
+  <table>
+    <tr><th>Variant</th><th>Behavior</th><th>Found on</th></tr>
+    <tr><td>Immediate (no delay slot)</td><td>Branch takes effect immediately; relies on branch prediction.</td><td>Alpha, PowerPC, all embedded RISCs (except SuperH option)</td></tr>
+    <tr><td>Delayed branch</td><td>Instruction in delay slot always executes.</td><td>MIPS, SPARC, PA-RISC, SuperH (optional)</td></tr>
+    <tr><td><b>SPARC annulling</b></td><td>Delay-slot instruction executes only if branch is taken — lets the compiler put the branch <b>target</b> instruction in the slot.</td><td>SPARC</td></tr>
+    <tr><td><b>MIPS branch likely</b></td><td>Annul if branch is NOT taken.</td><td>Later MIPS</td></tr>
+    <tr><td><b>PA-RISC nullification</b></td><td>Almost any instruction may annul the next; rule depends on branch direction & taken/not-taken (forward not taken or backward taken).</td><td>PA-RISC</td></tr>
+  </table>
+</div>
+
+<!-- 12.7 -->
+<h2 id="s7">12.7 Instructions Unique to MIPS-64 <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <ul>
+    <li><b>Misaligned word transfers:</b> <code>LWL</code>/<code>LWR</code>/<code>SWL</code>/<code>SWR</code> (and 64-bit forms) load/store a word that crosses an alignment boundary in just two instructions.</li>
+    <li><b>NOR</b> = <code>~(Rs1 | Rs2)</code>.</li>
+    <li><b>Constant shift amount</b> uses a 5-bit field in the R-format.</li>
+    <li><b>SYSCALL</b> traps into the OS.</li>
+    <li><b>CTCi/CFCi</b> move data between integer and control registers.</li>
+    <li><b>Jump/call NOT PC-relative</b> — 26-bit address shifted left 2 and replaces low 28 bits of PC. Only matters near a 256 MB boundary.</li>
+    <li><b>TLB instructions:</b> MIPS I handled TLB misses in software; instructions to manipulate TLB regs are coprocessor ops, vary across MIPS versions.</li>
+    <li><b>Reciprocal &amp; reciprocal sqrt</b> — fast, not IEEE-754 rounded.</li>
+    <li><b>BGEZAL / BLTZAL</b> — conditional procedure-call (branch-and-link if &ge;0 or &lt;0). Gives PC-relative call.</li>
+    <li><b>Paired-single FP:</b> two parallel 32-bit FP ops on a 64-bit register: <code>ADD.PS, SUB.PS, MUL.PS, MADD.PS, MSUB.PS</code>, etc.</li>
+    <li>FP can run in parallel with integer if early checks confirm no FP exception possible (otherwise serialized).</li>
+  </ul>
+</div>
+
+<!-- 12.8 -->
+<h2 id="s8">12.8 Instructions Unique to Alpha</h2>
+<div class="panel">
+  <p>Two original controversial choices: <b>imprecise FP exceptions</b> and <b>no byte/halfword loads/stores</b> (until 21164A).</p>
+
+  <ul>
+    <li><b>TRAPB</b> — stalls until prior arithmetic instructions are guaranteed exception-free. Used to enforce precise FP exceptions; one TRAPB per FP op slows code ~5×.</li>
+    <li>NaN, infinity, and denormal handling are done in software → require precise interrupts → require TRAPB.</li>
+    <li><b>Byte manipulation:</b> <code>EXTxx</code> (extract field), <code>INSxx</code> (insert field), <code>MSKxx</code> (mask), <code>ZAP</code> (zero fields), <code>CMPGE</code> (compare bytes).</li>
+    <li><b>PAL code</b> = privileged architecture library. Mode with all privileges, interrupts off, VM mapping off. Used for TLB management, atomic ops, OS primitives. Invoked via <code>CALL_PAL</code>.</li>
+    <li><b>No integer divide.</b></li>
+    <li><b>LDQ_U/STQ_U</b> — 64-bit unaligned load/store using addresses with low 3 bits ignored; combine with extract instructions.</li>
+    <li><b>Single-precision FP held as double</b> in registers; converted on load/store.</li>
+    <li>FP register <b>F31 = 0</b> (hardwired).</li>
+    <li><b>VAX FP formats</b> F and G are supported in addition to IEEE 754 S and T (D dropped — exponent too narrow).</li>
+    <li><b>Bit-count instructions:</b> <code>CTLZ</code>, <code>CTTZ</code>, <code>CTPOP</code> (added in v3) — useful for crypto.</li>
+  </ul>
+</div>
+
+<!-- 12.9 -->
+<h2 id="s9">12.9 Instructions Unique to SPARC v9 <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Register Windows <span class="badge b-key">key</span></h3>
+  <p>The defining SPARC feature. Multiple banks of registers; each procedure call allocates a new window. Banks act as a circular buffer (no fixed call depth limit; sweet spot 6–8 banks). Each window typically holds 8 globals + 8 locals + 8 incoming + 8 outgoing parameters = 16 unique regs/window. Implementations may have 40–520 physical registers (typically 128–136).</p>
+  <ul>
+    <li>Window changes use separate <code>SAVE</code>/<code>RESTORE</code> instructions, not call/return.</li>
+    <li><code>SAVE</code>: source from caller's window, dest in callee's window — also used to allocate stack frame.</li>
+    <li><code>RESTORE</code>: inverse — dest in caller's window, deallocates frame; also used for return-value setup.</li>
+    <li>Doesn't necessarily slow the clock — cache access dominates register access in practice.</li>
+  </ul>
+
+  <h3>Other SPARC Features</h3>
+  <ul>
+    <li><b>Alternate-space load/store</b> — distinguish memory accesses to I/O devices and control registers.</li>
+    <li><b>Fast traps:</b> ≥ 4 trap levels so window over/underflow handlers can themselves be interrupted; <code>RETRY</code>, <code>DONE</code>, and <code>RETURN</code> instructions support multilevel trap return.</li>
+    <li><b>Tagged add/subtract</b> (<code>TADDcc</code>, <code>TSUBcc</code>) — designed for LISP/Smalltalk. Low 2 bits = type tag; <code>00</code> = integer. Sets overflow if either operand is non-integer or result too large.</li>
+    <li><b>Overlapped int/FP execution:</b> queue of pending FP instructions; <code>RDPR</code> empties it.</li>
+    <li><b>FSQRTS/FSQRTD/FSQRTQ</b> — FP square root.</li>
+    <li><b>JMPL Rd</b> — Rd specifies the return address register (Rd = r31 ≈ MIPS JALR; Rd = r0 ≈ MIPS JR).</li>
+    <li><b>LDSTUB</b> — atomic byte load + store 0xFF (synchronization primitive, v8).</li>
+    <li><b>CASA/CASXA</b> — atomic compare-and-swap on 32 / 64 bits (v9). Foundation for wait-free synchronization.</li>
+    <li><b>BPcc/BPr/FBPcc</b> — branches with prediction-hint bit.</li>
+    <li><b>ILLTRAP</b> — illegal instruction trap (used for aggregate returns in C).</li>
+    <li><b>POPC</b> — population count.</li>
+    <li><b>Nonfaulting loads</b> — speculative loads that won't fault if the address is bad.</li>
+    <li><b>Quad-precision FP</b> — registers act as 8×128-bit.</li>
+    <li><b>XNOR</b> — XOR with complement of operand 2.</li>
+  </ul>
+</div>
+
+<!-- 12.10 -->
+<h2 id="s10">12.10 Instructions Unique to PowerPC</h2>
+<div class="panel">
+  <h3>Link &amp; Count Registers <span class="badge b-key">key</span></h3>
+  <ul>
+    <li><b>Link register</b>: dedicated register holds return address on call. No reg file read needed for return → faster jumps.</li>
+    <li><b>Count register</b>: dedicated register for loop iteration counts. Branch-on-count auto-decrements. Branch hardware sees the value early in the cycle → easy prediction.</li>
+    <li>Both registers can also serve as branch <b>target</b> address sources: <code>BCLR</code> (branch via link register), <code>BCCTR</code> (via count register).</li>
+  </ul>
+
+  <h3>Other PowerPC Quirks</h3>
+  <ul>
+    <li>Register 0 is <b>not</b> hardwired to 0. As a base register it generates 0; as an index in base+index it works normally.</li>
+    <li><b>Load/store multiple</b> — save/restore up to 32 regs in one instruction.</li>
+    <li><b>LSW/STSW</b> — fixed/variable-length string transfers, arbitrary alignment.</li>
+    <li><b>Rotate-with-mask</b> — extract or insert a bit field by rotating then masking. Two flavors.</li>
+    <li><b>Algebraic right shift</b> — sets carry (CA) if operand is negative and 1-bits are shifted out → enables signed power-of-2 divide via <code>SRAWI; ADDZE</code>.</li>
+    <li><b>CBTLZ</b> count leading zeros.</li>
+    <li><b>SUBFIC</b> = immediate - RA → builds 1's/2's complement.</li>
+    <li><b>Logical shifted immediate</b> — shift the 16-bit immediate left 16 bits before AND/OR/XOR.</li>
+  </ul>
+</div>
+
+<!-- 12.11 -->
+<h2 id="s11">12.11 Instructions Unique to PA-RISC 2.0</h2>
+<div class="panel">
+  <p>Has the most addressing modes, the most instruction formats, and many "two-instructions-in-one" hybrids of any desktop RISC.</p>
+
+  <h3>Nullification <span class="badge b-key">key</span></h3>
+  <p>Generalized to any arithmetic/logical instruction or branch. An ADD can compute, store, AND skip the next instruction if the sum is zero. Eliminates branches around single-instruction <code>then</code> bodies.</p>
+
+  <h3>Lots of Conditional Branches</h3>
+  <p>Despite nullification, PA-RISC has the largest set of conditional branches of any RISC. 16 conditions: =, &lt;, &le;, odd, signed overflow, unsigned no-overflow, zero or no-overflow unsigned, never, plus complements. <code>BB</code> branches on a selected bit; <code>BVB</code> uses the shift-amount register.</p>
+
+  <h3>Other PA-RISC Quirks</h3>
+  <ul>
+    <li><b>Synthesized multiply/divide</b> — primitives shift one operand 1/2/3 bits and add (mul step). Divide step does nonrestoring divide. Avg multiply-by-constant ≈ 6 cycles, multiply-by-variable ≈ 24 cycles. PA-RISC has 10 such mul/div primitive instructions.</li>
+    <li><b>Decimal ops</b> for COBOL: 4 bits/digit. 5 instructions provide adjust/condition-code support after a binary add.</li>
+    <li><b>Branch vectored</b> — index reg shifted left 3, added to base, branch to result. For switch statements.</li>
+    <li><b>Extract / deposit</b> — 12 instructions for bit-field manipulation.</li>
+    <li><b>ADDIL</b> — add a left-adjusted 21-bit constant to a register, place result in r1. Followed by data transfer with 11-bit offset → encodes 32-bit constant addressing in 2 instructions.</li>
+    <li><b>9 debug instructions</b> for breakpoints on instruction or data addresses.</li>
+    <li><b>Load-and-clear</b> — semaphore: read value, write 0.</li>
+    <li><b>Store bytes short</b> — unaligned data move, leftmost or rightmost bytes.</li>
+    <li><b>Cache hints</b> on loads/stores. Load with destination = r0 = software-controlled cache prefetch. PA-RISC 2.0 extended hints to stores (for block copy: don't load into cache).</li>
+    <li><b>Branch target stack</b> (optional in 2.0) for indirect jump prediction (subroutine returns).</li>
+    <li><b>Multiply/add</b> and <b>multiply/subtract</b> — two FP ops per instruction, plus fused multiply-add and fused multiply-negate-add.</li>
+  </ul>
+</div>
+
+<!-- 12.12 -->
+<h2 id="s12">12.12 Instructions Unique to ARM <span class="badge b-exam">core</span></h2>
+<div class="panel">
+  <h3>Conditional Execution of EVERY Instruction <span class="badge b-key">key</span></h3>
+  <p>Each instruction starts with a 4-bit condition field. If the condition is false, the instruction acts as a NOP. Conditional branches are just conditionally-executing unconditional branches. Saves space and time by avoiding branches around single instructions.</p>
+
+  <h3>12-Bit Immediate Trick</h3>
+  <p>Low 8 bits zero-extended to 32, then rotated right by (high 4 bits × 2) bits. Lets every power of two fit in a single immediate.</p>
+
+  <h3>Operand Shifting</h3>
+  <p>The 2nd register operand of any arithmetic/logical instruction may be pre-shifted (LSL, LSR, ASR, ROR). Enables rotate-and-add, shift-right-and-test, etc., as one-cycle fused ops.</p>
+
+  <h3>Other ARM Features</h3>
+  <ul>
+    <li><b>Block load/store (LDM/STM)</b> — 16-bit register-mask in the instruction; loads or stores any subset of the 16 GPRs in a single instruction. Used for procedure entry/return and memory copy.</li>
+    <li><b>RSB</b> (reverse subtract) and <b>RSC</b> (with carry) — first register subtracted from immediate or shifted register.</li>
+    <li><b>Long multiplies:</b> <code>SMULL</code>/<code>UMULL</code> produce 64-bit signed/unsigned product into Hi/Lo regs.</li>
+    <li><b>No integer divide.</b></li>
+    <li><b>Conditional trap is free</b> (every instruction including SWI is conditional).</li>
+    <li><b>Coprocessor interface</b>: data transfer, GPR↔coproc moves, coproc ops. FP architecture (FPA10) was originally implemented as a coprocessor.</li>
+    <li><b>BX</b> (branch and exchange) — switches between ARM and Thumb modes. Lower 31 bits of register → PC; MSB selects ARM (1) / Thumb (0).</li>
+  </ul>
+</div>
+
+<!-- 12.13 -->
+<h2 id="s13">12.13 Instructions Unique to Thumb</h2>
+<div class="panel">
+  <p>Thumb is a 16-bit-instruction subset of ARM, translated by hardware into ARM ops. Hot procedures use ARM (performance), cold procedures use Thumb (code density).</p>
+
+  <h3>Restrictions vs ARM</h3>
+  <ul>
+    <li><b>No conditional execution</b> on most instructions.</li>
+    <li>Easy access to <b>only the first 8 registers</b>; SP, LR, PC are used implicitly.</li>
+    <li><b>Two-operand format</b> (instead of three) to save space.</li>
+    <li>Shifted-immediate and shifted-second-operand are gone — use separate shift instructions.</li>
+    <li>Simplified addressing modes; many more instruction formats due to 16-bit size.</li>
+    <li><b>Logical immediates dropped.</b></li>
+    <li>Condition codes are <b>implicit by opcode</b>: all ALU ops set them, no data transfers do.</li>
+    <li><b>Hi/Lo register split:</b> 8 Lo regs (always available) + 8 Hi regs (incl. SP, LR, PC). Most ops only on Lo. <code>ADD/BX/CMP/MOV</code> have variants reaching Hi.</li>
+    <li>Branch addresses shifted by 1 (16-bit instructions). Branch-with-link is a 2-instruction sequence concatenating 11+11 bits, shifted left → 23-bit address.</li>
+    <li>Data-transfer offsets: 5 bits for GPRs, 8 bits for SP/PC.</li>
+  </ul>
+</div>
+
+<!-- 12.14 -->
+<h2 id="s14">12.14 Instructions Unique to SuperH</h2>
+<div class="panel">
+  <p>R0 plays a special role: indirect-indexed and PC-relative addressing add R0 to another register; only R0 can be the operand for immediate AND, CMP, OR, XOR.</p>
+
+  <ul>
+    <li><b>DT</b> — decrement and test (set T=1 if result is 0).</li>
+    <li><b>Optional delayed branch</b> for <code>BT</code>/<code>BF</code> — unique among embedded RISCs (others don't use delayed branches).</li>
+    <li><b>Many multiply variants:</b> <code>MULS, MULU, DMULS, DMULU, MUL</code> — product in MACL/MACH.</li>
+    <li><b>EXTU/EXTS</b> — zero/sign extend byte or halfword inside a 32-bit register.</li>
+    <li><b>1-bit constant shifts only</b> — to fit into 16-bit instructions.</li>
+    <li><b>Dynamic shift (SHLD/SHAD)</b> — variable shift; sign of amount selects direction.</li>
+    <li><b>Rotate</b> — <code>ROTL/ROTR</code> set T to the rotated bit; <code>ROTCL/ROTCR</code> include T in the rotation.</li>
+    <li><b>SWAP</b> — swap high/low bytes of a word, or two bytes of low halfword.</li>
+    <li><b>XTRCT</b> — middle 32 bits of a register pair into another register.</li>
+    <li><b>Negate-with-carry</b>.</li>
+    <li><b>PREF</b> — cache prefetch.</li>
+    <li><b>TAS</b> (test-and-set) — atomic lock primitive (load byte, set T from zero-test, set MSB of byte to 1, store back).</li>
+  </ul>
+</div>
+
+<!-- 12.15 -->
+<h2 id="s15">12.15 Instructions Unique to M32R</h2>
+<div class="panel">
+  <ul>
+    <li><b>Slight VLIW:</b> a bit in the first 16-bit instruction of a pair tells the hardware whether the pair can be executed in parallel.</li>
+    <li>All branch displacements shifted left 2 before adding to PC (low 2 PC bits cleared) → branches must target 32-bit-aligned instructions even though some instructions are 16 bits. Same restriction on branch-and-link return addresses.</li>
+    <li>VLIW pairing means the necessary nop padding doesn't usually cost extra cycles.</li>
+    <li>Mitsubishi claims overall code is only 7% larger than for the Motorola 6800.</li>
+    <li><b>Divide returns the remainder</b> (not the quotient).</li>
+  </ul>
+</div>
+
+<!-- 12.16 -->
+<h2 id="s16">12.16 Instructions Unique to MIPS-16</h2>
+<div class="panel">
+  <p>Not a separate ISA — it's a 16-bit-instruction extension of full 32-bit MIPS, compatible with MIPS I/II/III/IV/V. <b>ISA mode bit</b>: 0 = 32-bit, 1 = 16-bit. <code>JALX</code> toggles the mode bit; <code>JR/JALR</code> set the mode bit from the branch register's MSB. Procedures must be all 16-bit or all 32-bit (except <code>JAL</code>/<code>JALX</code>, which are 32 bits even in 16-bit mode).</p>
+
+  <h3>Key Differences from MIPS Core</h3>
+  <ul>
+    <li>Only <b>8 easy-to-use registers</b>; explicit move instructions to access the other 24 of the underlying MIPS architecture.</li>
+    <li>SP treated as a separate register; many SP-relative data-transfer opcodes (<code>LWSP, LDSP, SWSP, SDSP, ADJSP, DADJSP, ADDIUSPD, DADDIUSP</code>).</li>
+    <li>Immediates shrunk to 5–8 bits.</li>
+    <li><b>EXTEND prefix</b> — a 16-bit prefix (Intel-8086 style) prepended to extend an immediate or address field to 16 bits (does not need 32-bit alignment). Two exceptions: <code>ADDIU/DADDIU</code> have 4-bit fields; even with EXTEND, max is 15-bit.</li>
+    <li>EXTEND also extends 3-bit shift fields to 5 bits.</li>
+    <li><b>New addressing mode:</b> PC-relative load (<code>LWPC, LDPC</code>) — 8-bit immediate shifted by 2/3, added to PC. Lets 32/64-bit constants be embedded in code. <code>ADDIUPC</code> computes a PC-relative address into a register.</li>
+    <li><b>16-bit forms of 64-bit ops</b> (data transfer, arithmetic, shifts) — MIPS-16 alone among embedded RISCs subsets a 64-bit address ISA.</li>
+    <li><b>Dropped:</b> trapping-add variants (<code>ADD, ADDI, SUB, DADD, DADDI, DSUB</code>), logical immediates (<code>ANDI, ORI, XORI</code>), most compare-and-branch (<code>BEQ, BNE, BGEZ, BGTZ, BLEZ, BLTZ</code>) — replaced by T-register-based branches (<code>BTEQZ, BTNEZ</code>).</li>
+    <li>Branch addresses shifted by 1 (16-bit insts).</li>
+    <li><b>Delayed branches gone</b> — branches take effect before next instruction. Jumps still have 1-slot delay.</li>
+    <li>Data-transfer offsets <b>zero-extended</b> in 16-bit mode (sign-extended only with EXTEND prefix). Shifted left 1/2/3 bits for halfword/word/doubleword.</li>
+    <li>Shift amount of 0 redefined to mean shift of 8 bits.</li>
+    <li>Added <b>load immediate</b>, <b>negate</b>, <b>not</b> (since r0 is no longer freely available).</li>
+  </ul>
+</div>
+
+<!-- 12.17 -->
+<h2 id="s17">12.17 Concluding Remarks</h2>
+<div class="panel">
+  <p>~90% of executed instructions on any of these 10 ISAs would map to the MIPS core subset. The 10 architectures share the most architectural agreement in the history of computing — contrast with the four 1970s architectures (which had little agreement on anything).</p>
+
+  <h3>Lineage Highlights</h3>
+  <ul>
+    <li>CDC 6600 / Cray-1 — load-store ancestors with r0=0 and separate int/FP registers.</li>
+    <li>IBM 801 → unsuccessful RT/PC. America project → Power architecture.</li>
+    <li>Berkeley RISC → SPARC (Sun), inspiration for ARM.</li>
+    <li>Stanford MIPS → MIPS commercial.</li>
+    <li>HP PA-RISC inherited some 801 alumni.</li>
+    <li>DEC Alpha 21064 ≈ MIPS III + PRISM ideas. Alpha chip versions: EV4, EV45, EV5, EV56, EV6 (21064 → 21264). "EV" = "extended VAX."</li>
+    <li>All desktop RISCs evolved to 64-bit address architectures fairly painlessly.</li>
+  </ul>
+</div>
+
+<!-- Cheat Sheet -->
+<h2 id="cheat">Quick-Reference Cheat Sheet</h2>
+<div class="panel">
+  <h3>Desktop vs Embedded RISC One-Liners</h3>
+  <table>
+    <tr><th>Trait</th><th>Desktop/server</th><th>Embedded</th></tr>
+    <tr><td>GPRs</td><td>32</td><td>8–16</td></tr>
+    <tr><td>Instruction width</td><td>32 bits, always</td><td>16 or 32 bits</td></tr>
+    <tr><td>Address width (modern)</td><td>64-bit flat</td><td>Mostly 32-bit (MIPS-16 supports 64)</td></tr>
+    <tr><td>Reserved zero register</td><td>Yes (one)</td><td>No</td></tr>
+    <tr><td>Primary instruction formats</td><td>4</td><td>6</td></tr>
+    <tr><td>FP support</td><td>Yes</td><td>Generally none</td></tr>
+  </table>
+
+  <h3>Compare-and-Branch Cheat</h3>
+  <pre>SPARC: 4 CCs (N,Z,C,V), optional set
+PowerPC: 8×4-bit CC regs
+MIPS: no int CCs; BEQ/BNE on regs; SLT* + branch
+Alpha: CMPxx writes 1/0 to GPR
+PA-RISC: COMB compare-and-branch + nullification
+ARM: 4 CCs; EVERY inst can be conditional
+Thumb: ARM CCs but mandatory set, no cond exec
+SuperH: 1 T-bit; BT / BF
+M32R: 1 C-bit; BC / BNC + BEQ/BNE
+MIPS-16: T register; BTEQZ/BTNEZ + BEQZ/BNEZ</pre>
+
+  <h3>Branch Variants</h3>
+  <pre>Immediate (no delay slot)  → Alpha, PowerPC, embedded RISCs
+Delayed branch             → MIPS, SPARC, PA-RISC, SuperH (opt.)
+SPARC annulling            → executes delay slot only if taken
+MIPS branch likely         → annul if NOT taken
+PA-RISC nullification      → any inst can annul next</pre>
+
+  <h3>Multimedia Extensions</h3>
+  <pre>HP MAX2  : 4H ops, average instruction
+SPARC VIS: 4H or 2W ops, set constants
+MIPS MDMX: 8B/4H + 192-bit accumulator (3*64)
+Alpha MAX: byte cmp/min/max/abs-diff only
+PowerPC  : holdout (added later)
+Saturating: clamp on overflow vs wrap</pre>
+
+  <h3>Signature ISA Features</h3>
+  <pre>SPARC      : register windows (SAVE/RESTORE)
+PowerPC    : link reg + count reg as branch targets
+PA-RISC    : nullification on any instruction
+ARM        : conditional execution of every instruction;
+             rotated 8-bit immediate; LDM/STM
+Thumb      : 16-bit ARM subset; Hi/Lo reg split
+SuperH     : T-bit + DT decrement-and-test
+M32R       : VLIW pairing bit; divide returns remainder
+MIPS-64    : LWL/LWR/SWL/SWR misaligned;
+             paired-single FP; reciprocal/rsqrt
+Alpha      : PAL code; no byte L/S originally; F31=0
+MIPS-16    : EXTEND prefix; LWPC/LDPC; T register</pre>
+
+  <h3>"Survey of 10 — ~90% are MIPS Core"</h3>
+  <p>Memorize this: the dominant fact of the chapter is that practically all RISCs run the same 5 categories of instructions (data transfer, arithmetic/logical, control, FP, conventions). The "uniqueness" sections are mostly small variations on branches, immediates, and register conventions.</p>
+</div>
+
+<!-- Self-test -->
+<h2 id="quiz">Self-Test Q&amp;A</h2>
+<div class="panel">
+
+  <details>
+    <summary>Categories &amp; high-level trends (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Name the 5 desktop/server RISCs and 5 embedded RISCs in the survey.</div><div class="a">Desktop: Alpha, PA-RISC, PowerPC, MIPS-64, SPARC. Embedded: ARM, Thumb, SuperH, M32R, MIPS-16.</div></div>
+      <div class="qa"><div class="q">What's the fundamental register-count and instruction-width split between desktop and embedded RISCs?</div><div class="a">Desktop: 32 GPRs, always 32-bit instructions. Embedded: 8–16 GPRs, 16- or 32-bit instructions.</div></div>
+      <div class="qa"><div class="q">Why are Thumb and MIPS-16 not really separate ISAs?</div><div class="a">They're 16-bit modes of ARM and MIPS, switched into via a call/branch. Hardware translates Thumb back to ARM.</div></div>
+      <div class="qa"><div class="q">What rough percentage of executed instructions on these 10 ISAs would be MIPS-core-equivalent?</div><div class="a">~90%.</div></div>
+      <div class="qa"><div class="q">Why is the MIPS jump/call constant not sign-extended?</div><div class="a">It replaces only the lower 28 bits of PC, leaving the upper 4 bits unchanged.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Addressing modes &amp; formats (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">How is "register indirect" addressing synthesized on a desktop RISC?</div><div class="a">As displacement addressing with offset = 0.</div></div>
+      <div class="qa"><div class="q">How is "absolute" addressing synthesized?</div><div class="a">As displacement addressing with the always-zero register as the base.</div></div>
+      <div class="qa"><div class="q">Why are PC-relative branch offsets shifted left 2 bits on desktop RISCs?</div><div class="a">Because all instructions are 32-bit aligned, the low two address bits are always 0 — using them in the offset would waste reach.</div></div>
+      <div class="qa"><div class="q">What is the ARM 8-bit immediate trick?</div><div class="a">The 8-bit value is zero-extended to 32 then rotated right by an even count (2–30) chosen by 4 bits in the instruction. Captures all powers of two as single immediates.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Compare-and-branch strategies (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">SPARC's mechanism?</div><div class="a">Four PSW condition codes (N, Z, C, V) optionally set per instruction. Explicit compare = subtract with r0 destination. v9 added branches with prediction-hint bit.</div></div>
+      <div class="qa"><div class="q">PowerPC's mechanism?</div><div class="a">Eight 4-bit condition-code registers. Compares can target any of them; CRAND/CROR/CRXOR combine them.</div></div>
+      <div class="qa"><div class="q">MIPS's mechanism?</div><div class="a">No integer CCs. BEQ/BNE compare two GPRs; SLT/SLTI/SLTU/SLTIU set 1/0 in a register. Special compare-with-zero branches: BGEZ, BGTZ, BLEZ, BLTZ.</div></div>
+      <div class="qa"><div class="q">Alpha's mechanism?</div><div class="a">CMPxx writes 1/0 into a GPR; FP compares write 2.0/0.0. Branches compare against 0 or test the LSB.</div></div>
+      <div class="qa"><div class="q">ARM's mechanism?</div><div class="a">Four CCs optionally set. CMP, CMN (add), TST (AND), TEQ (XOR). Every instruction is conditional on the CCs.</div></div>
+      <div class="qa"><div class="q">SuperH's mechanism?</div><div class="a">Single T-bit. BT branches if T=1, BF if T=0.</div></div>
+      <div class="qa"><div class="q">MIPS-16's mechanism?</div><div class="a">SLT result goes into a special T register (= MIPS r24). BTEQZ/BTNEZ test T; BEQZ/BNEZ test other regs. Compare instructions added because BEQ/BNE were dropped.</div></div>
+      <div class="qa"><div class="q">Why does SPARC explicitly subtract into r0?</div><div class="a">Because SPARC compares are arithmetic instructions that set CCs as a side effect; using r0 as destination throws away the result while still updating CCs.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Branch variants (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What is a delayed branch?</div><div class="a">The instruction after the branch always executes, regardless of whether the branch is taken. Lets the pipeline finish the fetched instruction productively instead of squashing it.</div></div>
+      <div class="qa"><div class="q">Which RISCs use immediate (non-delayed) branches?</div><div class="a">Alpha, PowerPC, and most embedded RISCs (SuperH offers it as an option).</div></div>
+      <div class="qa"><div class="q">What is SPARC annulling?</div><div class="a">The delay-slot instruction executes only if the branch is taken — lets the compiler safely place the branch target in the slot.</div></div>
+      <div class="qa"><div class="q">What is MIPS "branch likely"?</div><div class="a">A delayed branch that annuls the delay-slot instruction if the branch is NOT taken.</div></div>
+      <div class="qa"><div class="q">What is PA-RISC nullification?</div><div class="a">Almost any instruction may annul the next instruction. Branches choose to nullify based on direction (forward/backward) and taken/not-taken — handy for loop bodies.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Multimedia (SIMD) extensions (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">How does a single 64-bit ALU do parallel byte/halfword ops?</div><div class="a">By partitioning (breaking) the carry chains so the ALU treats the 64 bits as eight 8-bit, four 16-bit, or two 32-bit lanes.</div></div>
+      <div class="qa"><div class="q">What is saturating arithmetic, and why does multimedia want it?</div><div class="a">On overflow, clamp to MAX/MIN instead of wrapping (mod). For audio/video, clipping is far less destructive than wraparound.</div></div>
+      <div class="qa"><div class="q">Which extension does MIPS use, and what's its accumulator?</div><div class="a">MDMX. 192-bit (3×64) accumulator partitioned to 8 bytes × 24 bits or 4 halfwords × 48 bits, used for add/sub/MAC.</div></div>
+      <div class="qa"><div class="q">Which desktop RISC was the multimedia holdout?</div><div class="a">PowerPC.</div></div>
+      <div class="qa"><div class="q">Why are these instructions intended for hand-written libraries rather than compiler use?</div><div class="a">Inconsistency across ISAs — a single multimedia compiler that produced good code for all of them would be very hard. Auto-vectorization is also brittle.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>SPARC register windows (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What problem do register windows solve?</div><div class="a">Reducing register save/restore traffic on procedure calls — each call gets a fresh window of registers.</div></div>
+      <div class="qa"><div class="q">How is unbounded call depth supported?</div><div class="a">The windows form a circular buffer. When it overflows, hardware traps and the OS spills to the stack.</div></div>
+      <div class="qa"><div class="q">Typical window structure?</div><div class="a">8 globals + 8 locals + 8 incoming + 8 outgoing parameters. 16 unique regs per window (overlap).</div></div>
+      <div class="qa"><div class="q">What do SAVE and RESTORE do besides change windows?</div><div class="a">They are also add instructions — used to allocate/deallocate stack frames (SP arithmetic) without an extra cycle.</div></div>
+      <div class="qa"><div class="q">Why didn't register windows slow the SPARC clock as predicted?</div><div class="a">Cache access dominates register access in real implementations, so the larger register file isn't on the critical path.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>ARM specifics (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Most distinctive ARM feature?</div><div class="a">Conditional execution of every instruction via a 4-bit condition field — turns instructions into NOPs when the condition fails.</div></div>
+      <div class="qa"><div class="q">Why does ARM use that rotated-8-bit-immediate scheme?</div><div class="a">To pack a useful range of constants into 12 bits, including all powers of two — common values in embedded code.</div></div>
+      <div class="qa"><div class="q">What do LDM/STM do?</div><div class="a">Block load/store: a 16-bit register mask in the instruction selects which of the 16 GPRs to load or store. Used for procedure entry/return and block memory copy.</div></div>
+      <div class="qa"><div class="q">Does ARM have integer divide?</div><div class="a">No (in the v4 era covered here).</div></div>
+      <div class="qa"><div class="q">What does the BX instruction do?</div><div class="a">Branch and exchange between ARM and Thumb modes. Lower 31 bits of register go to PC; the MSB selects ARM (1) or Thumb (0).</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Alpha specifics (5)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why was Alpha originally without byte/halfword loads/stores?</div><div class="a">Architects believed byte loads needed an extra shifter and byte stores would force read-modify-write on ECC memory. Bytes/halfwords were added in Alpha 21164A.</div></div>
+      <div class="qa"><div class="q">What does TRAPB do?</div><div class="a">Stalls until all prior arithmetic instructions are guaranteed to complete without exception — used to enforce precise FP exceptions. ~5× slowdown if used aggressively.</div></div>
+      <div class="qa"><div class="q">Why does Alpha need precise interrupts to handle NaN/inf/denormals?</div><div class="a">Because those cases are completed in software, which must locate the offending instruction and operand values.</div></div>
+      <div class="qa"><div class="q">What is PAL code?</div><div class="a">Privileged Architecture Library — privileged-mode code with interrupts off and VM mapping off. Used for TLB management, atomic ops, OS primitives. Called via CALL_PAL.</div></div>
+      <div class="qa"><div class="q">What's special about Alpha FP register F31?</div><div class="a">Hardwired to 0 — simplifies compares to zero.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>PowerPC, PA-RISC, others (8)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">Why does PowerPC have a dedicated link register?</div><div class="a">Return jumps don't need to read the GPR file → faster returns. Frees up a GPR.</div></div>
+      <div class="qa"><div class="q">What's PowerPC's count register for?</div><div class="a">Loop counts. Branch-on-count auto-decrements and the value is visible to the branch unit early in the cycle (good prediction).</div></div>
+      <div class="qa"><div class="q">What does PA-RISC's nullification do?</div><div class="a">Lets almost any instruction (arithmetic/logical/branch) skip the next instruction based on a condition — eliminates branches around single-instruction <code>then</code> bodies.</div></div>
+      <div class="qa"><div class="q">Why does PA-RISC have so many conditional branches?</div><div class="a">Inherited from a CISC heritage; combined with nullification it offers many addressing/compare combinations directly. PA-RISC has the most addressing modes and instruction formats of any RISC.</div></div>
+      <div class="qa"><div class="q">SuperH "DT" instruction?</div><div class="a">Decrement and test — decrements a register and sets T=1 if the result is 0. Common in loop epilogues.</div></div>
+      <div class="qa"><div class="q">M32R divide returns what?</div><div class="a">The remainder, not the quotient.</div></div>
+      <div class="qa"><div class="q">M32R VLIW feature?</div><div class="a">A bit in the first instruction of a 16-bit pair tells hardware whether the pair can execute in parallel.</div></div>
+      <div class="qa"><div class="q">What is MIPS-16's EXTEND prefix?</div><div class="a">A 16-bit prefix prepended to a 16-bit MIPS-16 instruction to widen its immediate or address field to 16 bits (Intel-8086-inspired). Doesn't need 32-bit alignment.</div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Common extensions to MIPS core (4)</summary>
+    <div class="body">
+      <div class="qa"><div class="q">What does an "atomic swap" instruction do?</div><div class="a">Exchanges a register and a memory location atomically — foundation for OS semaphores and multiprocessor sync.</div></div>
+      <div class="qa"><div class="q">What does a prefetch instruction do?</div><div class="a">Provides an address and a hint (read/write soon, once vs many) so the cache can pull the line in early. Never traps.</div></div>
+      <div class="qa"><div class="q">What does the "Endian" big/little PSR bit do?</div><div class="a">Lets the same chip act as big- or little-endian by complementing some low-order address bits in data transfers.</div></div>
+      <div class="qa"><div class="q">Why is "shared memory synchronization" (memory barrier) important?</div><div class="a">In a cache-coherent multiprocessor it forces all loads/stores before the barrier to complete before any after — needed for sane ordering of synchronization sequences.</div></div>
+    </div>
+  </details>
+
+</div>
+
+<!-- Common Traps -->
+<h2 id="trap">Common Exam Traps</h2>
+<div class="panel">
+  <ul>
+    <li><b>"Thumb is a separate ISA from ARM."</b> <span class="no">No.</span> It's a 16-bit instruction mode of ARM, translated by hardware to ARM ops.</li>
+    <li><b>"MIPS-16 uses the same registers as MIPS-32."</b> <span class="no">Partly.</span> Hardware still has all 32 MIPS registers, but only 8 are easily addressable in 16-bit mode; explicit moves expose the rest.</li>
+    <li><b>"All RISCs reserve a register equal to zero."</b> <span class="no">No.</span> Desktop RISCs do; embedded RISCs typically do not. PowerPC's r0 is reserved as a base-only zero-source, not a true hardwired zero everywhere.</li>
+    <li><b>"All instructions in all RISCs are 32 bits."</b> <span class="no">No.</span> Desktop RISCs are 32-bit. Embedded RISCs use 16- or 32-bit; Thumb and MIPS-16 are pure 16-bit modes.</li>
+    <li><b>"PC-relative branch offsets are added to PC unshifted."</b> <span class="no">No.</span> Desktop RISCs shift by 2 (32-bit instructions); embedded by 1 (16-bit).</li>
+    <li><b>"SPARC condition codes are set on every arithmetic instruction."</b> <span class="no">No.</span> Setting CCs is optional per instruction (this is a pipelining-friendly choice).</li>
+    <li><b>"Every RISC has integer divide."</b> <span class="no">No.</span> Alpha and ARM (v4) lack integer divide.</li>
+    <li><b>"Multimedia extensions perform identically across desktop RISCs."</b> <span class="no">No.</span> The only universal ops are AND, OR, XOR. Different ISAs partition different lane widths and offer wildly different operations (Alpha's MAX is minimal; MIPS MDMX has a 192-bit accumulator).</li>
+    <li><b>"Saturating arithmetic produces a wraparound result on overflow."</b> <span class="no">Backwards.</span> Saturation clamps to MAX or MIN; modular (two's-complement) arithmetic wraps. Saturation is the DSP/multimedia behavior precisely <i>because</i> wraparound is destructive.</li>
+    <li><b>"PA-RISC's nullification only works on branches."</b> <span class="no">No.</span> It's generalized to almost any arithmetic/logical instruction or branch.</li>
+    <li><b>"ARM's conditional execution applies only to branches."</b> <span class="no">No.</span> Every ARM instruction has a 4-bit condition field. Conditional branches are just conditional unconditional-branches.</li>
+    <li><b>"Register windows make SPARC's clock slower than MIPS."</b> <span class="no">In practice no.</span> Cache access dominated and SPARC kept up with MIPS in clock for years.</li>
+    <li><b>"PowerPC r0 is hardwired to zero."</b> <span class="no">No.</span> r0 is treated as 0 only when used as the base in base+displacement; otherwise it's a normal register.</li>
+    <li><b>"Alpha's TRAPB is needed once per program."</b> <span class="no">No.</span> One TRAPB is needed per FP-exception-causing instruction to enforce precise exceptions, which is why the worst-case slowdown is ~5×.</li>
+    <li><b>"MIPS-16 supports mixing 16- and 32-bit instructions inside a single procedure."</b> <span class="no">No.</span> A procedure must be all one mode. Mode switches happen at procedure boundaries via JR/JALR/JALX.</li>
+  </ul>
+</div>
+
+<hr/>
+<p class="hint">Source: WGU C952 zyBook Chapter 12 — "Survey of RISC Architectures" (COD Appendix D content). Chapter is marked <i>Optional</i> in zyBook.</p>
+
+</div>
+<script>
+  (function() {
+    var btn = document.getElementById('themeBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      var next;
+      if (!current) {
+        next = prefersLight ? 'dark' : 'light';
+      } else {
+        next = current === 'dark' ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>
