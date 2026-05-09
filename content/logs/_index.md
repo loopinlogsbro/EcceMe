@@ -1,7 +1,7 @@
 ---
 title: "Work Log"
 description: "Weekly notes about coursework, projects, fixes, and what changed."
-build:
+_build:
   render: never
   list: never
 ---

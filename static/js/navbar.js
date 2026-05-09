@@ -35,14 +35,7 @@
     span.style.cursor = 'pointer';
     text.replaceWith(span);
     scramble(span);
-    let clicks = 0, timer = null;
-    span.addEventListener('click', () => {
-      scramble(span);
-      clicks++;
-      clearTimeout(timer);
-      if (clicks >= 3) { clicks = 0; window.location.href = '/private/c952/'; return; }
-      timer = setTimeout(() => { clicks = 0; }, 700);
-    });
+    span.addEventListener('click', () => scramble(span));
   }
 
   // ── Nav link hover effects ──────────────────────────────────────────────────
