@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>C952 Quest</title>
+<link rel="stylesheet" href="css/main.css"/>
+<script>
+  // Apply saved theme before render to avoid flash. Shared key with the
+  // surrounding C952 chapter pages (c952-theme).
+  (function () {
+    try {
+      var saved = localStorage.getItem('c952-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
+
+<nav id="hud">
+  <span id="hud-title">⚡ C952 Quest</span>
+  <div id="hud-progress"><div id="hud-bar" style="width:0%"></div></div>
+  <span id="hud-streak"></span>
+  <span id="hud-xp">0 XP</span>
+</nav>
+
+<div id="app">
+
+  <!-- ══════════ TITLE ══════════ -->
+  <div id="screen-title" class="screen active">
+    <div class="hero">
+      <h1>⚡ C952 Quest</h1>
+      <p class="sub">Computer architecture from bits to caches — 33 levels across 5 worlds.</p>
+      <div id="title-xp-badge" class="xp-display" style="margin-bottom:24px;">⭐ 0 XP total</div>
+      <br/>
+      <button class="btn btn-primary" id="title-cta">▶ Start</button>
+      &nbsp;
+      <button class="btn btn-ghost btn-sm" id="btn-title-settings">⚙ Settings</button>
+    </div>
+    <div class="card">
+      <h3>Five worlds</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin-top:10px;">
+        <div>⚡ Foundations <span class="badge">10 levels</span></div>
+        <div>🔧 LEGv8 Instructions <span class="badge">9 levels</span></div>
+        <div>🧮 Arithmetic <span class="badge">coming</span></div>
+        <div>🏗 Datapath &amp; Pipelining <span class="badge">coming</span></div>
+        <div>💾 Memory Hierarchy <span class="badge">coming</span></div>
+      </div>
+      <p style="margin-top:14px;font-size:12.5px;">Tip: <kbd>1</kbd>–<kbd>4</kbd> picks an answer, <kbd>Enter</kbd> advances, <kbd>?</kbd> shows a hint, <kbd>R</kbd> resets the current challenge, <kbd>Esc</kbd> goes back.</p>
+    </div>
+  </div>
+
+  <!-- ══════════ WORLDS ══════════ -->
+  <div id="screen-worlds" class="screen">
+    <h2 style="margin:16px 0 4px;">Pick a World</h2>
+    <p id="worlds-xp-line" style="margin-bottom:16px;color:var(--muted);"></p>
+    <div id="world-grid"></div>
+    <button class="btn btn-ghost btn-sm" id="btn-worlds-back" style="margin-top:8px;">← Back</button>
+  </div>
+
+  <!-- ══════════ LEVEL MAP ══════════ -->
+  <div id="screen-map" class="screen">
+    <h2 id="world-map-title" style="margin:16px 0 4px;">World</h2>
+    <div id="level-map"></div>
+    <button class="btn btn-ghost btn-sm" id="btn-map-back" style="margin-top:8px;">← Worlds</button>
+  </div>
+
+  <!-- ══════════ INTRO ══════════ -->
+  <div id="screen-intro" class="screen">
+    <div id="intro-content"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="btn btn-primary" id="btn-start-level">Start Level →</button>
+      <button class="btn btn-ghost" id="btn-intro-back">← Map</button>
+    </div>
+  </div>
+
+  <!-- ══════════ CHALLENGE ══════════ -->
+  <div id="screen-challenge" class="screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span id="ch-level-label" style="font-size:13px;color:var(--muted);"></span>
+      <span id="ch-counter" class="challenge-counter"></span>
+    </div>
+    <div class="card card-accent" id="ch-prompt-card">
+      <div id="ch-concept" style="font-size:12px;color:var(--muted);margin-bottom:6px;display:none;"></div>
+      <div id="ch-prompt" style="font-size:16px;font-weight:600;margin-bottom:4px;"></div>
+    </div>
+    <div id="ch-body"></div>
+    <div id="feedback"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" id="btn-check">Check ✓</button>
+      <button class="btn btn-ghost" id="btn-next" style="display:none">Next →</button>
+      <button class="btn btn-ghost btn-sm" id="btn-hint">💡 Hint</button>
+      <button class="btn btn-ghost btn-sm" id="btn-lesson" style="margin-left:auto;">📖 Lesson</button>
+      <button class="btn btn-ghost btn-sm" id="btn-ch-back">← Map</button>
+    </div>
+  </div>
+
+  <!-- ══════════ LEVEL COMPLETE ══════════ -->
+  <div id="screen-lc" class="screen">
+    <div class="card" style="text-align:center;">
+      <div id="lc-icon" style="font-size:48px;margin-bottom:8px;"></div>
+      <h2 id="lc-title"></h2>
+      <div id="lc-stars"></div>
+      <div id="lc-stats" style="margin:16px 0;text-align:left;"></div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+        <button class="btn btn-primary" id="btn-lc-next">Next Level →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- ══════════ MODALS ══════════ -->
+<div id="lesson-modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2>Lesson</h2>
+      <button class="btn btn-ghost btn-sm" id="btn-lesson-close">✕ Close</button>
+    </div>
+    <div id="lesson-modal-content"></div>
+  </div>
+</div>
+
+<div id="settings-modal">
+  <div class="modal-inner" id="settings-inner"></div>
+</div>
+
+<div id="xp-popup">+0 XP</div>
+
+<script type="module" src="js/ui.js"></script>
+</body>
+</html>
