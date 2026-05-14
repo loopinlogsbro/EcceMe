@@ -1,9 +1,4 @@
-{{- $lastmod := site.Lastmod -}}
-{{- if eq ($lastmod.Format "2006-01-02") "0001-01-01" -}}
-  {{- $lastmod = now -}}
-{{- end -}}
-
-<div class="footer-col footer-brand">
+<div class="ecce-tagline-block text-center">
   <p class="ecce-tagline" aria-label="Disco, Aedifico, Polio — I learn, I build, I polish">
     <span class="verb" tabindex="0" role="button" aria-describedby="verb-disco-trans">
       Disco<span id="verb-disco-trans" class="translation" role="tooltip">I learn</span>
@@ -16,19 +11,5 @@
     <span class="verb" tabindex="0" role="button" aria-describedby="verb-polio-trans">
       Polio<span id="verb-polio-trans" class="translation" role="tooltip">I polish</span>
     </span>
-    <a class="therefore-mark" href="/about/#methodology" title="Methodology" aria-label="therefore — methodology">
-      <span class="dot d1" aria-hidden="true">.</span><span class="dot d2" aria-hidden="true">.</span><span class="dot d3" aria-hidden="true">.</span>
-    </a>
-  </p>
-
-  <p class="ecce-meta">
-    <span class="ecce-mark">Ecce</span>
-    <span class="meta-sep" aria-hidden="true">·</span>
-    <small>a working archive</small>
-  </p>
-
-  <p class="ecce-revised">
-    <span class="pulse-dot" aria-hidden="true"></span>
-    <small>last revised &middot; <time datetime="{{ $lastmod.Format "2006-01-02" }}">{{ $lastmod.Format "2006-01-02" }}</time></small>
   </p>
 </div>

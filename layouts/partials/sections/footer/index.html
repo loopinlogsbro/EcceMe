@@ -6,22 +6,27 @@
 
       {{- partial "sections/footer/socialNetwork.html" . -}}
 
-      {{- partial "sections/footer/brand.html" . -}}
-
     </div>
   </div>
 
   {{- partial "sections/footer/owl-button.html" . -}}
 
+  {{- partial "sections/footer/brand.html" . -}}
+
   {{- partial "sections/footer/copyright.html" . -}}
 </footer>
 
 <style>
-  /* Three-column footer layout */
+  /* Footer base */
   .ecce-footer {
     font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     color: var(--text-secondary-color, inherit);
   }
+
+  /* Hide the top container when neither recent posts nor social are configured */
+  .ecce-footer > .container:not(:has(.footer-col)) { display: none; }
+
+  /* Three-column row (used only when recent posts / social are enabled) */
   .ecce-footer-row { gap: 1.5rem 0; }
   .ecce-footer .footer-col {
     flex: 1 1 0;
@@ -29,7 +34,6 @@
     padding: 0 1rem;
     text-align: center;
   }
-  /* When recentPosts/social are disabled and only brand renders, center it across the row */
   .ecce-footer .footer-col:only-child { flex-basis: 100%; }
   .ecce-footer .footer-col-title {
     font-size: 0.75rem;
@@ -91,12 +95,12 @@
     outline: none;
   }
 
-  /* Brand column — triad tagline */
-  .ecce-footer .footer-brand p { margin: 0 0 0.35rem; line-height: 1.4; }
+  /* Standalone triad block (rendered after the owl, above the copyright) */
+  .ecce-footer .ecce-tagline-block { padding: 0.75rem 1rem 0.25rem; }
+  .ecce-footer .ecce-tagline-block p { margin: 0; line-height: 1.4; }
   .ecce-footer .ecce-tagline {
     font-size: 1rem;
     letter-spacing: 0.04em;
-    margin-bottom: 0.6rem;
   }
   .ecce-footer .ecce-tagline .verb {
     position: relative;
@@ -156,81 +160,10 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* ∴ mark — staggered dots, hover blink */
-  .ecce-footer .therefore-mark {
-    display: inline-block;
-    margin-left: 0.35rem;
-    color: var(--primary-color);
-    text-decoration: none;
-    font-size: 1.4em;
-    line-height: 1;
-    letter-spacing: 0.12em;
-    transition: transform .2s ease, filter .2s ease;
-  }
-  .ecce-footer .therefore-mark:hover,
-  .ecce-footer .therefore-mark:focus-visible {
-    color: var(--primary-color);
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 4px var(--primary-color));
-    outline: none;
-  }
-  .ecce-footer .therefore-mark .dot {
-    display: inline-block;
-    opacity: 0;
-    animation: ecce-dot-in 0.6s ease forwards;
-  }
-  .ecce-footer .therefore-mark .d1 { animation-delay: 0.10s; }
-  .ecce-footer .therefore-mark .d2 { animation-delay: 0.30s; }
-  .ecce-footer .therefore-mark .d3 { animation-delay: 0.50s; }
-  .ecce-footer .therefore-mark:hover .dot,
-  .ecce-footer .therefore-mark:focus-visible .dot {
-    animation: ecce-dot-blink 1.2s ease-in-out infinite;
-  }
-  .ecce-footer .therefore-mark:hover .d1,
-  .ecce-footer .therefore-mark:focus-visible .d1 { animation-delay: 0s; }
-  .ecce-footer .therefore-mark:hover .d2,
-  .ecce-footer .therefore-mark:focus-visible .d2 { animation-delay: 0.4s; }
-  .ecce-footer .therefore-mark:hover .d3,
-  .ecce-footer .therefore-mark:focus-visible .d3 { animation-delay: 0.8s; }
-
-  @keyframes ecce-dot-in {
-    from { opacity: 0; transform: translateY(2px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes ecce-dot-blink {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.25; }
-  }
-
-  /* Brand mark line */
-  .ecce-footer .ecce-meta { font-size: 0.85rem; opacity: 0.85; }
-  .ecce-footer .ecce-meta .ecce-mark {
-    color: var(--primary-color);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-  }
-  .ecce-footer .ecce-meta .meta-sep { margin: 0 0.4rem; opacity: 0.6; }
-
-  /* Last revised + pulse dot */
-  .ecce-footer .ecce-revised { font-size: 0.78rem; opacity: 0.7; }
-  .ecce-footer .ecce-revised .pulse-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    margin-right: 0.35rem;
-    vertical-align: 1px;
-    animation: ecce-pulse 2s ease-in-out infinite;
-  }
-  @keyframes ecce-pulse {
-    0%, 100% { opacity: 0.4; box-shadow: 0 0 0 0 var(--primary-color); }
-    50%      { opacity: 1.0; box-shadow: 0 0 6px 0 var(--primary-color); }
-  }
-
   /* Copyright line */
   .ecce-footer .ecce-copyright-wrap {
     text-align: center;
-    padding: 0.5rem 0 1rem;
+    padding: 0.25rem 0 1rem;
     font-size: 0.75rem;
     opacity: 0.6;
   }
@@ -243,14 +176,10 @@
   @media (prefers-reduced-motion: reduce) {
     .ecce-footer .ecce-tagline .verb,
     .ecce-footer .ecce-tagline .translation,
-    .ecce-footer .therefore-mark,
-    .ecce-footer .therefore-mark .dot,
-    .ecce-footer .ecce-revised .pulse-dot,
     .ecce-footer .footer-social-list a,
     .ecce-footer .footer-list a {
       transition: none !important;
       animation: none !important;
     }
-    .ecce-footer .therefore-mark .dot { opacity: 1; }
   }
 </style>
