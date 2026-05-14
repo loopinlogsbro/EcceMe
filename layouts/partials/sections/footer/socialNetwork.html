@@ -1,0 +1,46 @@
+{{- with .Site.Params.footer.socialNetworks -}}
+{{- $any := false -}}
+{{- range $k, $v := . -}}{{- if $v -}}{{- $any = true -}}{{- end -}}{{- end -}}
+{{- if $any -}}
+<div class="footer-col footer-social">
+  <h6 class="footer-col-title">Elsewhere</h6>
+  <ul class="footer-social-list" aria-label="Social links">
+    {{- if .github }}
+    <li>
+      <a href="{{ .github }}" rel="me noopener" target="_blank" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-1.96c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.06 11.06 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.13v3.16c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+      </a>
+    </li>
+    {{- end }}
+    {{- if .linkedin }}
+    <li>
+      <a href="{{ .linkedin }}" rel="me noopener" target="_blank" aria-label="LinkedIn" title="LinkedIn">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3V9.5zm7 0h3.84v1.57h.05c.54-1.02 1.86-2.1 3.83-2.1 4.1 0 4.86 2.7 4.86 6.21V21h-4v-5.18c0-1.24-.02-2.83-1.72-2.83-1.72 0-1.98 1.34-1.98 2.73V21h-4V9.5z"/></svg>
+      </a>
+    </li>
+    {{- end }}
+    {{- if .twitter }}
+    <li>
+      <a href="{{ .twitter }}" rel="me noopener" target="_blank" aria-label="Twitter / X" title="Twitter / X">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M18.244 2H21l-6.523 7.45L22 22h-6.842l-4.71-6.155L4.96 22H2.2l6.98-7.97L2 2h6.998l4.26 5.63L18.244 2zm-1.2 18h1.62L7.04 4H5.32l11.724 16z"/></svg>
+      </a>
+    </li>
+    {{- end }}
+    {{- if .instagram }}
+    <li>
+      <a href="{{ .instagram }}" rel="me noopener" target="_blank" aria-label="Instagram" title="Instagram">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
+    </li>
+    {{- end }}
+    {{- if .facebook }}
+    <li>
+      <a href="{{ .facebook }}" rel="me noopener" target="_blank" aria-label="Facebook" title="Facebook">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88V14.9H7.9V12h2.54V9.8c0-2.5 1.49-3.9 3.78-3.9 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.9h-2.33v6.98A10 10 0 0 0 22 12z"/></svg>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end -}}
+{{- end -}}

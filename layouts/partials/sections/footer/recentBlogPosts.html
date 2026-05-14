@@ -1,0 +1,24 @@
+{{- with .Site.Params.footer.recentPosts -}}
+{{- if .enable -}}
+  {{- $path := .path | default "logs" -}}
+  {{- $count := .count | default 3 -}}
+  {{- $title := .title | default "Writing" -}}
+  {{- $section := site.GetPage $path -}}
+  {{- with $section -}}
+    {{- $pages := first $count (where .Pages "Draft" false).ByDate.Reverse -}}
+    {{- if $pages -}}
+<div class="footer-col footer-recent">
+  <h6 class="footer-col-title">{{ $title }}</h6>
+  <ul class="footer-list">
+    {{- range $pages }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      <small class="footer-date">{{ .Date.Format "Jan 2, 2006" }}</small>
+    </li>
+    {{- end }}
+  </ul>
+</div>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

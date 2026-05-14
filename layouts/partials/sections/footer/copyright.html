@@ -1,7 +1,4 @@
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-4 text-center">
-            &copy; 1999–{{ now.Format "2006" }} | Build, Break, & Revise <span style="color:var(--primary-color);font-size:1.4em;">∴</span>
-        </div>
-    </div>
+{{- $year := now.Format "2006" -}}
+<div class="ecce-copyright-wrap">
+  <small>&copy; 1999&ndash;{{ $year }}</small>
 </div>
