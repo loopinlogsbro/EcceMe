@@ -217,6 +217,29 @@ from position.
 Renders a simplified datapath SVG with the named wires lit up, then
 asks an MC about the highlighted activity. (Used in World 4.)
 
+### `pipeline-trace` — 5-stage pipeline timeline
+
+```js
+{ type:'pipeline-trace',
+  prompt:'How many cycles does this sequence take?',
+  rows: [
+    { label:'LDUR X1,[X2,#0]', stages:['IF','ID','EX','MEM','WB'] },
+    { label:'ADD  X3,X1,X4',   stages:[null,'IF','ID','stall','EX','MEM','WB'] },
+  ],
+  forwarding: [{ from:{row:0, stage:3}, to:{row:1, stage:4}, kind:'MEM→EX' }],
+  opts: ['5','6','7','9'], ans: 2,
+  concept:'…',
+  explain:'…' }
+```
+
+Each row is one instruction; `stages[i]` is what occupies cycle `i+1`.
+Valid stage tokens: `'IF'`, `'ID'`, `'EX'`, `'MEM'`, `'WB'`,
+`'stall'`, `'bubble'`, or `null`/empty for blank cells. Optional
+`forwarding` array adds a text caption underneath the grid listing
+the bypass paths (full SVG arrows kept out of scope for portability).
+Followed by an `opts`/`ans` MC or a single `type` answer.
+(Used in World 4 for hazard / scheduling questions.)
+
 ### `cache-sim` — tag/index/offset and hit/miss
 
 ```js
@@ -277,7 +300,7 @@ exam-trap callouts to match the narrative of World 2.
 - World 1 (Foundations)        — 10 levels, **shipped**
 - World 2 (LEGv8 Instructions) — 9 levels, **shipped**
 - World 3 (Arithmetic)         — 4 levels, **shipped**
-- World 4 (Datapath/Pipeline)  — 5 levels, planned
+- World 4 (Datapath/Pipeline)  — 5 levels, **shipped**
 - World 5 (Memory Hierarchy)   — 5 levels, planned
 
 Total target: 33 levels.
