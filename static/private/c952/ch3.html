@@ -145,7 +145,7 @@
   // Apply saved theme before render to avoid flash
   (function() {
     try {
-      var saved = localStorage.getItem('c952-theme');
+      var saved = localStorage.getItem('study-guide-theme');
       if (saved === 'light' || saved === 'dark') {
         document.documentElement.setAttribute('data-theme', saved);
       }
@@ -960,13 +960,13 @@ document.addEventListener('keydown',function(e){
     btn.addEventListener('click', function() {
       var next = currentTheme() === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
-      try { localStorage.setItem('c952-theme', next); } catch (e) {}
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
       updateLabel();
     });
     // If user has not chosen manually, follow OS changes live
     mq.addEventListener && mq.addEventListener('change', function() {
       var saved = null;
-      try { saved = localStorage.getItem('c952-theme'); } catch (e) {}
+      try { saved = localStorage.getItem('study-guide-theme'); } catch (e) {}
       if (saved !== 'light' && saved !== 'dark') updateLabel();
     });
     updateLabel();

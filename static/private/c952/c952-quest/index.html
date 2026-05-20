@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="css/main.css"/>
 <script>
   // Apply saved theme before render to avoid flash. Shared key with the
-  // surrounding C952 chapter pages (c952-theme).
+  // surrounding C952 chapter pages (study-guide-theme).
   (function () {
     try {
-      var saved = localStorage.getItem('c952-theme');
+      var saved = localStorage.getItem('study-guide-theme');
       if (saved === 'light' || saved === 'dark') {
         document.documentElement.setAttribute('data-theme', saved);
       }

@@ -267,7 +267,7 @@ or an AMAT in cycles). Used in World 5.
   `bq-state` (Binary Quest) is copied over once. After that the legacy
   key is left alone.
 - **Theme**: shared with the surrounding C952 chapter pages via the
-  `c952-theme` key, so the theme toggle here also affects ch2.html etc.
+  `study-guide-theme` key, so the theme toggle here also affects ch2.html etc.
 - **Locks**: a level is unlocked when every prereq id in `prereqs[]`
   is in the completed set.
 - **XP math** (matches Binary Quest):

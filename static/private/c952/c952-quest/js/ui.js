@@ -476,13 +476,13 @@ document.addEventListener('keydown', (e) => {
   btn.addEventListener('click', () => {
     const next = currentTheme() === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
-    try { localStorage.setItem('c952-theme', next); } catch (e) {}
+    try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
     updateLabel();
   });
   if (mq.addEventListener) {
     mq.addEventListener('change', () => {
       let saved = null;
-      try { saved = localStorage.getItem('c952-theme'); } catch (e) {}
+      try { saved = localStorage.getItem('study-guide-theme'); } catch (e) {}
       if (saved !== 'light' && saved !== 'dark') updateLabel();
     });
   }
