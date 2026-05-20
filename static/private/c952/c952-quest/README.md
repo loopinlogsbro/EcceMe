@@ -276,7 +276,7 @@ exam-trap callouts to match the narrative of World 2.
 
 - World 1 (Foundations)        — 10 levels, **shipped**
 - World 2 (LEGv8 Instructions) — 9 levels, **shipped**
-- World 3 (Arithmetic)         — 4 levels, planned
+- World 3 (Arithmetic)         — 4 levels, **shipped**
 - World 4 (Datapath/Pipeline)  — 5 levels, planned
 - World 5 (Memory Hierarchy)   — 5 levels, planned
 

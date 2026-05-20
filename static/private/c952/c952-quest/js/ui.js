@@ -14,8 +14,8 @@ import * as Engine from './engine.js';
 // at module load. Add new worlds here as they ship.
 import './../levels/world1-foundations.js';
 import './../levels/world2-legv8.js';
-// Future: import './../levels/world3-arithmetic.js';
-//         import './../levels/world4-datapath.js';
+import './../levels/world3-arithmetic.js';
+// Future: import './../levels/world4-datapath.js';
 //         import './../levels/world5-memory.js';
 
 const SOUND_FREQ_OK = 880;

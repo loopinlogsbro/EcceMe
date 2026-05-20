@@ -407,6 +407,28 @@ export function makeMachine({ lines, labels, initRegs = {}, initMem = {}, sp = 0
           break;
         }
 
+        case 'MUL': {
+          // MUL Xd, Xn, Xm — keeps the lower 64 bits of the product
+          setReg(rw(0), (reg(1) * reg(2)) & MASK64);
+          break;
+        }
+        case 'UDIV': {
+          // ARM rule: divide by zero returns 0 (no exception).
+          const d = reg(2);
+          setReg(rw(0), d === 0n ? 0n : (reg(1) / d) & MASK64);
+          break;
+        }
+        case 'SDIV': {
+          const d = toS64(reg(2));
+          if (d === 0n) { setReg(rw(0), 0n); break; }
+          const n = toS64(reg(1));
+          // Round-toward-zero (BigInt /). LEGv8 specifies truncate toward 0.
+          let q = n / d;
+          // BigInt division truncates toward zero for both pos and neg in JS.
+          setReg(rw(0), q);
+          break;
+        }
+
         case 'MOVZ': case 'MOVK': {
           const dst = rw(0);
           const imm = parseImm(op[1]);
