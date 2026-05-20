@@ -246,13 +246,18 @@ Followed by an `opts`/`ans` MC or a single `type` answer.
 { type:'cache-sim',
   prompt:'Compute tag/index/offset for 0x1A2C.',
   cache: { totalBytes:1024, blockBytes:16, ways:1, addrBits:16 },
+  address: 0x1A2C,                  // optional; renders the address
+                                    // colour-coded as tag | index | offset
+                                    // bits beneath the cache summary
   ask: 'fields',                    // 'fields' | 'hit-miss' | 'amat'
-  ans: { tag:0x1A, index:2, offset:12 },
+  ans: { tag:6, index:34, offset:12 },
   concept:'…',
   explain:'…' }
 ```
 
-(Used in World 5.)
+If `ask` is omitted (or set to anything other than `'fields'`), the
+challenge takes a single string/number answer (e.g. `'hit'`, `'miss'`,
+or an AMAT in cycles). Used in World 5.
 
 ## Engine details
 
@@ -301,6 +306,6 @@ exam-trap callouts to match the narrative of World 2.
 - World 2 (LEGv8 Instructions) — 9 levels, **shipped**
 - World 3 (Arithmetic)         — 4 levels, **shipped**
 - World 4 (Datapath/Pipeline)  — 5 levels, **shipped**
-- World 5 (Memory Hierarchy)   — 5 levels, planned
+- World 5 (Memory Hierarchy)   — 5 levels, **shipped**
 
-Total target: 33 levels.
+All 33 levels shipped — full course coverage complete.

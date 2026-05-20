@@ -956,6 +956,34 @@ function renderCacheSim(container, ch, ctx) {
           + `Address: ${c.addrBits} bits → tag ${tagBits} | index ${indexBits} | offset ${offsetBits}.` });
   container.appendChild(summary);
 
+  // Address-breakdown visualization: tag | index | offset, each segment
+  // labelled with its bit count. If the challenge provides ch.address,
+  // also render the actual bit string so the student can read fields off.
+  const addrEl = el('div', { class: 'cache-addr' });
+  addrEl.appendChild(el('div', { class: 'cache-addr-seg tag',
+    html: `<div>tag</div><span class="seg-bits">${tagBits} bits</span>` }));
+  addrEl.appendChild(el('div', { class: 'cache-addr-seg idx',
+    html: `<div>index</div><span class="seg-bits">${indexBits} bits</span>` }));
+  addrEl.appendChild(el('div', { class: 'cache-addr-seg off',
+    html: `<div>offset</div><span class="seg-bits">${offsetBits} bits</span>` }));
+  container.appendChild(addrEl);
+
+  if (ch.address != null) {
+    const addr = typeof ch.address === 'string' ? parseInt(ch.address, 16) : ch.address;
+    const bin = addr.toString(2).padStart(c.addrBits, '0');
+    const tagStr = bin.slice(0, tagBits);
+    const idxStr = bin.slice(tagBits, tagBits + indexBits);
+    const offStr = bin.slice(tagBits + indexBits);
+    const hex = '0x' + addr.toString(16).toUpperCase();
+    const breakdown = el('div', { class: 'sub-num', style: 'text-align:center;margin-top:6px;font-family:monospace;' });
+    breakdown.innerHTML =
+      `Access address ${hex} (${c.addrBits}-bit binary): `
+      + `<span style="color:var(--purple);font-weight:700">${tagStr || '∅'}</span>`
+      + `<span style="color:var(--accent);font-weight:700"> ${idxStr || '∅'}</span>`
+      + `<span style="color:var(--orange);font-weight:700"> ${offStr || '∅'}</span>`;
+    container.appendChild(breakdown);
+  }
+
   if (ch.ask === 'fields') {
     const wrap = el('div', { class:'two-col', style:'margin-top:10px;' });
     ['tag','index','offset'].forEach(field => {
