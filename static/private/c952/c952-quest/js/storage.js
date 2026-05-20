@@ -17,7 +17,7 @@
 //     migratedFromBQ: bool,
 //   }
 //
-// Theme is stored separately under `c952-theme` (shared across
+// Theme is stored separately under `study-guide-theme` (shared across
 // the C952 study-guide pages) so toggling here also affects the
 // chapter pages.
 // ============================================================

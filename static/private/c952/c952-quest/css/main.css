@@ -110,8 +110,14 @@ strong{color:var(--text);}
 .bit-col{display:flex;flex-direction:column;align-items:center;}
 
 /* ── Place values ── */
+/* Layout mirrors .bit-row exactly so each pv-cell sits centred above
+   its corresponding bit-col on every viewport size:
+     .pv-row → flex with 6px gap (matches .bit-row outer gap)
+     .pv-group → flex with 4px gap (matches .bit-group inner gap)
+     .bit-sep → 10px spacer between halves of an 8-bit display */
 .pv-row{display:flex;gap:6px;justify-content:center;margin:8px 0;}
-.pv-cell{min-width:48px;text-align:center;font-size:11px;color:var(--gold);
+.pv-group{display:flex;gap:4px;}
+.pv-cell{width:48px;text-align:center;font-size:11px;color:var(--gold);
   font-family:monospace;font-weight:600;}
 
 /* ── MC Options ── */
@@ -443,6 +449,7 @@ strong{color:var(--text);}
 @media(max-width:540px){
   .two-col,.mc-grid{grid-template-columns:1fr;}
   .bit-btn{width:38px;height:38px;font-size:16px;}
+  .pv-cell{width:38px;}
   #level-map{grid-template-columns:1fr;}
   .reg-grid{grid-template-columns:repeat(2,1fr);}
   .dm-area{grid-template-columns:1fr;}

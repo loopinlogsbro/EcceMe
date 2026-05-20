@@ -117,27 +117,32 @@ function checkMC(ch, ctx) {
 // a read-only place-value strip is rendered above the input as a hint.
 // ============================================================
 function renderType(container, ch, ctx) {
-  // Optional binary-literal preview
+  // Optional binary-literal preview. Both pv-row and bit-row use the
+  // same group + separator structure so cells line up column-by-column.
   const m = ch.prompt && ch.prompt.match(/([01])\s*([01])\s*([01])\s*([01])\s*([01])\s*([01])\s*([01])\s*([01])/);
   if (m) {
     const bits = m.slice(1, 9).map(b => parseInt(b, 10));
     const pvRow = el('div', { class: 'pv-row' });
     const bitRow = el('div', { class: 'bit-row' });
+    let pvGrp = el('div', { class: 'pv-group' });
     let grp = el('div', { class: 'bit-group' });
     for (let k = 0; k < 8; k++) {
       const pos = 7 - k;
-      pvRow.appendChild(el('div', { class: 'pv-cell', html: String(Math.pow(2, pos)) }));
-      if (k === 4) {
-        pvRow.appendChild(el('div', { class: 'bit-sep' }));
-        bitRow.appendChild(grp);
-        bitRow.appendChild(el('div', { class: 'bit-sep' }));
-        grp = el('div', { class: 'bit-group' });
-      }
+      pvGrp.appendChild(el('div', { class: 'pv-cell', html: String(Math.pow(2, pos)) }));
       const col = el('div', { class: 'bit-col' });
       col.appendChild(el('div', { class: 'bit-btn readonly' + (bits[k] ? ' on' : ''), html: String(bits[k]) }));
       col.appendChild(el('div', { class: 'bit-label', html: `bit ${pos}` }));
       grp.appendChild(col);
+      if (k === 3) {
+        pvRow.appendChild(pvGrp);
+        pvRow.appendChild(el('div', { class: 'bit-sep' }));
+        bitRow.appendChild(grp);
+        bitRow.appendChild(el('div', { class: 'bit-sep' }));
+        pvGrp = el('div', { class: 'pv-group' });
+        grp   = el('div', { class: 'bit-group' });
+      }
     }
+    pvRow.appendChild(pvGrp);
     bitRow.appendChild(grp);
     container.appendChild(pvRow);
     container.appendChild(bitRow);
@@ -178,13 +183,20 @@ function renderToggle(container, ch, ctx) {
   const bits = new Array(n).fill(0);
   ctx.setRuntime({ bits });
 
-  // Place-value row (top-down, MSB → LSB) — only for 8-bit which is the
-  // only width the existing levels use.
+  // Place-value row (top-down, MSB → LSB). Use the same flex group +
+  // separator structure as the bit-row so each pv-cell sits centred
+  // above its bit-col on every viewport size.
   const pvRow = el('div', { class: 'pv-row' });
+  let pvGrp = el('div', { class: 'pv-group' });
   for (let i = n - 1; i >= 0; i--) {
-    if (i === 3 && n === 8) pvRow.appendChild(el('div', { class: 'bit-sep' }));
-    pvRow.appendChild(el('div', { class: 'pv-cell', html: String(Math.pow(2, i)) }));
+    pvGrp.appendChild(el('div', { class: 'pv-cell', html: String(Math.pow(2, i)) }));
+    if (i === 4 && n === 8) {
+      pvRow.appendChild(pvGrp);
+      pvRow.appendChild(el('div', { class: 'bit-sep' }));
+      pvGrp = el('div', { class: 'pv-group' });
+    }
   }
+  pvRow.appendChild(pvGrp);
   container.appendChild(pvRow);
 
   const row = el('div', { class: 'bit-row' });
