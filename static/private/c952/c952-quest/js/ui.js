@@ -15,8 +15,8 @@ import * as Engine from './engine.js';
 import './../levels/world1-foundations.js';
 import './../levels/world2-legv8.js';
 import './../levels/world3-arithmetic.js';
-// Future: import './../levels/world4-datapath.js';
-//         import './../levels/world5-memory.js';
+import './../levels/world4-datapath.js';
+// Future: import './../levels/world5-memory.js';
 
 const SOUND_FREQ_OK = 880;
 const SOUND_FREQ_BAD = 220;

@@ -1006,6 +1006,92 @@ function checkCacheSim(ch, ctx) {
 }
 
 // ============================================================
+//  PIPELINE-TRACE — render a 5-stage timeline + ask MC/type
+// ============================================================
+// Author shape:
+//   { type:'pipeline-trace',
+//     prompt: "How many total cycles does this sequence take?",
+//     // Each row = one instruction.
+//     // stages[] is what appears in each column (cycle 1..N).
+//     // Use 'IF','ID','EX','MEM','WB','stall','bubble', or null for empty.
+//     rows: [
+//       { label:'ADD X1,X2,X3', stages:['IF','ID','EX','MEM','WB'] },
+//       { label:'SUB X4,X1,X5', stages:[null,'IF','ID','stall','EX','MEM','WB'] },
+//     ],
+//     // Optional forwarding arrows: array of { from:{row,stage}, to:{row,stage}, kind:'EX-EX'|'MEM-EX' }
+//     forwarding?: [{ from:{row:0,stage:4}, to:{row:1,stage:4} }],
+//     // Then a multiple-choice question OR a text answer:
+//     opts?: [...], ans?: idx,                 // multiple choice
+//     // OR
+//     askType?: 'type', ans?: '6',             // free-form answer
+//     concept?, explain? }
+// ============================================================
+function renderPipelineTrace(container, ch, ctx) {
+  const rows = ch.rows || [];
+  const cols = Math.max(0, ...rows.map(r => (r.stages || []).length));
+
+  // Header row: cycle numbers
+  const grid = el('div', { class: 'pipe-grid',
+    style: `grid-template-columns: 160px repeat(${cols}, minmax(48px, 1fr));` });
+  grid.appendChild(el('div', { class: 'pipe-row-label', html: 'Instruction \\ cycle' }));
+  for (let c = 1; c <= cols; c++) {
+    grid.appendChild(el('div', { class: 'pipe-row-label', html: String(c) }));
+  }
+
+  rows.forEach((row, ri) => {
+    grid.appendChild(el('div', { class: 'pipe-row-label', html: escapeHtml(row.label || '') }));
+    for (let c = 0; c < cols; c++) {
+      const s = (row.stages || [])[c];
+      if (!s) {
+        grid.appendChild(el('div', { class: 'pipe-cell empty', 'data-row': String(ri), 'data-col': String(c) }));
+      } else if (s === 'stall' || s === 'bubble') {
+        grid.appendChild(el('div', { class: `pipe-cell ${s}`, 'data-row': String(ri), 'data-col': String(c), html: '⊘' }));
+      } else {
+        grid.appendChild(el('div', { class: `pipe-cell ${s}`, 'data-row': String(ri), 'data-col': String(c), html: s }));
+      }
+    }
+  });
+  container.appendChild(grid);
+
+  // Optional forwarding callouts (rendered below the grid as text, since
+  // overlaying SVG arrows on a CSS grid is fiddly across browsers).
+  if (ch.forwarding && ch.forwarding.length) {
+    const caption = el('div', { class: 'sub-num', style: 'text-align:left;margin-top:6px;' });
+    caption.innerHTML = '<strong style="color:var(--accent)">Forwarding paths:</strong> '
+      + ch.forwarding.map(f => {
+          const fr = rows[f.from.row]?.label || `row ${f.from.row}`;
+          const to = rows[f.to.row]?.label   || `row ${f.to.row}`;
+          const ks = f.kind ? ` (${f.kind})` : '';
+          return `${fr}[cycle ${f.from.stage+1}] → ${to}[cycle ${f.to.stage+1}]${ks}`;
+        }).join('; ');
+    container.appendChild(caption);
+  }
+
+  // Defer the answer prompt to MC or text.
+  if (ch.opts) {
+    renderMC(container, ch, ctx);
+  } else if (ch.askType === 'type' || ch.ans != null) {
+    container.appendChild(el('div', { class: 'type-wrap' },
+      el('input', {
+        type:'text', class:'type-input', id:'pipe-answer',
+        placeholder:'answer', autocomplete:'off',
+        onkeydown(e){ if (e.key === 'Enter') ctx.requestCheck(); }
+      })));
+  }
+}
+function checkPipelineTrace(ch, ctx) {
+  if (ch.opts) return checkMC(ch, ctx);
+  const inp = document.getElementById('pipe-answer');
+  if (!inp) return { correct: false, message: 'Answer field missing.' };
+  const userVal = inp.value.trim().toLowerCase();
+  const want    = String(ch.ans).toLowerCase();
+  const correct = userVal === want;
+  inp.classList.toggle('correct', correct);
+  inp.classList.toggle('wrong',   !correct);
+  return { correct, locked: correct };
+}
+
+// ============================================================
 //  Registry
 // ============================================================
 export const TYPES = {
@@ -1018,6 +1104,7 @@ export const TYPES = {
   'bit-field':       { render: renderBitField,   check: checkBitField },
   'drag-match':      { render: renderDragMatch,  check: checkDragMatch },
   'datapath-trace':  { render: renderDatapath,   check: checkDatapath },
+  'pipeline-trace':  { render: renderPipelineTrace, check: checkPipelineTrace },
   'cache-sim':       { render: renderCacheSim,   check: checkCacheSim },
 };
 
