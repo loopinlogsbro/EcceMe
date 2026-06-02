@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>StopCalc — Stops / Hour</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c; --border: #2a3140;
+    --text: #e6e8ec; --muted: #9aa3b2; --accent: #7cc4ff;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+      --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+      --accent: #1f6feb; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f8fa; --panel: #ffffff; --panel-2: #f1f3f7;
+    --border: #d8dde5; --text: #1a1d23; --muted: #5a6473;
+    --accent: #1f6feb; --shadow: 0 2px 8px rgba(15,17,21,0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222c;
+    --border: #2a3140; --text: #e6e8ec; --muted: #9aa3b2;
+    --accent: #7cc4ff; --shadow: 0 2px 10px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--text); }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 22px 60px; }
+  header { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px 18px 20px; box-shadow: var(--shadow); }
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+  label .hint { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type="time"], input[type="number"] {
+    width: 100%; padding: 10px 12px; font-size: 16px;
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .results { margin-top: 20px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .stat { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat .v { display: block; margin-top: 4px; font-size: 26px; font-weight: 700; font-family: ui-monospace, Consolas, monospace; color: var(--accent); }
+  .stat .u { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .note { margin-top: 16px; color: var(--muted); font-size: 12.5px; }
+  .err { margin-top: 16px; color: #ff7b72; font-size: 13px; min-height: 0; }
+  .theme-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1; padding: 0;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .theme-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-btn .icon-sun, .theme-btn .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-btn .icon-sun,
+  :root:not([data-theme]) .theme-btn .icon-sun { display: inline; }
+  :root[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-btn .icon-sun { display: none; }
+    :root:not([data-theme]) .theme-btn .icon-moon { display: inline; }
+  }
+</style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('study-guide-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">&#9788;</span>
+  <span class="icon-moon" aria-hidden="true">&#9790;</span>
+</button>
+<div class="wrap">
+  <header>
+    <h1>StopCalc</h1>
+    <div class="sub">Amazon delivery pace &middot; stops per hour to finish on time</div>
+  </header>
+
+  <div class="panel">
+    <div class="field">
+      <label for="startTime">1st stop &mdash; start time
+        <span class="hint">When you complete (or begin) your first stop</span>
+      </label>
+      <input type="time" id="startTime" />
+    </div>
+
+    <div class="field">
+      <label for="finishTime">Last stop &mdash; finish time
+        <span class="hint">When you need the route done by</span>
+      </label>
+      <input type="time" id="finishTime" />
+    </div>
+
+    <div class="field">
+      <label for="stops">Total stops
+        <span class="hint">Number of stops on the route</span>
+      </label>
+      <input type="number" id="stops" inputmode="numeric" min="1" step="1" placeholder="e.g. 120" />
+    </div>
+
+    <div class="results">
+      <div class="stat">
+        <span class="k">Time available</span>
+        <span class="v" id="outTime">&mdash;</span>
+      </div>
+      <div class="stat">
+        <span class="k">Stops / hour</span>
+        <span class="v" id="outRate">&mdash;</span>
+      </div>
+      <div class="stat">
+        <span class="k">Per stop</span>
+        <span class="v" id="outPer">&mdash; <span class="u">min</span></span>
+      </div>
+    </div>
+
+    <div class="err" id="err"></div>
+    <div class="note">Tip: if the finish time is earlier on the clock than the start (an overnight route), it's treated as the next day.</div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var startEl = document.getElementById('startTime');
+    var finishEl = document.getElementById('finishTime');
+    var stopsEl = document.getElementById('stops');
+    var outTime = document.getElementById('outTime');
+    var outRate = document.getElementById('outRate');
+    var outPer = document.getElementById('outPer');
+    var errEl = document.getElementById('err');
+
+    function toMinutes(v) {
+      if (!v) return null;
+      var p = v.split(':');
+      if (p.length < 2) return null;
+      var h = parseInt(p[0], 10), m = parseInt(p[1], 10);
+      if (isNaN(h) || isNaN(m)) return null;
+      return h * 60 + m;
+    }
+
+    function fmtDuration(mins) {
+      var h = Math.floor(mins / 60);
+      var m = Math.round(mins % 60);
+      if (h <= 0) return m + 'm';
+      if (m === 0) return h + 'h';
+      return h + 'h ' + m + 'm';
+    }
+
+    function calc() {
+      errEl.textContent = '';
+      var start = toMinutes(startEl.value);
+      var finish = toMinutes(finishEl.value);
+      var stops = parseInt(stopsEl.value, 10);
+
+      if (start === null || finish === null || isNaN(stops)) {
+        outTime.innerHTML = '&mdash;';
+        outRate.innerHTML = '&mdash;';
+        outPer.innerHTML = '&mdash; <span class="u">min</span>';
+        return;
+      }
+      if (stops < 1) {
+        errEl.textContent = 'Total stops must be at least 1.';
+        return;
+      }
+
+      var diff = finish - start;
+      if (diff <= 0) diff += 24 * 60; // overnight wrap
+
+      var hours = diff / 60;
+      var rate = stops / hours;            // stops per hour
+      var perStop = diff / stops;          // minutes per stop
+
+      outTime.textContent = fmtDuration(diff);
+      outRate.innerHTML = (Math.round(rate * 10) / 10).toFixed(1) + ' <span class="u">/hr</span>';
+      outPer.innerHTML = (Math.round(perStop * 10) / 10).toFixed(1) + ' <span class="u">min</span>';
+    }
+
+    startEl.addEventListener('input', calc);
+    finishEl.addEventListener('input', calc);
+    stopsEl.addEventListener('input', calc);
+  })();
+</script>
+
+<script>
+  (function() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    var mq = window.matchMedia('(prefers-color-scheme: light)');
+    function currentTheme() {
+      var t = root.getAttribute('data-theme');
+      if (t === 'light' || t === 'dark') return t;
+      return mq.matches ? 'light' : 'dark';
+    }
+    function updateLabel() {
+      var t = currentTheme();
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.setAttribute('title', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    btn.addEventListener('click', function() {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('study-guide-theme', next); } catch (e) {}
+      updateLabel();
+    });
+    mq.addEventListener && mq.addEventListener('change', function() {
+      var saved = null;
+      try { saved = localStorage.getItem('study-guide-theme'); } catch (e) {}
+      if (!saved) updateLabel();
+    });
+    updateLabel();
+  })();
+</script>
+</body>
+</html>
