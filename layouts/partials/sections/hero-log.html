@@ -1,101 +1,14 @@
 {{ if .Site.Params.hero.enable | default false }}
 {{- $hero := .Site.Language.Params.hero | default .Site.Params.hero -}}
-{{- $url := "https://api.github.com/users/loopinlogsbro/events/public" -}}
-{{- $events := slice -}}
-{{- $fetchError := false -}}
-{{- $token := os.Getenv "GITHUB_TOKEN" -}}
-{{- $opts := dict "headers" (dict "Authorization" (printf "Bearer %s" $token) "User-Agent" "EcceMe-build") -}}
-{{- $req := try (resources.GetRemote $url $opts) -}}
-{{- if $req.Err -}}
-    {{- $fetchError = true -}}
-{{- else if $req.Value -}}
-    {{- $events = $req.Value.Content | transform.Unmarshal -}}
-{{- else -}}
-    {{- $fetchError = true -}}
-{{- end -}}
-{{- if $fetchError -}}
-    {{- $fallback := index site.Data "github-events" | default slice -}}
-    {{- if gt (len $fallback) 0 -}}
-        {{- $events = $fallback -}}
-        {{- $fetchError = false -}}
-    {{- end -}}
-{{- end -}}
-
 <section id="hero" class="py-5">
     <div class="container px-3 px-sm-4 px-md-5 px-lg-5">
-        <div class="row align-items-start gy-4">
-
-            {{/* Hero text — left column */}}
-            <div class="col-12 col-lg-5 content {{ if .Site.Params.animate }}animate{{ end }}" id="primary-font">
+        <div class="row">
+            <div class="col-12 col-md-9 col-lg-7 content {{ if .Site.Params.animate }}animate{{ end }}" id="primary-font">
                 {{ if $hero.intro }}<p class="hero-intro">{{ $hero.intro }}</p>{{ end }}
                 <h1>{{ $hero.title }}</h1>
                 <h2>{{ $hero.subtitle }}</h2>
                 <p class="hero-content">{{ $hero.content | markdownify }}</p>
             </div>
-
-            {{/* Activity log — right column */}}
-            <div class="col-12 col-lg-7">
-                <div class="github-terminal">
-                    <div class="terminal-header">
-                        <span class="terminal-button close"></span>
-                        <span class="terminal-button minimize"></span>
-                        <span class="terminal-button maximize"></span>
-                        <span class="terminal-title">activity-log — loopinlogsbro@ecce</span>
-                    </div>
-                    <div class="terminal-body" id="github-terminal-output">
-                        {{ if $fetchError }}
-                            <div class="terminal-line error-text">
-                                <span class="prompt">></span> Terminal offline: GitHub API unavailable during build.
-                            </div>
-                        {{ else }}
-                            {{ $pushEvents := slice }}
-                            {{ range $events }}
-                                {{ if eq .type "PushEvent" }}
-                                    {{ $pushEvents = $pushEvents | append . }}
-                                {{ end }}
-                            {{ end }}
-                            {{ if eq (len $pushEvents) 0 }}
-                                <div class="terminal-line">
-                                    <span class="prompt">></span> No recent commits found for loopinlogsbro.
-                                </div>
-                            {{ else }}
-                                {{ range first 5 $pushEvents }}
-                                    {{ $repoParts := split .repo.name "/" }}
-                                    {{ $repoName := index $repoParts (sub (len $repoParts) 1) }}
-                                    {{ $message := "" }}
-                                    {{ $hash := "" }}
-                                    {{ if .payload.commits }}
-                                        {{ $commit := index .payload.commits 0 }}
-                                        {{ if $commit }}
-                                            {{ $messageLines := split $commit.message "\n" }}
-                                            {{ $message = index $messageLines 0 }}
-                                            {{ $hash = substr $commit.sha 0 7 }}
-                                        {{ end }}
-                                    {{ end }}
-                                    {{ if eq $message "" }}
-                                        {{ $refParts := split .payload.ref "/" }}
-                                        {{ $branch := index $refParts (sub (len $refParts) 1) }}
-                                        {{ $message = printf "Pushed to %s" $branch }}
-                                        {{ $hash = substr .payload.head 0 7 }}
-                                    {{ end }}
-                                    {{ $date := time.Format "2006-01-02" .created_at }}
-                                    <div class="terminal-line">
-                                        <span class="prompt">></span>
-                                        <span class="term-date">[{{ $date }}]</span>
-                                        <span class="term-repo">{{ $repoName }}</span>
-                                        <span class="term-hash">({{ $hash }})</span>:
-                                        <span class="term-msg">{{ htmlEscape $message }}</span>
-                                    </div>
-                                {{ end }}
-                            {{ end }}
-                        {{ end }}
-                        <div class="terminal-line">
-                            <span class="prompt">></span> <span class="cursor">_</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </section>
