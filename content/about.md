@@ -1,28 +1,25 @@
-# About the Lab
+-----
 
-> Ecce is my working archive for software, systems, automation, and practical engineering projects.
+## title: “About”
+date: 2026-06-11
+draft: false
 
-This site is not meant to be a polished résumé page. It is a record of things I am building, testing, breaking, documenting, and revising.
+# ecce.me?
 
-The focus is practical work: custom tools, web infrastructure, physical automation, coursework projects, experiments, and writeups that show how a system changed over time.
+I wanted a domain that was short, memorable, and meant something. *Ecce* is “behold” in Latin — a little grand but still, it captures the kind reaction the work I want to be known for, so it stays.
 
-## Methodology
+Ecce is my repository for software, systems, and documentation. A résumé of sorts — a record of what I’m building, testing, breaking, and documenting. Usually in that order.
 
-1. **Build quickly:** Start with a working prototype. Improve it after the idea survives contact with reality.
+## How I work
 
-2. **Solve real problems:** Software and hardware should make an actual workflow, environment, or system better.
+1. **Iterate quickly.** Working prototype first, refine it once the idea survives contact with reality.
+1. **Solve the obvious first.** The common case before the clever one.
+1. **Leave a trail.** Commits, logs, screenshots, notes. If I can’t trace how it got built, it isn’t done.
 
-3. **Leave a trail:** Commits, logs, screenshots, writeups, and notes make the work traceable.
+## What I’m building
 
-## Current Focus Areas
+- **Homelab & automation** — a self-hosted stack on a repurposed mini-PC: Home Assistant, Docker, RAID, ESP32 presence detection. Local-first, because I’d rather own the thing than rent it.
+- **Web infrastructure** — this site. Hugo, Cloudflare Pages, deploys straight from GitHub.
+- **Embedded** — ESP32 builds where the software has to survive the physical world, which it rarely does on the first try.
 
-- **Systems programming:** Python, Java, Linux environments, command-line workflows
-- **Physical automation:** ESP32 microcontrollers, Home Assistant, sensors, local-first tooling
-- **Web infrastructure:** Hugo, Cloudflare Pages, GitHub workflows, static deployment systems
-- **Documentation:** Project writeups, technical notes, build logs, and lessons learned
-
-## Why Ecce Exists
-
-I use this site to make my work visible. Not just finished projects, but the process behind them: design choices, failed attempts, tradeoffs, revisions, and practical results.
-
-A finished project page shows what worked. A good writeup shows how it got there.
+Each will links to a writeup. A finished project shows what worked. The writeup shows everything that did and didn’t.
