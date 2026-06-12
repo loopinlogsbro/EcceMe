@@ -1,8 +1,8 @@
------
-
-## title: “About”
+---
+title: "About"
 date: 2026-06-11
 draft: false
+---
 
 # ecce.me?
 
