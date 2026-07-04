@@ -8,6 +8,14 @@
             <div class="carousel-inner">
                 {{ range $i, $p := $projects.items }}
                 <div class="carousel-item {{ if eq $i 0 }}active{{ end }} px-2">
+                    {{ if $p.placeholder }}
+                    <div class="card card-placeholder" title="{{ $p.title }}">
+                        <div class="card-body bg-transparent p-3">
+                            <h5 class="card-title bg-transparent">{{ $p.title }}</h5>
+                            <span class="coming-soon">Coming soon</span>
+                        </div>
+                    </div>
+                    {{ else }}
                     <div class="card" title="{{ $p.title }}">
                         {{ if $p.image }}
                         <div class="card-head">
@@ -44,6 +52,7 @@
                         </div>
                         {{ end }}
                     </div>
+                    {{ end }}
                 </div>
                 {{ end }}
                 {{ range ( where .Site.RegularPages "Type" "projects" ) }}
@@ -106,7 +115,15 @@
         <div class="row justify-content-center px-3 px-md-5 d-none d-md-flex">
             {{ range $projects.items | default .Site.Params.projects.items }}
             <div class="col-lg-4 col-md-6 my-3">
-                <div class="card my-3" title="{{ .title }}">
+                {{ if .placeholder }}
+                <div class="card card-placeholder" title="{{ .title }}">
+                    <div class="card-body bg-transparent p-3">
+                        <h5 class="card-title bg-transparent">{{ .title }}</h5>
+                        <span class="coming-soon">Coming soon</span>
+                    </div>
+                </div>
+                {{ else }}
+                <div class="card" title="{{ .title }}">
                     {{ if .image }}
                     <div class="card-head">
                         <img class="card-img-top" src="{{ .image }}" alt="{{ .title }}">
@@ -142,6 +159,7 @@
                     </div>
                     {{ end }}
                 </div>
+                {{ end }}
             </div>
             {{ end }}
             {{ range ( where .Site.RegularPages "Type" "projects" ) }}

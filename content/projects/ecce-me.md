@@ -12,7 +12,7 @@ date: 2026-05-07
 tags:
   - projects
   - site
-image: /images/EcceIcon.png
+image: /images/ecce-logo.png
 badges:
   - Hugo
   - Cloudflare Pages
