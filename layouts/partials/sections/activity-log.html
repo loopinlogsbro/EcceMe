@@ -2,7 +2,11 @@
 {{- $events := slice -}}
 {{- $fetchError := false -}}
 {{- $token := os.Getenv "GITHUB_TOKEN" -}}
-{{- $opts := dict "headers" (dict "Authorization" (printf "Bearer %s" $token) "User-Agent" "EcceMe-build") -}}
+{{- $headers := dict "User-Agent" "EcceMe-build" -}}
+{{- if $token -}}
+    {{- $headers = merge $headers (dict "Authorization" (printf "Bearer %s" $token)) -}}
+{{- end -}}
+{{- $opts := dict "headers" $headers -}}
 {{- $req := try (resources.GetRemote $url $opts) -}}
 {{- if $req.Err -}}
     {{- $fetchError = true -}}

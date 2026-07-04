@@ -17,11 +17,14 @@ jobs:
 
       - name: Fetch events
         run: |
-          curl -s \
+          curl -sf \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "User-Agent: EcceMe-build" \
             "https://api.github.com/users/loopinlogsbro/events/public" \
-            > data/github-events.json
+            > /tmp/events.json
+          # Only accept a JSON array; rate-limit/error responses are objects
+          jq -e 'type == "array"' /tmp/events.json > /dev/null
+          mv /tmp/events.json data/github-events.json
 
       - name: Commit if changed
         run: |

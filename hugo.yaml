@@ -247,14 +247,6 @@ params:
           - "Home Assistant"
         links: []
 
-  coursework:
-    completed: "Fill in from degree plan"
-    current: "C952 Computer Architecture"
-    remaining: "Fill in from degree plan"
-    percent: 0
-    targetFinish: "3–6 months"
-    note: "Fill in completed and remaining counts from the official WGU degree plan."
-
   #Contact
   contact:
     enable: false
