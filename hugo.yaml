@@ -7,25 +7,17 @@ theme: hugo-profile
 # Multilingual configuration
 defaultContentLanguage: "en"
 defaultContentLanguageInSubdir: false
-disableLanguages:
-  - es
-  - fr
 
 languages:
   en:
-    label: "English"
     weight: 1
     contentDir: "content"
 outputs:
   home:
     - "HTML"
     - "RSS"
-    - "JSON"
   page:
     - "HTML"
-    - "RSS"
-
-enableRobotsTXT: true
 
 #services:
   #googleAnalytics:

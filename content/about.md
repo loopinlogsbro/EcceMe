@@ -1,5 +1,6 @@
 ---
 title: "About"
+type: about
 date: 2026-07-04
 draft: false
 description: "Ecce is Latin for “behold.” This site is the record — what I’m building, what worked, and what broke on the way."
