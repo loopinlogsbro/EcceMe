@@ -1,17 +1,3 @@
-/* ─── Design tokens ────────────────────────────────────────────────────────── */
-:root {
-  --terminal-bg:       #0d1117;
-  --terminal-header:   #161b22;
-  --terminal-text:     #c9d1d9;
-  --terminal-muted:    #8b949e;
-  --terminal-link:     #58a6ff;
-  --terminal-hash:     #f0883e;
-  --terminal-close:    #ff5f56;
-  --terminal-minimize: #ffbd2e;
-  --terminal-maximize: #27c93f;
-  --terminal-error:    #ff5f56;
-}
-
 /* ─── Theme toggle ─────────────────────────────────────────────────────────── */
 button#theme-toggle:focus {
     outline: none;
@@ -71,82 +57,61 @@ button#theme-toggle svg {
     padding-bottom: 1rem !important;
 }
 
-#activity-log {
-    padding-top: 1rem;
-}
-
 #about {
     padding-top: 2rem !important;
     padding-bottom: 2rem !important;
 }
 
-/* ─── Project cards — natural height, footer pinned to bottom ─────────────── */
+/* ─── Project cards — compact height, footer pinned to bottom ─────────────── */
 #projects .card {
     display: flex;
     flex-direction: column;
+    min-height: 0 !important; /* override the theme's 400px min-height (projects.css loads later) */
+    height: 100%;           /* equalize cards within a row */
 }
 
 #projects .card .card-body {
     flex: 1 0 auto;
 }
 
-/* ─── Custom sections ──────────────────────────────────────────────────────── */
-.ecce-section {
-    padding: 2rem 0 0.5rem;
+/* Placeholder cards for upcoming projects */
+#projects .card.card-placeholder {
+    background: transparent !important;
+    border: 1.5px dashed rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
 }
 
-.ecce-section h3,
-#projects h3 {
-    font-size: 1.5rem;
-    letter-spacing: 0.02em;
-    margin-bottom: 0.25rem;
+.light #projects .card.card-placeholder {
+    border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
-.ecce-card {
-    height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 1.25rem;
+#projects .card.card-placeholder:hover {
+    transform: none;
+    box-shadow: none !important;
 }
 
-.light .ecce-card {
-    border-color: rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.02);
+#projects .card.card-placeholder .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.4rem;
+    padding: 2rem 1.5rem !important;
 }
 
-.ecce-card h4,
-.ecce-card h5 {
-    margin-bottom: 0.75rem;
+#projects .card.card-placeholder .card-title {
+    margin: 0;
+    opacity: 0.55;
 }
 
-.ecce-meta {
-    color: var(--text-secondary-color-dark);
-    font-size: 0.95rem;
-}
-
-.ecce-progress {
-    height: 0.75rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    overflow: hidden;
-}
-
-.ecce-progress-bar {
-    display: block;
-    height: 100%;
-    width: var(--ecce-progress-value, 0%);
-    background: var(--primary-color);
-}
-
-.ecce-link-list {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 0;
-}
-
-.ecce-link-list li + li {
-    margin-top: 0.75rem;
+#projects .coming-soon {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--primary-color);
+    opacity: 0.85;
 }
 
 /* ─── Hero ─────────────────────────────────────────────────────────────────── */
@@ -175,96 +140,6 @@ button#theme-toggle svg {
     font-family: 'Roboto Mono', monospace !important;
 }
 
-/* ─── GitHub terminal widget ───────────────────────────────────────────────── */
-.github-terminal {
-    background-color: var(--terminal-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    font-family: 'Roboto Mono', monospace;
-    margin-bottom: 0;
-}
-
-.terminal-header {
-    background-color: var(--terminal-header);
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-}
-
-.terminal-button {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.terminal-button.close    { background-color: var(--terminal-close); }
-.terminal-button.minimize { background-color: var(--terminal-minimize); }
-.terminal-button.maximize { background-color: var(--terminal-maximize); }
-
-.terminal-title {
-    color: var(--terminal-muted);
-    font-size: 0.85rem;
-    margin-left: 10px;
-}
-
-.terminal-body {
-    padding: 16px;
-    color: var(--terminal-text);
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-.terminal-line {
-    margin-bottom: 4px;
-    word-break: break-all;
-}
-
-.terminal-line .prompt {
-    color: var(--primary-color);
-    margin-right: 8px;
-    font-weight: bold;
-}
-
-.term-date { color: var(--terminal-muted); }
-.term-repo { color: var(--terminal-link); font-weight: bold; }
-.term-hash { color: var(--terminal-hash); }
-.term-msg  { color: var(--terminal-text); }
-
-.error-text { color: var(--terminal-error); }
-
-/* light mode overrides */
-.light .github-terminal {
-    --terminal-bg:      #f6f8fa;
-    --terminal-header:  #e8ecf0;
-    --terminal-text:    #24292f;
-    --terminal-muted:   #57606a;
-    --terminal-link:    #0969da;
-    --terminal-hash:    #cf6a00;
-    --terminal-error:   #cf222e;
-    border-color: rgba(0, 0, 0, 0.12);
-}
-
-.light .terminal-header {
-    border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-
-/* ─── Cursor ───────────────────────────────────────────────────────────────── */
-.cursor {
-    display: inline-block;
-    width: 8px;
-    animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
 /* ─── Mobile project carousel ──────────────────────────────────────────────── */
 @media (max-width: 767.98px) {
     #projects-carousel {
@@ -272,7 +147,7 @@ button#theme-toggle svg {
     }
 
     #projects-carousel .carousel-item .card {
-        min-height: 360px;
+        min-height: 220px;
         height: auto;
     }
 
@@ -311,6 +186,12 @@ button#theme-toggle svg {
     padding-top: 1rem;
 }
 
+/* Comfortable reading measure, centered when there is no side image */
+.about-body {
+    max-width: 46rem;
+    margin: 0 auto;
+}
+
 .about-illustration {
     width: 100%;
     border-radius: 8px;
@@ -327,21 +208,37 @@ button#theme-toggle svg {
 }
 
 .about-intro {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     line-height: 1.7;
-    opacity: 0.75;
+    opacity: 0.8;
     border-left: 3px solid var(--primary-color);
     padding-left: 1rem;
 }
 
+#about-page .about-content h2,
 #about-page .about-content h3 {
     color: var(--primary-color);
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
     font-family: 'Roboto Mono', monospace;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* markdown-flavored heading marker, echoing the site's terminal aesthetic;
+   the second declaration hides it from screen readers where supported */
+#about-page .about-content h2::before {
+    content: "## ";
+    content: "## " / "";
+    opacity: 0.5;
+}
+
+.light #about-page .about-content h2,
+.light #about-page .about-content h3 {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 
 .about-content ol,
@@ -350,8 +247,13 @@ button#theme-toggle svg {
     line-height: 1.8;
 }
 
+.about-content li::marker {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
 .about-content li + li {
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
 }
 
 .about-content p {

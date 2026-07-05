@@ -1,9 +1,5 @@
 baseURL: "https://ecce.me/"
 
-security:
-  funcs:
-    getenv:
-      - '^GITHUB_TOKEN$'
 locale: "en-US"
 title: "ecce"
 theme: hugo-profile
@@ -11,25 +7,17 @@ theme: hugo-profile
 # Multilingual configuration
 defaultContentLanguage: "en"
 defaultContentLanguageInSubdir: false
-disableLanguages:
-  - es
-  - fr
 
 languages:
   en:
-    label: "English"
     weight: 1
     contentDir: "content"
 outputs:
   home:
     - "HTML"
     - "RSS"
-    - "JSON"
   page:
     - "HTML"
-    - "RSS"
-
-enableRobotsTXT: true
 
 #services:
   #googleAnalytics:
@@ -226,26 +214,10 @@ params:
         links: []
 
       - title: Coursework Tracker
-        content: "A simple dashboard tracking completed, in-progress, and remaining WGU courses — kept honest and public."
-        featured:
-          name: View
-          link: /courses/
-        badges:
-          - "WGU"
-          - "Data"
-          - "Accountability"
-        links: []
+        placeholder: true
 
       - title: Automation and Physical Systems
-        content: "Notes and experiments around ESP32 devices, Home Assistant, and small automation scripts."
-        featured:
-          name: Writeup
-          link: /projects/automation-and-physical-systems/
-        badges:
-          - "Python"
-          - "ESP32"
-          - "Home Assistant"
-        links: []
+        placeholder: true
 
   #Contact
   contact:
@@ -302,4 +274,4 @@ params:
     articleList: "Jan 2, 2006"
     articleRecent: "Jan 2, 2006"
 
-  customScripts: '<script src="/js/navbar.js"></script><script src="/js/terminal-animate.js"></script>'
+  customScripts: '<script src="/js/navbar.js"></script>'
