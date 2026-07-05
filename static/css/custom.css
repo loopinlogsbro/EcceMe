@@ -129,6 +129,87 @@ button#theme-toggle svg {
     margin-bottom: 0.4rem !important;
 }
 
+/* ─── Handwritten hero name (see partials/sections/hero-name-svg.html) ─────── */
+
+/* The write-on is the hero entrance; disable the theme's fade-left so the
+   first pen strokes draw at full opacity instead of inside a fading container */
+#hero .content.animate {
+    animation: none !important;
+}
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.hero-name {
+    margin: 0.2rem 0 0.5rem;
+}
+
+.hero-name-svg {
+    display: block;
+    height: clamp(88px, 12vw, 150px);
+    width: auto;
+    max-width: 100%;
+    cursor: pointer;               /* click replays the write-on */
+    overflow: visible;
+}
+
+.hero-name-svg path.glyph,
+.hero-name-svg .final path {
+    fill: var(--primary-color);
+}
+
+.hero-name-svg .pen-stroke {
+    fill: none;
+    stroke: #fff;                  /* mask content: white = reveal */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* The pen: each mask stroke draws itself in writing order… */
+.hero-name-svg.play .pen-stroke {
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    animation: hero-pen var(--dur) cubic-bezier(0.45, 0.05, 0.55, 0.95) var(--delay) forwards;
+}
+
+/* …then the exact glyph render fades in over the last pen stroke */
+.hero-name-svg .final {
+    opacity: 1;
+}
+
+.hero-name-svg.play .final {
+    opacity: 0;
+    animation: hero-ink 0.3s ease 2.35s forwards;
+}
+
+@keyframes hero-pen {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes hero-ink {
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-name-svg.play .pen-stroke {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+
+    .hero-name-svg.play .final {
+        animation: none;
+        opacity: 1;
+    }
+}
+
 #hero h2 {
     font-size: clamp(16px, 2vw, 24px) !important;
     font-weight: 400 !important;

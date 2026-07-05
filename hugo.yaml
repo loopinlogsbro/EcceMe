@@ -142,7 +142,7 @@ params:
     enable: true
     intro: "Hi, I'm"
     title: "Logan"
-    subtitle: "This is where I put things I've actually built."
+    subtitle: "This is where I put things I have built and am currently working on."
     content: ""
     image: ""
     bottomImage:
@@ -213,10 +213,10 @@ params:
           - "Writing"
         links: []
 
-      - title: Coursework Tracker
+      - title: Porky
         placeholder: true
 
-      - title: Automation and Physical Systems
+      - title: De-clouding a Zigbee Gateway
         placeholder: true
 
   #Contact
