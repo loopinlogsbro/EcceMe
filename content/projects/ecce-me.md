@@ -9,9 +9,7 @@ stack:
 github:
 demo: "https://ecce.me/"
 date: 2026-05-07
-tags:
-  - projects
-  - site
+url: /ecce.me/
 image: /images/ecce-logo.png
 badges:
   - Hugo

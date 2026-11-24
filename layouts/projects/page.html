@@ -1,0 +1,119 @@
+{{ define "head" }}
+<meta name="description" content="{{ .Description }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="stylesheet" href="{{ "css/single.css" | relURL }}">
+
+<script defer src="{{ "fontawesome-6/all-6.4.2.js" | relURL }}"></script>
+{{ end }}
+
+{{ define "title" }}
+{{ .Title }} | {{ .Site.Title }}
+{{ end }}
+
+{{ define "main" }}
+<section id="single">
+  <div class="container pb-5">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-12 col-lg-9">
+        <div class="pr-lg-4">
+          <div class="title mb-5">
+            <h1 class="text-center mb-4">{{ .Title }}</h1>
+            <div class="text-center">
+              {{ if .Params.author }}
+                {{ .Params.author }}
+                <small>|</small>
+              {{ end }}
+              {{ .Date | time.Format ":date_medium" }}
+
+              <span id="readingTime">
+                {{ i18n "min_read" }}
+              </span>
+            </div>
+          </div>
+          {{ if .Params.image }}
+          <div class="featured-image">
+            <img class="img-fluid mx-auto d-block" src="{{ .Params.image }}" alt="{{ .Title }}">
+          </div>
+          {{ end }}
+          <article class="page-content  p-2">
+          {{ .Content | emojify }}
+          </article>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-3">
+        <div id="stickySideBar" class="sticky-sidebar">
+          {{ if .Params.toc | default true}}
+          <aside class="toc">
+              <h5>
+                {{ i18n "toc" }}
+              </h5>
+              <div class="toc-content">
+                {{.TableOfContents}}
+              </div>
+          </aside>
+          {{ end }}
+
+          <aside class="social">
+            <h5>{{ i18n "social" }}</h5>
+            <div class="social-content">
+              <ul class="list-inline">
+                <li class="list-inline-item text-center">
+                  <a target="_blank" href="https://www.linkedin.com/feed/?shareActive=true&text={{ .Description }} {{ .Permalink }}">
+                    <i class="fab fa-linkedin"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item text-center">
+                  <a target="_blank" href='https://twitter.com/share?text={{ .Title }}&url={{ .Permalink }}'>
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item text-center">
+                  <a target="_blank" href="https://api.whatsapp.com/send?text={{ .Title }}: {{ .Permalink }}">
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
+                </li>
+                <li class="list-inline-item text-center">
+                  <a target="_blank" href='mailto:?subject={{ .Title }}&amp;body={{ i18n "email_text" }} {{ .Permalink }}'>
+                    <i class="fa fa-envelope"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="p-2 px-3" onclick="topFunction()" id="topScroll">
+    <i class="fas fa-angle-up"></i>
+  </button>
+</section>
+
+<div class="progress">
+  <div id="scroll-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<script src="{{ "js/scrollProgressBar.js" | relURL }}"></script>
+
+<script>
+  var topScroll = document.getElementById("topScroll");
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      topScroll.style.display = "block";
+    } else {
+      topScroll.style.display = "none";
+    }
+  }
+
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
+  document.getElementById("stickySideBar").style.top = "50px";
+</script>
+
+<script src="{{ "js/readingTime.js" | relURL }}"></script>
+
+{{ end }}

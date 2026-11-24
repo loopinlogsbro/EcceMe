@@ -1,7 +1,6 @@
 {{ define "head" }}
-<meta name="description" content="{{ .Params.description }}">
-<link rel="stylesheet" href="{{ (printf "%scss/single.css" (.Site.Params.staticPath | default "")) | relURL }}">
-<script defer src="{{ (printf "%sfontawesome-6/all-6.4.2.js" (.Site.Params.staticPath | default "")) | relURL }}"></script>
+<meta name="description" content="{{ .Description }}">
+<link rel="stylesheet" href="{{ "css/single.css" | relURL }}">
 {{ end }}
 
 {{ define "title" }}
@@ -21,8 +20,8 @@
 
       <div class="{{ if .Params.image }}col-md-8{{ else }}col-12{{ end }} about-body">
         <h1 class="about-title mb-2">{{ .Title }}</h1>
-        {{ if .Params.description }}
-        <p class="about-intro mb-4">{{ .Params.description }}</p>
+        {{ if .Description }}
+        <p class="about-intro mb-4">{{ .Description }}</p>
         {{ end }}
         <article class="about-content">{{ .Content | emojify }}</article>
       </div>

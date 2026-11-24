@@ -38,6 +38,5 @@ jobs:
         run: |
           version=$(head -1 hugo.lock)
           printf 'Hugo %s is available.\n' "$version" >> "$GITHUB_STEP_SUMMARY"
-          git submodule update --init --recursive --depth 1
           ./scripts/build-site "$RUNNER_TEMP/ecce-candidate"
           echo 'The candidate passed the local build. Review the pin change in a pull request.' >> "$GITHUB_STEP_SUMMARY"

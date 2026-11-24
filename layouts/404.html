@@ -1,0 +1,14 @@
+{{ define "head" }}
+<meta name="description" content="{{ site.Params.description }}">
+{{ end }}
+
+{{ define "title" }}
+{{ i18n "page_not_found" }} | {{ .Site.Title }}
+{{ end }}
+
+{{ define "main" }}
+<div class="container py-5 text-center">
+    <img src="{{ "404.png" | relURL }}" alt="{{ i18n "page_not_found" }}" class="img-fluid" width="40%">
+    <h1>{{ i18n "page_not_found" }}</h1>
+</div>
+{{ end }}
