@@ -51,9 +51,6 @@
 <link rel="stylesheet" href="{{ (printf "%scss/language-switcher.css" (.Site.Params.staticPath | default "")) | relURL }}" media="all">
 <link rel="stylesheet" href="{{ (printf "%scss/footer.css" (.Site.Params.staticPath | default "")) | relURL }}" media="all">
 
-<!-- theme -->
-<link rel="stylesheet" href="{{ (printf "%scss/theme.css" (.Site.Params.staticPath | default "")) | relURL }}" media="all">
-
 <!-- CUSTOM CSS -->
 <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
 
@@ -67,16 +64,27 @@
         --primary-color: {{ .Site.Params.color.primaryColor | default "#007bff" }};
         --secondary-color: {{ .Site.Params.color.secondaryColor | default "#f8f9fa" }};
 
-        /* dark mode colors */
-        --text-color-dark: {{ .Site.Params.color.darkmode.textColor | default "#e4e6eb" }};
-        --text-secondary-color-dark: {{ .Site.Params.color.darkmode.secondaryTextColor | default "#b0b3b8" }};
-        --text-link-color-dark: {{ .Site.Params.color.darkmode.textLinkColor | default (.Site.Params.color.darkmode.primaryColor | default "#ffffff") }};
-        --background-color-dark: {{ .Site.Params.color.darkmode.backgroundColor | default "#18191a" }};
-        --secondary-background-color-dark: {{ .Site.Params.color.darkmode.secondaryBackgroundColor | default "#212529" }};
-        --primary-color-dark: {{ .Site.Params.color.darkmode.primaryColor | default "#ffffff" }};
-        --secondary-color-dark: {{ .Site.Params.color.darkmode.secondaryColor | default "#212529" }};
+        color-scheme: light;
     }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --text-color: {{ .Site.Params.color.darkmode.textColor | default "#e4e6eb" }};
+        --text-secondary-color: {{ .Site.Params.color.darkmode.secondaryTextColor | default "#b0b3b8" }};
+        --text-link-color: {{ .Site.Params.color.darkmode.textLinkColor | default (.Site.Params.color.darkmode.primaryColor | default "#ffffff") }};
+        --background-color: {{ .Site.Params.color.darkmode.backgroundColor | default "#18191a" }};
+        --secondary-background-color: {{ .Site.Params.color.darkmode.secondaryBackgroundColor | default "#212529" }};
+        --primary-color: {{ .Site.Params.color.darkmode.primaryColor | default "#ffffff" }};
+        --secondary-color: {{ .Site.Params.color.darkmode.secondaryColor | default "#212529" }};
+      }
+
+      #footer-socialNetworks-github-svg-path { fill: #fff; }
+    }
+
     body {
+        color: var(--text-color);
+        background-color: var(--background-color);
         font-size: {{ .Site.Params.font.fontSize | default "1rem" }};
         font-weight: {{ .Site.Params.font.fontWeight | default "400" }};
         line-height: {{ .Site.Params.font.lineHeight | default "1.5" }};

@@ -87,10 +87,6 @@ params:
   # Whether the fade animations on the home page will be enabled
   animate: true
 
-  theme:
-    disableThemeToggle: false
-    defaultTheme: "auto"
-
   font:
     fontSize: 1rem # default: 1rem
     fontWeight: 400 # default: 400
@@ -119,44 +115,11 @@ params:
 
   # If you want to customize the menu, you can change it here
   navbar:
-    align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
-    # brandLogo: "images/ecce-logo.png" # Logo for the brand | default is the favicon variable
-    showBrandLogo: false # Show brand logo in nav bar | default is true
-    brandName: "ecce" # Brand name for the brand | default is the title variable
     disableSearch: true
-    # searchPlaceholder: "Search"
-    stickyNavBar:
-      enable : true
-      showOnScrollUp : true
-    enableSeparator: false
-    menus:
-      disableAbout: true
-      disableExperience: true
-      disableEducation: true
-      disableProjects: true
-      disableAchievements: true
-      disableContact: true
 
-  # Hero
   hero:
-    enable: true
     intro: "Hi, I'm"
     title: "Logan"
-    subtitle: "This is where I put things I have built and am currently working on."
-    content: ""
-    image: ""
-    bottomImage:
-      enable: true
-    # roundImage: true # Make hero image circular | default false
-    button:
-      enable: false
-      name: "Resume"
-      url: "#"
-      download: true
-      newPage: false
-    socialLinks:
-      fontAwesomeIcons: []
-      customIcons: []
 
   # About
   about:
@@ -196,28 +159,6 @@ params:
     enable: false
     # title: "Custom Name"
     items: []
-
-  # projects
-  projects:
-    enable: true
-    title: "Projects"
-    items:
-      - title: Ecce.me
-        content: "Personal site for documenting coursework, projects, and weekly progress while finishing a CS degree."
-        featured:
-          name: Writeup
-          link: /projects/ecce-me/
-        badges:
-          - "Hugo"
-          - "Cloudflare Pages"
-          - "Writing"
-        links: []
-
-      - title: Porky
-        placeholder: true
-
-      - title: De-clouding a Zigbee Gateway
-        placeholder: true
 
   #Contact
   contact:
@@ -273,5 +214,3 @@ params:
     article: "Jan 2, 2006"
     articleList: "Jan 2, 2006"
     articleRecent: "Jan 2, 2006"
-
-  customScripts: '<script src="/js/navbar.js"></script>'

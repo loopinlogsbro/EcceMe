@@ -1,18 +1,7 @@
-{{ if .Site.Params.hero.enable | default false }}
-{{- $hero := .Site.Language.Params.hero | default .Site.Params.hero -}}
-<section id="hero" class="py-5">
-    <div class="container px-3 px-sm-4 px-md-5 px-lg-5">
-        <div class="row">
-            <div class="col-12 col-md-9 col-lg-7 content {{ if .Site.Params.animate }}animate{{ end }}" id="primary-font">
-                {{ if $hero.intro }}<p class="hero-intro">{{ $hero.intro }}</p>{{ end }}
-                <h1 class="hero-name">
-                    <span class="visually-hidden">{{ $hero.title }}</span>
-                    {{- partial "sections/hero-name-svg.html" . -}}
-                </h1>
-                <h2>{{ $hero.subtitle }}</h2>
-                <p class="hero-content">{{ $hero.content | markdownify }}</p>
-            </div>
-        </div>
-    </div>
+<section id="hero" class="page-width">
+    <h1 class="hero-name">
+        <span class="visually-hidden">{{ .Site.Params.hero.title }}</span>
+        {{- partial "sections/hero-name-svg.html" . -}}
+    </h1>
+    <div class="hero-intro">{{ .Content }}</div>
 </section>
-{{ end }}

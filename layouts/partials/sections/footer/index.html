@@ -9,8 +9,6 @@
     </div>
   </div>
 
-  {{- partial "sections/footer/brand.html" . -}}
-
   {{- partial "sections/footer/copyright.html" . -}}
 </footer>
 
@@ -93,77 +91,11 @@
     outline: none;
   }
 
-  /* Standalone triad block (rendered above the copyright) */
-  .ecce-footer .ecce-tagline-block { padding: 0.75rem 1rem 0.25rem; }
-  .ecce-footer .ecce-tagline-block p { margin: 0; line-height: 1.4; }
-  .ecce-footer .ecce-tagline {
-    font-size: 1rem;
-    letter-spacing: 0.04em;
-  }
-  .ecce-footer .ecce-tagline .verb {
-    position: relative;
-    display: inline-block;
-    cursor: help;
-    padding: 0.1rem 0.15rem;
-    color: inherit;
-    transition: color .2s ease, opacity .2s ease, transform .2s ease;
-    outline: none;
-  }
-  .ecce-footer .ecce-tagline:hover .verb,
-  .ecce-footer .ecce-tagline:focus-within .verb { opacity: 0.5; }
-  .ecce-footer .ecce-tagline .verb:hover,
-  .ecce-footer .ecce-tagline .verb:focus,
-  .ecce-footer .ecce-tagline .verb:focus-visible {
-    opacity: 1;
-    color: var(--primary-color);
-    transform: translateY(-1px);
-  }
-  .ecce-footer .ecce-tagline .verb-sep {
-    display: inline-block;
-    margin: 0 0.25rem;
-    color: var(--primary-color);
-    opacity: 0.55;
-  }
-
-  /* Tooltip — hover, focus, tap (focus via tabindex=0) */
-  .ecce-footer .ecce-tagline .translation {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%) translateY(4px);
-    background: var(--secondary-background-color, #212529);
-    color: var(--text-color, #e4e6eb);
-    border: 1px solid var(--primary-color);
-    border-radius: 4px;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.78rem;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .12s ease, transform .12s ease;
-    z-index: 5;
-  }
-  .ecce-footer .ecce-tagline .translation::after {
-    content: '';
-    position: absolute;
-    top: 100%; left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--primary-color);
-  }
-  .ecce-footer .ecce-tagline .verb:hover .translation,
-  .ecce-footer .ecce-tagline .verb:focus .translation,
-  .ecce-footer .ecce-tagline .verb:focus-visible .translation {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
   /* Copyright line */
   .ecce-footer .ecce-copyright-wrap {
     text-align: center;
-    padding: 0.25rem 0 1rem;
+    padding: 0.5rem 1rem 3rem;
     font-size: 0.75rem;
-    opacity: 0.6;
   }
 
   /* Stack columns on narrow screens */
@@ -172,8 +104,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ecce-footer .ecce-tagline .verb,
-    .ecce-footer .ecce-tagline .translation,
     .ecce-footer .footer-social-list a,
     .ecce-footer .footer-list a {
       transition: none !important;
