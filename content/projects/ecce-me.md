@@ -1,5 +1,5 @@
 ---
-title: "Ecce.me"
+title: "ecce.me"
 summary: "A personal builder site for documenting coursework, project writeups, and weekly progress."
 status: "In progress"
 stack:
@@ -18,7 +18,7 @@ badges:
   - Cloudflare Pages
   - Writing
 links: []
-showInHome: false
+spotlight: "How I meandered my way into a site I could live with, from a godawful first draft to an integral part of my project workflow."
 ---
 
 ## Problem

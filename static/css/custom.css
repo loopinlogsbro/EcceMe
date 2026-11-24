@@ -1,163 +1,193 @@
-/* ─── Theme toggle ─────────────────────────────────────────────────────────── */
-button#theme-toggle:focus {
-    outline: none;
+@font-face {
+    font-family: Caveat;
+    src: url("../fonts/caveat/caveat-medium.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
 }
 
-button#theme-toggle svg {
-    height: 18px;
-    width: 18px;
-    vertical-align: middle;
-    stroke: currentColor;
+.page-width {
+    width: min(85%, 76.5rem);
+    margin-inline: auto;
 }
 
-/* ─── Navbar ───────────────────────────────────────────────────────────────── */
-.navbar-brand {
-    font-family: 'Roboto Mono', monospace !important;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    font-size: 1.75rem !important;
-    border: 1.5px solid currentColor !important;
-    border-radius: 4px !important;
-    padding: 0.25em 0.5em !important;
-    line-height: 1;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.navbar-brand:hover {
-    background-color: var(--primary-color) !important;
-    color: var(--background-color) !important;
-}
-
-.navbar-brand img {
-    width: auto;
-    height: 32px;
-    max-height: 32px;
-}
-
-.navbar-nav .nav-link {
-    font-size: 1.2rem !important;
-    font-family: 'Roboto Mono', monospace !important;
-}
-
-/* ─── Whitespace reduction ─────────────────────────────────────────────────── */
-#hero {
-    min-height: auto !important;
-    padding: 4rem 0 2rem !important;
-}
-
-.hero-bottom-svg {
-    display: none !important;
-}
-
-#projects {
-    padding-top: 0 !important;
-    padding-bottom: 1rem !important;
-}
-
-#about {
-    padding-top: 2rem !important;
-    padding-bottom: 2rem !important;
-}
-
-/* ─── Project cards — compact height, footer pinned to bottom ─────────────── */
-#projects .card {
+.site-nav {
     display: flex;
-    flex-direction: column;
-    min-height: 0 !important; /* override the theme's 400px min-height (projects.css loads later) */
-    height: 100%;           /* equalize cards within a row */
-}
-
-#projects .card .card-body {
-    flex: 1 0 auto;
-}
-
-/* Placeholder cards for upcoming projects */
-#projects .card.card-placeholder {
-    background: transparent !important;
-    border: 1.5px dashed rgba(255, 255, 255, 0.2) !important;
-    box-shadow: none !important;
-}
-
-.light #projects .card.card-placeholder {
-    border-color: rgba(0, 0, 0, 0.2) !important;
-}
-
-#projects .card.card-placeholder:hover {
-    transform: none;
-    box-shadow: none !important;
-}
-
-#projects .card.card-placeholder .card-body {
-    display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.4rem;
-    padding: 2rem 1.5rem !important;
+    gap: 1rem;
+    min-height: 5.5rem;
 }
 
-#projects .card.card-placeholder .card-title {
-    margin: 0;
-    opacity: 0.55;
-}
-
-#projects .coming-soon {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--primary-color);
-    opacity: 0.85;
-}
-
-/* ─── Hero ─────────────────────────────────────────────────────────────────── */
-.hero-intro {
-    font-family: 'Roboto Mono', monospace;
-    font-size: clamp(16px, 1.8vw, 22px);
-    opacity: 0.7;
-    margin-bottom: 0.1rem;
-}
-
-#hero h1 {
-    font-size: clamp(48px, 6vw, 80px) !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-    margin-bottom: 0.4rem !important;
-}
-
-/* ─── Handwritten hero name (see partials/sections/hero-name-svg.html) ─────── */
-
-/* The write-on is the hero entrance; disable the theme's fade-left so the
-   first pen strokes draw at full opacity instead of inside a fading container */
-#hero .content.animate {
-    animation: none !important;
-}
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+.site-greeting {
+    font: 500 clamp(2rem, 3.2vw, 2.875rem)/1 Caveat, cursive;
     white-space: nowrap;
-    border: 0;
+}
+
+.site-nav-links {
+    display: flex;
+    gap: clamp(0.25rem, 1.4vw, 1.25rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: 400 clamp(0.9375rem, 1.35vw, 1.2rem)/1.25 "Roboto Mono", monospace;
+}
+
+.site-nav-links a,
+.site-home {
+    color: var(--text-color);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.25rem;
+    text-decoration: none;
+}
+
+.site-home {
+    padding-inline: 0.25rem 0.5rem;
+}
+
+.site-home svg {
+    display: block;
+    width: 88px;
+    fill: var(--primary-color);
+}
+
+.site-nav-links a:hover {
+    color: var(--text-link-color);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.site-nav a:focus-visible,
+.project-spotlight a:focus-visible,
+.hero-name button:focus-visible {
+    outline: 2px solid var(--text-link-color);
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+
+#hero {
+    padding-top: 0.35rem;
 }
 
 .hero-name {
-    margin: 0.2rem 0 0.5rem;
+    margin: 0 0 0.55rem;
+}
+
+.hero-name button {
+    display: block;
+    border: 0;
+    padding: 0;
+    background: none;
+    max-width: 100%;
+}
+
+.hero-intro {
+    max-width: 52ch;
+    color: var(--text-secondary-color);
+    font: 400 clamp(1rem, 1.8vw, 1.5rem)/1.3 "Roboto Mono", monospace;
+    text-wrap: balance;
+}
+
+.hero-intro p {
+    margin: 0;
+}
+
+.project-spotlight {
+    padding-block: clamp(2rem, 3.7vw, 3.3rem) 2.75rem;
+}
+
+.project-spotlight-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid #acc4b1;
+    background: #e7efe8;
+}
+
+.project-spotlight-copy {
+    align-self: center;
+    padding: clamp(1.5rem, 3.7vw, 3.7rem);
+}
+
+.project-spotlight-label {
+    margin: 0 0 0.9rem;
+    font: 400 0.8rem/1.5 "Roboto Mono", monospace;
+}
+
+.project-spotlight h2 {
+    margin: 0 0 0.9rem;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.065em;
+}
+
+.project-spotlight-summary {
+    margin: 0 0 1.1rem;
+    max-width: 34ch;
+    font-size: clamp(1rem, 1.23vw, 1.125rem);
+    line-height: 1.5;
+}
+
+.project-spotlight a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    min-height: 44px;
+    color: var(--text-link-color);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.project-spotlight a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.project-spotlight-art {
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 3vw, 2.7rem);
+    background: radial-gradient(ellipse at 65% 80%, #31543b, #1b3124 56%, #14241b);
+}
+
+.project-spotlight-art img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #63836d;
+    border-radius: 10px;
+    box-shadow: 0 12px 35px rgb(0 0 0 / 25%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .project-spotlight-panel {
+        border-color: #43634c;
+        background: #1b221e;
+    }
+}
+
+@media (max-width: 45rem) {
+    .page-width {
+        width: calc(100% - 2rem);
+    }
+
+    .site-nav {
+        min-height: 4.25rem;
+    }
+
+    .project-spotlight-panel {
+        grid-template-columns: 1fr;
+    }
 }
 
 .hero-name-svg {
     display: block;
-    height: clamp(88px, 12vw, 150px);
+    height: clamp(96px, 12vw, 150px);
     width: auto;
     max-width: 100%;
-    cursor: pointer;               /* click replays the write-on */
     overflow: visible;
 }
 
@@ -199,61 +229,13 @@ button#theme-toggle svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .hero-name-svg.play .pen-stroke {
-        animation: none;
-        stroke-dashoffset: 0;
+    .hero-name-svg.play .written {
+        display: none;
     }
 
     .hero-name-svg.play .final {
         animation: none;
         opacity: 1;
-    }
-}
-
-#hero h2 {
-    font-size: clamp(16px, 2vw, 24px) !important;
-    font-weight: 400 !important;
-    opacity: 0.8 !important;
-    line-height: 1.3 !important;
-}
-
-#hero h1, #hero h2, #hero h3 {
-    font-family: 'Roboto Mono', monospace !important;
-}
-
-/* ─── Mobile project carousel ──────────────────────────────────────────────── */
-@media (max-width: 767.98px) {
-    #projects-carousel {
-        padding-bottom: 2.5rem;
-    }
-
-    #projects-carousel .carousel-item .card {
-        min-height: 220px;
-        height: auto;
-    }
-
-    .projects-carousel-indicators {
-        bottom: 0;
-    }
-
-    .projects-carousel-indicators [data-bs-target] {
-        background-color: var(--primary-color);
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        border: none;
-        opacity: 0.4;
-    }
-
-    .projects-carousel-indicators .active {
-        opacity: 1;
-    }
-
-    #projects-carousel .carousel-control-prev,
-    #projects-carousel .carousel-control-next {
-        width: 2rem;
-        top: 0;
-        bottom: 2.5rem;
     }
 }
 
@@ -317,9 +299,11 @@ button#theme-toggle svg {
     opacity: 0.5;
 }
 
-.light #about-page .about-content h2,
-.light #about-page .about-content h3 {
-    border-bottom-color: rgba(0, 0, 0, 0.1);
+@media (prefers-color-scheme: light) {
+    #about-page .about-content h2,
+    #about-page .about-content h3 {
+        border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
 }
 
 .about-content ol,
