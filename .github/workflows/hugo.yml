@@ -1,0 +1,46 @@
+name: Hugo
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: 0.147.7
+
+jobs:
+  build:
+    name: Hugo build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Install Hugo Extended
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP"
+          asset="hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          checksums="hugo_${HUGO_VERSION}_checksums.txt"
+          release="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}"
+          curl --fail --silent --show-error --location --retry 3 --remote-name "$release/$asset"
+          curl --fail --silent --show-error --location --retry 3 --remote-name "$release/$checksums"
+          awk -v asset="$asset" '$2 == asset { print; found=1 } END { exit !found }' "$checksums" | sha256sum --check -
+          mkdir -p "$RUNNER_TEMP/hugo-bin"
+          tar -xzf "$asset" -C "$RUNNER_TEMP/hugo-bin" hugo
+          echo "$RUNNER_TEMP/hugo-bin" >> "$GITHUB_PATH"
+
+      - name: Build and check public entry points
+        shell: bash
+        run: |
+          hugo version
+          output="$RUNNER_TEMP/ecce-public"
+          hugo --destination "$output"
+          test -s "$output/index.html"
+          test -s "$output/about/index.html"
+          test -s "$output/projects/ecce-me/index.html"
+          test -s "$output/sitemap.xml"
