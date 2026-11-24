@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Print a new Hugo lock file when upstream has a newer stable release."""
+
+import json
+import os
+from pathlib import Path
+import re
+from urllib.request import Request, urlopen
+
+
+def version_key(version):
+    return tuple(map(int, version.split(".")))
+
+
+def main():
+    current = (Path(__file__).resolve().parent.parent / "hugo.lock").read_text().splitlines()[0]
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "ecce-hugo-update"}
+    token = os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    request = Request("https://api.github.com/repos/gohugoio/hugo/releases/latest", headers=headers)
+    with urlopen(request, timeout=20) as response:
+        release = json.load(response)
+
+    tag = release["tag_name"]
+    if release["draft"] or release["prerelease"] or not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", tag):
+        raise SystemExit(f"Unexpected upstream release tag: {tag!r}")
+    latest = tag[1:]
+    if version_key(latest) <= version_key(current):
+        return
+
+    assets = {asset["name"]: asset for asset in release["assets"]}
+    lock = [latest]
+    for platform in ("linux-amd64", "linux-arm64"):
+        name = f"hugo_{latest}_{platform}.tar.gz"
+        digest = (assets.get(name, {}).get("digest") or "").removeprefix("sha256:")
+        if not re.fullmatch("[a-f0-9]{64}", digest):
+            raise SystemExit(f"Missing upstream SHA-256 for {name}")
+        lock.append(f"{digest}  {name}")
+    print("\n".join(lock))
+
+
+if __name__ == "__main__":
+    main()
