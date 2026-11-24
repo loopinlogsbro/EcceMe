@@ -1,0 +1,43 @@
+name: Check for Hugo updates
+
+on:
+  schedule:
+    - cron: '17 0,12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hugo-update-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Compare the pin with Hugo's stable release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          candidate=$(./scripts/latest-hugo)
+          if [[ -z $candidate ]]; then
+            echo 'Hugo is on the latest stable release.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          printf '%s\n' "$candidate" > hugo.lock
+          echo 'available=true' >> "$GITHUB_OUTPUT"
+
+      - name: Build the candidate
+        if: steps.release.outputs.available == 'true'
+        run: |
+          version=$(head -1 hugo.lock)
+          printf 'Hugo %s is available.\n' "$version" >> "$GITHUB_STEP_SUMMARY"
+          git submodule update --init --recursive --depth 1
+          ./scripts/build-site "$RUNNER_TEMP/ecce-candidate"
+          echo 'The candidate passed the local build. Review the pin change in a pull request.' >> "$GITHUB_STEP_SUMMARY"

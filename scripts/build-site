@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$root"
+output=${1:-public}
+./scripts/hugo --destination "$output"
+
+for page in index.html about/index.html projects/index.html projects/ecce-me/index.html sitemap.xml index.xml; do
+  if [[ ! -s $output/$page ]]; then
+    echo "Missing or empty build output: $page" >&2
+    exit 1
+  fi
+done
+
+commit=${CF_PAGES_COMMIT_SHA:-}
+if [[ -n $commit ]]; then
+  if [[ ! $commit =~ ^[0-9a-f]{40}$ ]]; then
+    echo "Invalid Cloudflare Pages commit SHA" >&2
+    exit 1
+  fi
+  IFS= read -r version < hugo.lock
+  mkdir -p "$output/.well-known"
+  printf '{"commit":"%s","hugo":"%s"}\n' "$commit" "$version" > "$output/.well-known/ecce-build.json"
+fi
