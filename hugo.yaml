@@ -1,29 +1,15 @@
 baseURL: "https://ecce.me/"
+locale: en-US
+title: ecce
 
-locale: "en-US"
-title: "ecce"
-theme: hugo-profile
-
-# Multilingual configuration
-defaultContentLanguage: "en"
-defaultContentLanguageInSubdir: false
-
-languages:
-  en:
-    weight: 1
-    contentDir: "content"
-outputs:
-  home:
-    - "HTML"
-    - "RSS"
+disableKinds: [taxonomy, term]
+permalinks:
   page:
-    - "HTML"
-
-#services:
-  #googleAnalytics:
-    #id: G-MEASUREMENT_ID
-  #disqus:
-    #shortname: your-disqus-shortname
+    projects: /:slug/
+outputs:
+  home: [HTML, RSS]
+  page: [HTML]
+  section: [HTML, RSS]
 
 pagination:
   pagerSize: 3
@@ -33,7 +19,7 @@ markup:
     renderer:
       unsafe: true
 
-Menus:
+menus:
   main:
     - identifier: about
       name: About
@@ -43,58 +29,18 @@ Menus:
       name: Projects
       url: /#projects
       weight: 2
-    #- identifier: writing
-    #  name: Writing
-    #  url: /logs/
-    #  weight: 3
-    #Dropdown menu
-    # - identifier: dropdown
-    #   title: Example dropdown menu
-    #   name: Dropdown
-    #   weight: 3
-    # - identifier: dropdown1
-    #   title: example dropdown 1
-    #   name: example 1
-    #   url: /#
-    #   parent: dropdown
-    #   weight: 1
-    # - identifier: dropdown2
-    #   title: example dropdown 2
-    #   name: example 2
-    #   url: /#
-    #   parent: dropdown
-    #   weight: 2
 
 params:
-  #title: "Ecce Me"
   description: "A personal builder site for coursework, projects, and practical systems."
-  # staticPath: ""  # The path to serve the static files from
-  favicon: "/images/ecce-logo.png"
-
-  # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
-  # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
-  # Note the lack of "" in true, it should be of boolean type.
-  useBootstrapCDN: false
-
-  # If you want to load dynamically responsive images from Cloudinary
-  # This requires your images to be uploaded + hosted on Cloudinary
-  # Uncomment and change YOUR_CLOUD_NAME to the Cloud Name in your Cloudinary console
-  # cloudinary_cloud_name: "YOUR_CLOUD_NAME"
-
-  # Whether to add mathjax support on all pages. Alternatively, you can opt-in per page by adding `mathjax: true` in the frontmatter.
-  mathjax: false
-
-  # Whether the fade animations on the home page will be enabled
-  animate: true
-
+  favicon: /images/ecce-logo.png
+  hero:
+    intro: "Hi, I'm"
+    title: Logan
   font:
-    fontSize: 1rem # default: 1rem
-    fontWeight: 400 # default: 400
-    lineHeight: 1.5 # default: 1.5
-    textAlign: left # default: left
-
-  # color preference
-  # When using hex codes for colors, quotations must be used along with the # sign
+    fontSize: 1rem
+    fontWeight: 400
+    lineHeight: 1.5
+    textAlign: left
   color:
     textColor: "#1a1b1e"
     secondaryTextColor: "#5a5f6b"
@@ -103,7 +49,6 @@ params:
     secondaryBackgroundColor: "#e6f0e8"
     primaryColor: "#007a1e"
     secondaryColor: "#edf3ee"
-
     darkmode:
       textColor: "#e4e6eb"
       secondaryTextColor: "#b0b3b8"
@@ -112,105 +57,3 @@ params:
       secondaryBackgroundColor: "#212529"
       primaryColor: "#00FF41"
       secondaryColor: "#212529"
-
-  # If you want to customize the menu, you can change it here
-  navbar:
-    disableSearch: true
-
-  hero:
-    intro: "Hi, I'm"
-    title: "Logan"
-
-  # About
-  about:
-    enable: false
-    title: "About"
-    image: "/images/me.png"
-    content: |-
-      This site serves as a visible trail of work: project writeups, small tools, and systems that make everyday problems easier to handle.
-
-      The goal is simple: move quickly, build things that actually work, and keep an honest record of the process.
-    skills:
-      enable: true
-      title: "Tools and areas I am working with lately:"
-      items:
-        - "Hugo"
-        - "Python"
-        - "Java"
-        - "Linux"
-        - "Automation"
-        - "ESP32 / Home Assistant"
-
-  # Experience
-  experience:
-    enable: false
-    # title: "Custom Name"
-    items: []
-
-  # Education
-  education:
-    enable: false
-    # title: "Custom Name"
-    index: false
-    items: []
-
-  # Achievements
-  achievements:
-    enable: false
-    # title: "Custom Name"
-    items: []
-
-  #Contact
-  contact:
-    enable: false
-    title: "About"
-    content: "The simplest way to follow the work right now is through the site itself. Public profile links will be added here once they are ready."
-    btnName: Browse projects
-    btnLink: /projects/
-    # formspree:
-    #   enable: true # `contact.email` value will be ignored
-    #   formId: abcdefgh # Take it from your form's endpoint, like 'https://formspree.io/f/abcdefgh'
-    #   emailCaption: "Enter your email address"
-    #   messageCaption: "Enter your message here"
-    #   messageRows: 5
-
-  footer:
-    recentPosts:
-      path: "logs"
-      count: 3
-      title: Writing
-      enable: false
-      disableFeaturedImage: true
-    socialNetworks:
-      github: ""
-      linkedin: ""
-      twitter: ""
-      instagram: ""
-      facebook: ""
-
-  # List pages like blogs and posts
-  listPages:
-    disableFeaturedImage: true
-
-  # Single pages like blog and post
-  singlePages:
-    socialShare: true
-    readTime:
-      enable: true
-      content: "min read"
-    scrollprogress:
-      enable: true
-    tags:
-      openInNewTab: true
-
-  # For translations
-  terms:
-    read: "Read"
-    toc: "Table Of Contents"
-    copyright: "All rights reserved"
-    emailText: "Check out this site"
-
-  datesFormat:
-    article: "Jan 2, 2006"
-    articleList: "Jan 2, 2006"
-    articleRecent: "Jan 2, 2006"

@@ -6,7 +6,7 @@ cd "$root"
 output=${1:-public}
 ./scripts/hugo --destination "$output"
 
-for page in index.html about/index.html projects/index.html projects/ecce-me/index.html sitemap.xml index.xml; do
+for page in index.html about/index.html projects/index.html ecce.me/index.html projects/index.xml sitemap.xml index.xml 404.html _redirects; do
   if [[ ! -s $output/$page ]]; then
     echo "Missing or empty build output: $page" >&2
     exit 1

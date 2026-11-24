@@ -6,7 +6,6 @@ stack:
 github:
 demo:
 date:
-tags:
 ---
 
 ## Problem
